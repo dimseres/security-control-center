@@ -246,18 +246,18 @@ const SettingsPage = (() => {
     'settings-sources': 'settings.detection_sources',
   };
   const CLEANUP_TARGETS = {
-    dashboard: { keys: [], prefixes: ['dashboard.'] },
-    monitoring: { keys: [], prefixes: ['monitoring.'] },
+    monitoring: { keys: [], prefixes: ['monitoring.'], remoteCleanup: cleanupMonitoringRemote },
     controls: {
       keys: ['controls.customOptions'],
       prefixes: [],
+      remoteCleanup: cleanupControlsRemote,
       onAfter: () => {
         if (window.ControlsPage?.saveCustomOptions) {
           window.ControlsPage.saveCustomOptions({ domains: [] });
         }
       },
     },
-    tasks: { keys: [], prefixes: ['tasks.'] },
+    tasks: { keys: [], prefixes: ['tasks.'], remoteCleanup: cleanupTasksRemote },
     incidents: {
       keys: ['incidents.customOptions'],
       prefixes: [],
@@ -268,15 +268,12 @@ const SettingsPage = (() => {
         }
       },
     },
-    reports: { keys: [], prefixes: ['reports.'] },
+    reports: { keys: [], prefixes: ['reports.'], remoteCleanup: cleanupReportsRemote },
     docs: {
       keys: ['berkut.tags'],
       prefixes: [],
       remoteCleanup: cleanupDocsRemote,
     },
-    accounts: { keys: [], prefixes: ['accounts.'] },
-    logs: { keys: [], prefixes: ['logs.saved_views.'] },
-    settings: { keys: ['berkut_prefs', 'berkut_lang', 'berkut.classifications'], prefixes: [] },
   };
 
   function init(onChange) {
@@ -762,7 +759,9 @@ const SettingsPage = (() => {
         }
       } catch (err) {
         if (alertBox) {
-          alertBox.textContent = err?.message || BerkutI18n.t('common.error');
+          const raw = (err?.message || '').trim();
+          const translated = raw ? BerkutI18n.t(raw) : '';
+          alertBox.textContent = translated && translated !== raw ? translated : (raw || BerkutI18n.t('common.error'));
           alertBox.classList.remove('success');
           alertBox.hidden = false;
         }
@@ -848,6 +847,80 @@ const SettingsPage = (() => {
       if (removedThisPass === 0) break;
     }
     return removed;
+  }
+
+  async function cleanupMonitoringRemote() {
+    let removed = 0;
+    removed += await cleanupCollection('/api/monitoring/maintenance', (item) => `/api/monitoring/maintenance/${item.id}`);
+    removed += await cleanupCollection('/api/monitoring/notifications', (item) => `/api/monitoring/notifications/${item.id}`);
+    removed += await cleanupCollection('/api/monitoring/monitors', (item) => `/api/monitoring/monitors/${item.id}`);
+    return removed;
+  }
+
+  async function cleanupReportsRemote() {
+    let removed = 0;
+    removed += await cleanupCollection('/api/reports/templates', (item) => `/api/reports/templates/${item.id}`);
+    removed += await cleanupCollection('/api/reports', (item) => `/api/reports/${item.id}`);
+    return removed;
+  }
+
+  async function cleanupTasksRemote() {
+    let removed = 0;
+    removed += await cleanupCollection('/api/tasks?include_archived=1&limit=500', (item) => `/api/tasks/${item.id}`);
+    removed += await cleanupCollection('/api/tasks/templates?include_inactive=1', (item) => `/api/tasks/templates/${item.id}`);
+    removed += await cleanupCollection('/api/tasks/boards?include_inactive=1', (item) => `/api/tasks/boards/${item.id}`);
+    removed += await cleanupCollection('/api/tasks/spaces?include_inactive=1', (item) => `/api/tasks/spaces/${item.id}`);
+    return removed;
+  }
+
+  async function cleanupControlsRemote() {
+    let removed = 0;
+    removed += await cleanupCollection('/api/checks', (item) => `/api/checks/${item.id}`);
+    removed += await cleanupCollection('/api/violations', (item) => `/api/violations/${item.id}`);
+    removed += await cleanupCollection('/api/controls', (item) => `/api/controls/${item.id}`);
+    removed += await cleanupCollection('/api/controls/types', (item) => `/api/controls/types/${item.id}`, {
+      itemFilter: (item) => !item?.is_builtin,
+    });
+    return removed;
+  }
+
+  async function cleanupCollection(listUrl, deleteUrlByItem, options = {}) {
+    let removed = 0;
+    for (let i = 0; i < 100; i += 1) {
+      let list = extractListItems(await Api.get(listUrl));
+      if (typeof options.itemFilter === 'function') {
+        list = list.filter((item) => options.itemFilter(item));
+      }
+      if (!list.length) break;
+      let removedThisPass = 0;
+      for (const item of list) {
+        const id = item?.id;
+        if (!id) continue;
+        try {
+          await Api.del(deleteUrlByItem(item));
+          removed += 1;
+          removedThisPass += 1;
+        } catch (err) {
+          if (isCleanupIgnorableError(err)) continue;
+          throw err;
+        }
+      }
+      if (removedThisPass === 0) break;
+    }
+    return removed;
+  }
+
+  function isCleanupIgnorableError(err) {
+    const msg = (err?.message || '').trim().toLowerCase();
+    return (
+      msg === 'forbidden' ||
+      msg === 'not found' ||
+      msg === 'common.notfound' ||
+      msg === 'controls.types.builtin' ||
+      msg === 'controls.types.inuse' ||
+      msg === 'monitoring.error.passivemonitor' ||
+      msg === 'monitoring.error.busy'
+    );
   }
 
   function extractListItems(payload) {

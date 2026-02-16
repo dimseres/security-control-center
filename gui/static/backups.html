@@ -6,6 +6,7 @@
       <div class="tabs browser-tabs backups-tabs" id="backups-tabs">
         <a class="tab-btn active" href="/backups" data-tab="backups-tab-overview" data-i18n="backups.tabs.overview">Overview</a>
         <a class="tab-btn" href="/backups/history" data-tab="backups-tab-history" data-i18n="backups.tabs.history">History</a>
+        <a class="tab-btn" href="/backups/contents" data-tab="backups-tab-contents" data-i18n="backups.tabs.contents">Contents</a>
         <a class="tab-btn" href="/backups/restore" data-tab="backups-tab-restore" data-i18n="backups.tabs.restore">Restore</a>
         <a class="tab-btn" href="/backups/plan" data-tab="backups-tab-plan" data-i18n="backups.tabs.plan">Plan</a>
       </div>
@@ -48,10 +49,6 @@
               </div>
             </div>
           </div>
-          <div class="backups-actions backups-overview-actions">
-            <button class="btn primary" id="backups-create-now" data-i18n="backups.actions.createNow">Create backup now</button>
-            <button class="btn ghost" id="backups-overview-refresh" data-i18n="common.refresh">Refresh</button>
-          </div>
           <div class="card nested-card backups-create-card">
             <div class="card-header"><h3 data-i18n="backups.overview.newBackupOptions">New backup options</h3></div>
             <div class="card-body">
@@ -77,6 +74,10 @@
                   <label class="checkbox"><input type="checkbox" data-scope="controls"><span data-i18n="nav.controls">Controls</span></label>
                 </div>
                 <div class="form-hint" id="backups-create-scope-preview">ALL</div>
+              </div>
+              <div class="backups-actions backups-overview-actions backups-overview-actions-inside">
+                <button class="btn primary" id="backups-create-now" data-i18n="backups.actions.createNow">Create backup now</button>
+                <button class="btn ghost" id="backups-overview-refresh" data-i18n="common.refresh">Refresh</button>
               </div>
             </div>
           </div>
@@ -132,6 +133,70 @@
                   </thead>
                   <tbody></tbody>
                 </table>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="tab-panel" id="backups-tab-contents" data-tab="backups-tab-contents" hidden>
+          <div class="card nested-card">
+            <div class="card-body">
+              <div class="form-grid two-column">
+                <div class="form-field">
+                  <label for="backups-contents-artifact" data-i18n="backups.contents.selectBackup">Бэкап</label>
+                  <select id="backups-contents-artifact"></select>
+                </div>
+              </div>
+              <div class="backups-actions">
+                <button class="btn ghost" id="backups-contents-refresh" data-i18n="common.refresh">Refresh</button>
+              </div>
+            </div>
+          </div>
+          <div class="card nested-card">
+            <div class="card-body">
+              <div id="backups-contents-loading" class="muted" hidden data-i18n="common.loading">Loading...</div>
+              <div id="backups-contents-empty" class="muted" hidden data-i18n="backups.contents.empty">Выберите бэкап для просмотра содержимого.</div>
+              <div id="backups-contents-body" hidden>
+                <div class="backups-contents-grid">
+                  <div><strong data-i18n="backups.fields.filename">Файл</strong>: <span id="backups-contents-filename">-</span></div>
+                  <div><strong data-i18n="backups.fields.status">Статус</strong>: <span id="backups-contents-status">-</span></div>
+                  <div><strong data-i18n="backups.fields.createdAt">Создан</strong>: <span id="backups-contents-created">-</span></div>
+                  <div><strong data-i18n="backups.fields.size">Размер</strong>: <span id="backups-contents-size">-</span></div>
+                  <div><strong data-i18n="backups.contents.scope">Охват</strong>: <span id="backups-contents-scope">-</span></div>
+                  <div><strong data-i18n="backups.contents.monitorCount">Мониторы в бэкапе</strong>: <span id="backups-contents-monitor-count">-</span></div>
+                  <div><strong data-i18n="backups.contents.includeFiles">Файлы</strong>: <span id="backups-contents-include-files">-</span></div>
+                  <div><strong data-i18n="backups.contents.label">Метка</strong>: <span id="backups-contents-label">-</span></div>
+                  <div><strong data-i18n="backups.contents.appVersion">Версия приложения</strong>: <span id="backups-contents-app-version">-</span></div>
+                  <div><strong data-i18n="backups.contents.dbEngine">БД</strong>: <span id="backups-contents-db-engine">-</span></div>
+                  <div><strong data-i18n="backups.contents.gooseVersion">Версия схемы</strong>: <span id="backups-contents-goose-version">-</span></div>
+                  <div><strong data-i18n="backups.contents.formatVersion">Формат</strong>: <span id="backups-contents-format-version">-</span></div>
+                  <div><strong data-i18n="backups.contents.checksum">SHA-256</strong>: <span id="backups-contents-checksum">-</span></div>
+                </div>
+                <h4 data-i18n="backups.contents.payloadChecksums">Контрольные суммы payload</h4>
+                <div class="table-responsive">
+                  <table class="data-table" id="backups-contents-checksums-table">
+                    <thead>
+                      <tr>
+                        <th data-i18n="backups.contents.payloadFile">Файл</th>
+                        <th data-i18n="backups.contents.checksum">SHA-256</th>
+                        <th data-i18n="backups.fields.size">Размер</th>
+                      </tr>
+                    </thead>
+                    <tbody></tbody>
+                  </table>
+                </div>
+                <h4 data-i18n="backups.contents.entityCounts">Состав модулей</h4>
+                <div class="table-responsive">
+                  <table class="data-table" id="backups-contents-entities-table">
+                    <thead>
+                      <tr>
+                        <th data-i18n="backups.contents.entity">Сущность</th>
+                        <th data-i18n="backups.contents.records">Записей</th>
+                      </tr>
+                    </thead>
+                    <tbody></tbody>
+                  </table>
+                </div>
               </div>
             </div>
           </div>

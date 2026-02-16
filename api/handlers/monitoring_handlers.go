@@ -1,6 +1,7 @@
 package handlers
 
 import (
+	"context"
 	"database/sql"
 	"encoding/json"
 	"errors"
@@ -83,6 +84,7 @@ func (h *MonitoringHandler) CreateMonitor(w http.ResponseWriter, r *http.Request
 		Status:           initialStatus(mon.IsPaused),
 		LastResultStatus: "down",
 	})
+	h.requestImmediateCheck(mon.ID)
 	h.audit(r, monitorAuditMonitorCreate, strconv.FormatInt(id, 10))
 	writeJSON(w, http.StatusCreated, mon)
 }
@@ -148,6 +150,7 @@ func (h *MonitoringHandler) UpdateMonitor(w http.ResponseWriter, r *http.Request
 	if existing.IsPaused != mon.IsPaused {
 		_ = h.store.SetMonitorPaused(r.Context(), id, mon.IsPaused)
 	}
+	h.requestImmediateCheck(id)
 	h.audit(r, monitorAuditMonitorUpdate, strconv.FormatInt(id, 10))
 	if slaChanged {
 		h.audit(r, monitorAuditSLAUpdate, strconv.FormatInt(id, 10))
@@ -289,6 +292,18 @@ func (h *MonitoringHandler) CloneMonitor(w http.ResponseWriter, r *http.Request)
 		Status:           initialStatus(clone.IsPaused),
 		LastResultStatus: "down",
 	})
+	h.requestImmediateCheck(clone.ID)
 	h.audit(r, monitorAuditMonitorClone, strconv.FormatInt(newID, 10))
 	writeJSON(w, http.StatusCreated, clone)
+}
+
+func (h *MonitoringHandler) requestImmediateCheck(monitorID int64) {
+	if h == nil || h.engine == nil || monitorID <= 0 {
+		return
+	}
+	go func(id int64) {
+		ctx, cancel := context.WithTimeout(context.Background(), 20*time.Second)
+		defer cancel()
+		_ = h.engine.CheckNow(ctx, id)
+	}(monitorID)
 }

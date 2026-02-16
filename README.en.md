@@ -8,7 +8,7 @@
 
 Berkut Solutions - Security Control Center (SCC) is a self-hosted platform for security operations and compliance management.
 
-Current version: `1.0.6`
+Current version: `1.0.7`
 
 ## Product Overview
 Berkut SCC is a unified workspace for security teams where operational workflows, compliance artifacts, and control activities are managed in one system.
@@ -76,6 +76,7 @@ It replaces fragmented spreadsheets, chat approvals, and disconnected trackers w
 - Do not use default secrets outside development.
 - Do not store secrets in git (`BACKUP_ENCRYPTION_KEY`, `DOCS_ENCRYPTION_KEY`, `PEPPER`, `CSRF_KEY`).
 - Restrict `BERKUT_SECURITY_TRUSTED_PROXIES` to trusted addresses only.
+- Set `TZ=Europe/Moscow` (or your operational timezone) in compose/.env to keep container and UI time aligned.
 
 ## Screenshots
 ![Screenshot 1](gui/static/screen1.png)

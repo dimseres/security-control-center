@@ -144,6 +144,7 @@ const BackupsRestore = (() => {
     }
     steps.forEach((step) => {
       const li = document.createElement('li');
+      li.className = 'restore-step-item';
       const name = document.createElement('span');
       name.className = 'restore-step-name';
       name.textContent = BackupsPage.t(step.message_i18n_key) || step.message_i18n_key || step.name;
@@ -152,8 +153,22 @@ const BackupsRestore = (() => {
       status.className = 'restore-step-status';
       status.textContent = BackupsPage.statusLabel(step.status);
       li.appendChild(status);
+      const detail = extractStepDetail(step);
+      if (detail) {
+        const detailEl = document.createElement('div');
+        detailEl.className = 'restore-step-detail muted';
+        detailEl.textContent = detail;
+        li.appendChild(detailEl);
+      }
       list.appendChild(li);
     });
+  }
+
+  function extractStepDetail(step) {
+    if (!step || typeof step !== 'object') return '';
+    const d = step.details || {};
+    if (typeof d.error === 'string' && d.error.trim()) return d.error.trim();
+    return '';
   }
 
   function toggleLoading(show) {

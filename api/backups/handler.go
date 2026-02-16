@@ -40,6 +40,10 @@ func (h *Handler) ListBackups(w http.ResponseWriter, r *http.Request) {
 
 func (h *Handler) GetBackup(w http.ResponseWriter, r *http.Request) {
 	session := currentSession(r)
+	resource := strings.TrimSpace(r.URL.Query().Get("resource"))
+	if resource == "" {
+		resource = "artifact"
+	}
 	id, ok := pathInt64(chi.URLParam(r, "id"))
 	if !ok {
 		writeError(w, http.StatusBadRequest, corebackups.ErrorCodeInvalidRequest, corebackups.ErrorKeyInvalidRequest)
@@ -48,14 +52,14 @@ func (h *Handler) GetBackup(w http.ResponseWriter, r *http.Request) {
 	item, err := h.svc.GetArtifact(r.Context(), id)
 	if err != nil {
 		if err == corebackups.ErrNotFound {
-			corebackups.Log(h.audits, r.Context(), session.Username, corebackups.AuditReadBackup, "not_found", "id="+strconv.FormatInt(id, 10))
+			corebackups.Log(h.audits, r.Context(), session.Username, corebackups.AuditReadBackup, "not_found", "id="+strconv.FormatInt(id, 10)+" resource="+resource)
 			writeError(w, http.StatusNotFound, "backups.not_found", corebackups.ErrorKeyNotFound)
 			return
 		}
 		writeError(w, http.StatusInternalServerError, "backups.internal", "common.serverError")
 		return
 	}
-	corebackups.Log(h.audits, r.Context(), session.Username, corebackups.AuditReadBackup, "success", "id="+strconv.FormatInt(id, 10))
+	corebackups.Log(h.audits, r.Context(), session.Username, corebackups.AuditReadBackup, "success", "id="+strconv.FormatInt(id, 10)+" resource="+resource)
 	writeJSON(w, http.StatusOK, map[string]any{"item": item})
 }
 
@@ -86,9 +90,9 @@ func (h *Handler) CreateBackup(w http.ResponseWriter, r *http.Request) {
 		writeError(w, http.StatusInternalServerError, corebackups.ErrorCodeInternal, "common.serverError")
 		return
 	}
-	details := ""
+	details := "scope=" + strings.Join(normalizeScopeForLog(payload.Scope), ",") + " include_files=" + strconv.FormatBool(payload.IncludeFiles)
 	if result != nil && result.Artifact.Filename != nil && result.Artifact.SizeBytes != nil {
-		details = "filename=" + *result.Artifact.Filename + " size=" + strconv.FormatInt(*result.Artifact.SizeBytes, 10)
+		details = details + " filename=" + *result.Artifact.Filename + " size=" + strconv.FormatInt(*result.Artifact.SizeBytes, 10)
 	}
 	corebackups.Log(h.audits, r.Context(), session.Username, corebackups.AuditCreateSuccess, "success", details+" event=backups.create.success")
 	writeJSON(w, http.StatusCreated, result)
@@ -304,6 +308,32 @@ func restoreErrorHTTPStatus(code string) int {
 	default:
 		return http.StatusInternalServerError
 	}
+}
+
+func normalizeScopeForLog(scope []string) []string {
+	if len(scope) == 0 {
+		return []string{"ALL"}
+	}
+	out := make([]string, 0, len(scope))
+	seen := map[string]struct{}{}
+	for _, raw := range scope {
+		v := strings.ToUpper(strings.TrimSpace(raw))
+		if v == "" {
+			continue
+		}
+		if v == "ALL" {
+			return []string{"ALL"}
+		}
+		if _, ok := seen[v]; ok {
+			continue
+		}
+		seen[v] = struct{}{}
+		out = append(out, v)
+	}
+	if len(out) == 0 {
+		return []string{"ALL"}
+	}
+	return out
 }
 
 func deleteErrorHTTPStatus(code string) int {

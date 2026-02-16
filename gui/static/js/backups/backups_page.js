@@ -2,12 +2,14 @@ const BackupsPage = (() => {
   const TAB_ROUTE = {
     'backups-tab-overview': '/backups',
     'backups-tab-history': '/backups/history',
+    'backups-tab-contents': '/backups/contents',
     'backups-tab-restore': '/backups/restore',
     'backups-tab-plan': '/backups/plan',
   };
   const ROUTE_TAB = {
     '/backups': 'backups-tab-overview',
     '/backups/history': 'backups-tab-history',
+    '/backups/contents': 'backups-tab-contents',
     '/backups/restore': 'backups-tab-restore',
     '/backups/plan': 'backups-tab-plan',
   };
@@ -20,6 +22,7 @@ const BackupsPage = (() => {
     bindTabs();
     if (typeof BackupsOverview !== 'undefined') BackupsOverview.init();
     if (typeof BackupsHistory !== 'undefined') BackupsHistory.init();
+    if (typeof BackupsContents !== 'undefined') BackupsContents.init();
     if (typeof BackupsRestore !== 'undefined') BackupsRestore.init();
     if (typeof BackupsPlan !== 'undefined') BackupsPlan.init();
     syncRouteTab();
@@ -56,6 +59,7 @@ const BackupsPage = (() => {
     }
     if (tabId === 'backups-tab-overview' && typeof BackupsOverview !== 'undefined') BackupsOverview.load();
     if (tabId === 'backups-tab-history' && typeof BackupsHistory !== 'undefined') BackupsHistory.load();
+    if (tabId === 'backups-tab-contents' && typeof BackupsContents !== 'undefined') BackupsContents.load();
     if (tabId === 'backups-tab-restore' && typeof BackupsRestore !== 'undefined') BackupsRestore.load();
     if (tabId === 'backups-tab-plan' && typeof BackupsPlan !== 'undefined') BackupsPlan.load();
   }

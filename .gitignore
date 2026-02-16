@@ -34,3 +34,6 @@ Thumbs.db
 *.orig
 *.rej
 *~
+
+# Local deployment overrides
+docker-compose.local.yml

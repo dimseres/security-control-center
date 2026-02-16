@@ -5410,6 +5410,10 @@ body.auth-locked #main-screen {
   margin-top: 10px;
 }
 
+#backups-page .backups-action-spaced {
+  margin-left: 8px;
+}
+
 #reports-page .reports-audit-actions {
   margin-top: 10px;
 }
@@ -5427,9 +5431,10 @@ body.auth-locked #main-screen {
 }
 
 #backups-page .steps-list li {
-  display: flex;
-  justify-content: space-between;
+  display: grid;
+  grid-template-columns: 1fr auto;
   align-items: center;
+  column-gap: 10px;
   border: 1px solid rgba(125, 155, 255, 0.2);
   border-radius: 8px;
   padding: 8px 10px;
@@ -5445,6 +5450,13 @@ body.auth-locked #main-screen {
   font-size: 13px;
 }
 
+#backups-page .restore-step-detail {
+  grid-column: 1 / -1;
+  margin-top: 4px;
+  font-size: 12px;
+  word-break: break-word;
+}
+
 #backups-page .backups-empty {
   padding: 16px;
   border: 1px dashed rgba(125, 155, 255, 0.3);
@@ -5454,6 +5466,10 @@ body.auth-locked #main-screen {
 
 #backups-page .backups-overview-actions {
   margin-top: 12px;
+}
+
+#backups-page .backups-overview-actions-inside {
+  margin-top: 14px;
 }
 
 #backups-page .backups-overview-loading {
@@ -5513,6 +5529,18 @@ body.auth-locked #main-screen {
 
 #backups-page .backups-restore-current {
   margin-top: 10px;
+}
+
+#backups-page .backups-contents-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 8px 12px;
+  margin-bottom: 12px;
+}
+
+#backups-page #backups-contents-body h4 {
+  margin: 10px 0 8px;
+  font-size: 14px;
 }
 
 #tasks-page .tab-close:hover {

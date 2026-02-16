@@ -1,6 +1,6 @@
 ﻿# Documentation
 
-Version baseline: `1.0.6`
+Version baseline: `1.0.7`
 
 This directory contains detailed technical documentation for the current runtime model.
 

@@ -124,6 +124,15 @@
       return { mon, state, metrics: metricsItems, events: events.items || [], maintenance: maintenance.items || [] };
     } catch (err) {
       console.error('monitor detail', err);
+      const msg = (err?.message || '').trim();
+      if (msg === 'common.notFound' || msg === 'not found') {
+        if (MonitoringPage.state.selectedId === id) {
+          MonitoringPage.state.selectedId = null;
+        }
+        stopDetailRefresh();
+        await MonitoringPage.loadMonitors?.();
+        return null;
+      }
       const fallback = MonitoringPage.state.monitors.find(m => m.id === id);
       if (fallback) scheduleDetailRefresh(fallback);
       return null;

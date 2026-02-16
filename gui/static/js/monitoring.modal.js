@@ -1,6 +1,6 @@
 (() => {
   const els = {};
-  const modalState = { editingId: null };
+  const modalState = { editingId: null, submitting: false };
   const URL_TYPES = new Set(['http', 'http_keyword', 'http_json', 'postgres', 'grpc_keyword']);
   const HOST_PORT_TYPES = new Set(['tcp', 'ping', 'dns', 'docker', 'steam', 'gamedig', 'mqtt', 'kafka_producer', 'mssql', 'mysql', 'mongodb', 'radius', 'redis', 'tailscale_ping']);
   const HTTP_TYPES = new Set(['http', 'http_keyword', 'http_json']);
@@ -63,9 +63,11 @@
 
   async function openMonitorModal(monitor) {
     if (!els.modal) return;
+    modalState.submitting = false;
     modalState.editingId = monitor?.id || null;
     MonitoringPage.hideAlert(els.alert);
     els.form?.reset();
+    setSubmitState(false);
     fillTagOptions(monitor?.tags || []);
     if (monitor) {
       els.title.textContent = MonitoringPage.t('monitoring.modal.editTitle');
@@ -137,9 +139,12 @@
   }
 
   async function submitForm() {
+    if (modalState.submitting) return;
     MonitoringPage.hideAlert(els.alert);
     const payload = buildPayload();
     if (!payload) return;
+    modalState.submitting = true;
+    setSubmitState(true);
     try {
       let id = modalState.editingId;
       if (modalState.editingId) {
@@ -154,12 +159,8 @@
       if (id && MonitoringPage.hasPermission('monitoring.notifications.manage')) {
         await saveMonitorNotifications(id);
       }
-      if (id && MonitoringPage.hasPermission('monitoring.manage')) {
-        try {
-          await Api.post(`/api/monitoring/monitors/${id}/check-now`, {});
-        } catch (_) {
-          // Initial check is best-effort: keep save flow successful even if engine is busy.
-        }
+      if (id && MonitoringPage.hasPermission('monitoring.view')) {
+        await waitMonitorFirstCheck(id);
       }
       els.modal.hidden = true;
       modalState.editingId = null;
@@ -171,6 +172,31 @@
       MonitoringPage.refreshCerts?.();
     } catch (err) {
       MonitoringPage.showAlert(els.alert, MonitoringPage.sanitizeErrorMessage(err.message || err), false);
+    } finally {
+      modalState.submitting = false;
+      setSubmitState(false);
+    }
+  }
+
+  function setSubmitState(submitting) {
+    if (!els.save) return;
+    els.save.disabled = !!submitting;
+    els.save.classList.toggle('disabled', !!submitting);
+  }
+
+  async function waitMonitorFirstCheck(id) {
+    const timeoutMs = 7000;
+    const stepMs = 450;
+    const deadline = Date.now() + timeoutMs;
+    while (Date.now() < deadline) {
+      try {
+        const res = await Api.get(`/api/monitoring/monitors/${id}/state`);
+        const item = res?.item || null;
+        if (item && item.last_checked_at) return;
+      } catch (_) {
+        return;
+      }
+      await new Promise((resolve) => setTimeout(resolve, stepMs));
     }
   }
 

@@ -3,6 +3,8 @@ services:
     image: postgres:16-alpine
     container_name: berkut-postgres
     environment:
+      TZ: ${TZ:-Europe/Moscow}
+      PGTZ: ${TZ:-Europe/Moscow}
       POSTGRES_DB: ${POSTGRES_DB:-berkut}
       POSTGRES_USER: ${POSTGRES_USER:-berkut}
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-berkut}
@@ -26,6 +28,7 @@ services:
       onlyoffice:
         condition: service_started
     environment:
+      TZ: ${TZ:-Europe/Moscow}
       ENV: ${ENV:-dev}
       APP_ENV: ${APP_ENV:-dev}
       DEPLOYMENT_MODE: ${DEPLOYMENT_MODE:-home}
@@ -98,6 +101,7 @@ services:
     image: onlyoffice/documentserver:latest
     container_name: onlyoffice
     environment:
+      TZ: ${TZ:-Europe/Moscow}
       JWT_ENABLED: ${ONLYOFFICE_JWT_ENABLED:-true}
       JWT_SECRET: ${ONLYOFFICE_JWT_SECRET:-change-me-onlyoffice-jwt-secret}
       JWT_HEADER: ${ONLYOFFICE_JWT_HEADER:-Authorization}
@@ -116,6 +120,8 @@ services:
         condition: service_healthy
       onlyoffice:
         condition: service_started
+    environment:
+      TZ: ${TZ:-Europe/Moscow}
     command:
       - /bin/sh
       - -c

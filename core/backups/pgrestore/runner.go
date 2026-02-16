@@ -12,6 +12,7 @@ type Options struct {
 	BinaryPath string
 	DBURL      string
 	InputPath  string
+	Clean      bool
 }
 
 type Runner interface {
@@ -32,14 +33,24 @@ func (r *runner) Restore(ctx context.Context, options Options) error {
 	cmd := exec.CommandContext(
 		ctx,
 		bin,
-		"--clean",
-		"--if-exists",
 		"--exit-on-error",
 		"--no-owner",
 		"--no-privileges",
 		"--dbname", options.DBURL,
 		options.InputPath,
 	)
+	if options.Clean {
+		args := []string{
+			"--clean",
+			"--if-exists",
+			"--exit-on-error",
+			"--no-owner",
+			"--no-privileges",
+			"--dbname", options.DBURL,
+			options.InputPath,
+		}
+		cmd = exec.CommandContext(ctx, bin, args...)
+	}
 	var stderr bytes.Buffer
 	cmd.Stderr = &stderr
 	if err := cmd.Run(); err != nil {

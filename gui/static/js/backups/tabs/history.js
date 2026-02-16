@@ -94,8 +94,7 @@ const BackupsHistory = (() => {
     actions.appendChild(downloadBtn);
 
     const deleteBtn = document.createElement('button');
-    deleteBtn.className = 'btn danger';
-    deleteBtn.style.marginLeft = '8px';
+    deleteBtn.className = 'btn danger backups-action-spaced';
     deleteBtn.textContent = BackupsPage.t('backups.actions.delete');
     deleteBtn.addEventListener('click', () => openDeleteModal(item.id, item.filename || `#${item.id}`));
     actions.appendChild(deleteBtn);

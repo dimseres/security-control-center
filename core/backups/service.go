@@ -286,7 +286,8 @@ func (s *Service) runBackupFlow(ctx context.Context, run *BackupRun, outDir stri
 	if err != nil {
 		gooseVersion = 0
 	}
-	manifest := format.NewManifest(appmeta.AppVersion, gooseVersion, time.Now().UTC())
+	now := backupNow()
+	manifest := format.NewManifest(appmeta.AppVersion, gooseVersion, now.UTC())
 	manifest.IncludesFiles = opts.IncludeFiles
 	manifest.Notes = buildBackupNotes(opts)
 	payloadPath := filepath.Join(tmpDir, "payload.tar")
@@ -295,7 +296,7 @@ func (s *Service) runBackupFlow(ctx context.Context, run *BackupRun, outDir stri
 		return nil, s.failRun(ctx, run, NewDomainError(ErrorCodeStorageMissing, ErrorKeyStorageMissing), ErrorKeyStorageMissing)
 	}
 
-	filename := buildBackupFilename(opts, time.Now().UTC())
+	filename := buildBackupFilename(opts, now)
 	finalPath := filepath.Join(outDir, filename)
 	if err := cipher.EncryptFile(payloadPath, finalPath); err != nil {
 		return nil, s.failRun(ctx, run, NewDomainError(ErrorCodeEncryptFailed, ErrorKeyEncryptFailed), ErrorKeyEncryptFailed)
@@ -314,6 +315,7 @@ func (s *Service) runBackupFlow(ctx context.Context, run *BackupRun, outDir stri
 		"includes_files":   manifest.IncludesFiles,
 		"backup_scope":     normalizedBackupScope(opts.Scope),
 		"backup_label":     strings.TrimSpace(opts.Label),
+		"entity_counts":    s.snapshotEntityCounts(ctx, opts.Scope),
 		"checksums":        payloadInfo.Checksums,
 	})
 	artifact := &BackupArtifact{

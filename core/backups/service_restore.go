@@ -257,7 +257,7 @@ func (s *Service) executeRestore(runID, artifactID int64, requestedBy string, dr
 	derr = s.replaceDatabase(restoreCtx, payload.DumpPath)
 	cancel()
 	if derr != nil {
-		fail(restore.StepRestoreDatabase, ErrorCodePgRestore, nil)
+		fail(restore.StepRestoreDatabase, ErrorCodePgRestore, map[string]any{"error": derr.Error()})
 		if maintenanceEnabled {
 			_ = s.repo.SetMaintenanceMode(ctx, false, "restore_failed")
 		}
@@ -305,6 +305,9 @@ func (s *Service) replaceDatabase(ctx context.Context, dumpPath string) error {
 	if s == nil || s.db == nil {
 		return fmt.Errorf("missing db")
 	}
+	if err := s.prepareDatabaseForRestore(ctx); err != nil {
+		return err
+	}
 	if err := s.restorer.Restore(ctx, restoreOptions(s.cfg, dumpPath)); err != nil {
 		return err
 	}
@@ -316,7 +319,31 @@ func restoreOptions(cfg *config.AppConfig, dumpPath string) pgrestore.Options {
 		BinaryPath: "pg_restore",
 		DBURL:      cfg.DBURL,
 		InputPath:  dumpPath,
+		Clean:      false,
 	}
+}
+
+func (s *Service) prepareDatabaseForRestore(ctx context.Context) error {
+	if s == nil || s.db == nil {
+		return fmt.Errorf("missing db")
+	}
+	terminateSQL := `
+		SELECT pg_terminate_backend(pid)
+		FROM pg_stat_activity
+		WHERE datname = current_database()
+		  AND pid <> pg_backend_pid()
+	`
+	_, _ = s.db.ExecContext(ctx, terminateSQL)
+	if _, err := s.db.ExecContext(ctx, `DROP SCHEMA IF EXISTS public CASCADE`); err != nil {
+		return fmt.Errorf("drop public schema failed: %w", err)
+	}
+	if _, err := s.db.ExecContext(ctx, `CREATE SCHEMA IF NOT EXISTS public`); err != nil {
+		return fmt.Errorf("create public schema failed: %w", err)
+	}
+	if _, err := s.db.ExecContext(ctx, `GRANT ALL ON SCHEMA public TO CURRENT_USER`); err != nil {
+		return fmt.Errorf("grant schema failed: %w", err)
+	}
+	return nil
 }
 
 func (s *Service) resolveArtifactPath(artifact *BackupArtifact) (string, error) {
