@@ -27,6 +27,7 @@ type monitoringSettingsPayload struct {
 	AutoTaskOnDown          *bool   `json:"auto_task_on_down"`
 	AutoTLSIncident         *bool   `json:"auto_tls_incident"`
 	AutoTLSIncidentDays     int     `json:"auto_tls_incident_days"`
+	AutoIncidentCloseOnUp   *bool   `json:"auto_incident_close_on_up"`
 }
 
 func (h *MonitoringHandler) GetSettings(w http.ResponseWriter, r *http.Request) {
@@ -102,6 +103,9 @@ func (h *MonitoringHandler) UpdateSettings(w http.ResponseWriter, r *http.Reques
 	if payload.AutoTLSIncidentDays > 0 {
 		current.AutoTLSIncidentDays = payload.AutoTLSIncidentDays
 	}
+	if payload.AutoIncidentCloseOnUp != nil {
+		current.AutoIncidentCloseOnUp = *payload.AutoIncidentCloseOnUp
+	}
 	if current.RetentionDays <= 0 || current.DefaultTimeoutSec <= 0 || current.DefaultIntervalSec <= 0 || current.MaxConcurrentChecks <= 0 {
 		http.Error(w, "monitoring.error.invalidSettings", http.StatusBadRequest)
 		return
@@ -162,6 +166,7 @@ func settingsDetails(s *store.MonitorSettings) string {
 		"auto_task_on_down=" + strconv.FormatBool(s.AutoTaskOnDown),
 		"auto_tls_incident=" + strconv.FormatBool(s.AutoTLSIncident),
 		"auto_tls_incident_days=" + strconv.Itoa(s.AutoTLSIncidentDays),
+		"auto_incident_close_on_up=" + strconv.FormatBool(s.AutoIncidentCloseOnUp),
 	}
 	return strings.Join(parts, "|")
 }

@@ -432,6 +432,12 @@
               </label>
             </div>
             <div class="form-field">
+              <label class="checkbox">
+                <input type="checkbox" id="monitoring-auto-incident-close-on-up">
+                <span data-i18n="monitoring.settings.autoIncidentCloseOnUp">Automatically close incident when monitor is UP again</span>
+              </label>
+            </div>
+            <div class="form-field">
               <label data-i18n="monitoring.settings.autoTLSIncidentDays">TLS incident threshold (days)</label>
               <input type="number" id="monitoring-auto-tls-incident-days" min="1">
             </div>
@@ -453,137 +459,135 @@
       </div>
       <div class="modal-content">
         <div class="alert" id="monitor-modal-alert" hidden></div>
-        <form id="monitor-form" class="form-grid two-column">
-          <div class="form-field required">
-            <label data-i18n="monitoring.field.type">Type</label>
-            <select id="monitor-type">
-              <option value="http" data-i18n="monitoring.type.http">HTTP(s)</option>
-              <option value="ping" data-i18n="monitoring.type.ping">Ping</option>
-              <option value="http_keyword" data-i18n="monitoring.type.httpKeyword">HTTP(s) - Word</option>
-              <option value="http_json" data-i18n="monitoring.type.httpJson">HTTP(s) - JSON</option>
-              <option value="grpc_keyword" data-i18n="monitoring.type.grpcKeyword">gRPC(s) - Word</option>
-              <option value="tcp" data-i18n="monitoring.type.tcp">TCP Port</option>
-              <option value="dns" data-i18n="monitoring.type.dns">DNS</option>
-              <option value="docker" data-i18n="monitoring.type.docker">Docker container</option>
-              <option value="push" data-i18n="monitoring.type.push">Push</option>
-              <option value="steam" data-i18n="monitoring.type.steam">Steam Game Server</option>
-              <option value="gamedig" data-i18n="monitoring.type.gamedig">GameDig</option>
-              <option value="mqtt" data-i18n="monitoring.type.mqtt">MQTT</option>
-              <option value="kafka_producer" data-i18n="monitoring.type.kafkaProducer">Kafka Producer</option>
-              <option value="mssql" data-i18n="monitoring.type.mssql">Microsoft SQL Server</option>
-              <option value="redis" data-i18n="monitoring.type.redis">Redis</option>
-              <option value="postgres" data-i18n="monitoring.type.postgres">PostgreSQL</option>
-              <option value="mysql" data-i18n="monitoring.type.mysql">MySQL/MariaDB</option>
-              <option value="mongodb" data-i18n="monitoring.type.mongodb">MongoDB</option>
-              <option value="radius" data-i18n="monitoring.type.radius">Radius</option>
-              <option value="tailscale_ping" data-i18n="monitoring.type.tailscalePing">Tailscale Ping</option>
-            </select>
-          </div>
-          <div class="form-field required">
-            <label data-i18n="monitoring.field.name">Name</label>
-            <input id="monitor-name" required>
-          </div>
-          <div class="form-field required" id="monitor-url-field">
-            <label data-i18n="monitoring.field.url">URL</label>
-            <input id="monitor-url" placeholder="https://example.com" data-i18n-placeholder="monitoring.placeholder.url">
-          </div>
-          <div class="form-field required" id="monitor-host-field" hidden>
-            <label data-i18n="monitoring.field.host">Host</label>
-            <input id="monitor-host" placeholder="example.com" data-i18n-placeholder="monitoring.placeholder.host">
-          </div>
-          <div class="form-field required" id="monitor-port-field" hidden>
-            <label data-i18n="monitoring.field.port">Port</label>
-            <input type="number" id="monitor-port" min="1" max="65535">
-          </div>
-          <div class="form-field">
-            <label data-i18n="monitoring.field.interval">Interval (sec)</label>
-            <input type="number" id="monitor-interval" min="5">
-          </div>
-          <div class="form-field">
-            <label data-i18n="monitoring.field.timeout">Timeout (sec)</label>
-            <input type="number" id="monitor-timeout" min="1">
-          </div>
-          <div class="form-field">
-            <label data-i18n="monitoring.field.retries">Retries</label>
-            <input type="number" id="monitor-retries" min="0" max="5">
-          </div>
-          <div class="form-field">
-            <label data-i18n="monitoring.field.retryInterval">Retry interval (sec)</label>
-            <input type="number" id="monitor-retry-interval" min="1">
-          </div>
-          <div class="form-field" id="monitor-method-field">
-            <label data-i18n="monitoring.field.method">Method</label>
-            <select id="monitor-method">
-              <option value="GET">GET</option>
-              <option value="POST">POST</option>
-            </select>
-          </div>
-          <div class="form-field" id="monitor-status-field">
-            <label data-i18n="monitoring.field.allowedStatus">Allowed status</label>
-            <input id="monitor-allowed-status" placeholder="200-299, 301, 302" data-i18n-placeholder="monitoring.placeholder.allowedStatus">
-          </div>
-          <div class="form-field full" id="monitor-headers-field">
-            <label data-i18n="monitoring.field.headers">Headers (JSON)</label>
-            <textarea id="monitor-headers" rows="3" placeholder='{"Authorization":"Bearer ..."}' data-i18n-placeholder="monitoring.placeholder.headers"></textarea>
-          </div>
-          <div class="form-field">
-            <label data-i18n="monitoring.field.bodyType">Body type</label>
-            <select id="monitor-body-type">
-              <option value="none" data-i18n="monitoring.bodyType.none">None</option>
-              <option value="json">JSON</option>
-              <option value="xml">XML</option>
-            </select>
-          </div>
-          <div class="form-field full" id="monitor-body-field">
-            <label data-i18n="monitoring.field.body">Body</label>
-            <textarea id="monitor-body" rows="3"></textarea>
-          </div>
-          <div class="form-field full">
-            <label data-i18n="monitoring.field.tags">Tags</label>
-            <select id="monitor-tags" multiple></select>
-            <div class="selected-hint tag-hint" data-tag-hint="monitor-tags"></div>
-            <div class="tag-input-row">
-              <input id="monitor-tags-new" placeholder="Tag" data-i18n-placeholder="monitoring.placeholder.tag">
-              <button class="btn ghost" id="monitor-tags-add" type="button" data-i18n="common.add">Add</button>
+        <form id="monitor-form" class="form-grid monitor-form-grid">
+          <div class="monitor-form-col">
+            <div class="form-field required">
+              <label data-i18n="monitoring.field.type">Type</label>
+              <select id="monitor-type">
+                <option value="http" data-i18n="monitoring.type.http">HTTP(s)</option>
+                <option value="ping" data-i18n="monitoring.type.ping">Ping</option>
+                <option value="http_keyword" data-i18n="monitoring.type.httpKeyword">HTTP(s) - Word</option>
+                <option value="http_json" data-i18n="monitoring.type.httpJson">HTTP(s) - JSON</option>
+                <option value="grpc_keyword" data-i18n="monitoring.type.grpcKeyword">gRPC(s) - Word</option>
+                <option value="tcp" data-i18n="monitoring.type.tcp">TCP Port</option>
+                <option value="dns" data-i18n="monitoring.type.dns">DNS</option>
+                <option value="docker" data-i18n="monitoring.type.docker">Docker container</option>
+                <option value="push" data-i18n="monitoring.type.push">Push</option>
+                <option value="steam" data-i18n="monitoring.type.steam">Steam Game Server</option>
+                <option value="gamedig" data-i18n="monitoring.type.gamedig">GameDig</option>
+                <option value="mqtt" data-i18n="monitoring.type.mqtt">MQTT</option>
+                <option value="kafka_producer" data-i18n="monitoring.type.kafkaProducer">Kafka Producer</option>
+                <option value="mssql" data-i18n="monitoring.type.mssql">Microsoft SQL Server</option>
+                <option value="redis" data-i18n="monitoring.type.redis">Redis</option>
+                <option value="postgres" data-i18n="monitoring.type.postgres">PostgreSQL</option>
+                <option value="mysql" data-i18n="monitoring.type.mysql">MySQL/MariaDB</option>
+                <option value="mongodb" data-i18n="monitoring.type.mongodb">MongoDB</option>
+                <option value="radius" data-i18n="monitoring.type.radius">Radius</option>
+                <option value="tailscale_ping" data-i18n="monitoring.type.tailscalePing">Tailscale Ping</option>
+              </select>
+            </div>
+            <div class="form-field required" id="monitor-host-field" hidden>
+              <label data-i18n="monitoring.field.host">Host</label>
+              <input id="monitor-host" placeholder="example.com" data-i18n-placeholder="monitoring.placeholder.host">
+            </div>
+            <div class="form-field">
+              <label data-i18n="monitoring.field.interval">Interval (sec)</label>
+              <input type="number" id="monitor-interval" min="5">
+            </div>
+            <div class="form-field">
+              <label data-i18n="monitoring.field.retryInterval">Retry interval (sec)</label>
+              <input type="number" id="monitor-retry-interval" min="1">
+            </div>
+            <div class="form-field" id="monitor-headers-field">
+              <label data-i18n="monitoring.field.headers">Headers (JSON)</label>
+              <textarea id="monitor-headers" rows="3" placeholder='{"Authorization":"Bearer ..."}' data-i18n-placeholder="monitoring.placeholder.headers"></textarea>
+            </div>
+            <div class="form-field">
+              <label data-i18n="monitoring.field.tags">Tags</label>
+              <select id="monitor-tags" multiple></select>
+              <div class="selected-hint tag-hint" data-tag-hint="monitor-tags"></div>
+            </div>
+            <div class="form-field">
+              <label data-i18n="monitoring.incidents.severity">Severity</label>
+              <select id="monitor-incident-severity">
+                <option value="low" data-i18n="incidents.severity.low">Low</option>
+                <option value="medium" data-i18n="incidents.severity.medium">Medium</option>
+                <option value="high" data-i18n="incidents.severity.high">High</option>
+                <option value="critical" data-i18n="incidents.severity.critical">Critical</option>
+              </select>
             </div>
           </div>
-          <div class="form-field full" id="monitor-automation-create-field">
-            <div class="checkbox-list">
-              <label class="checkbox" id="monitor-auto-incident-row">
-                <input type="checkbox" id="monitor-auto-incident">
-                <span data-i18n="monitoring.incidents.autoCreate">Create incidents on downtime</span>
-              </label>
-              <label class="checkbox">
-                <input type="checkbox" id="monitor-auto-task-on-down">
-                <span data-i18n="monitoring.tasks.autoCreate">Create tasks on downtime</span>
-              </label>
+          <div class="monitor-form-col">
+            <div class="form-field required">
+              <label data-i18n="monitoring.field.name">Name</label>
+              <input id="monitor-name" required>
+            </div>
+            <div class="form-field">
+              <label data-i18n="monitoring.field.timeout">Timeout (sec)</label>
+              <input type="number" id="monitor-timeout" min="1">
+            </div>
+            <div class="form-field" id="monitor-method-field">
+              <label data-i18n="monitoring.field.method">Method</label>
+              <select id="monitor-method">
+                <option value="GET">GET</option>
+                <option value="POST">POST</option>
+              </select>
+            </div>
+            <div class="form-field">
+              <label data-i18n="monitoring.field.bodyType">Body type</label>
+              <select id="monitor-body-type">
+                <option value="none" data-i18n="monitoring.bodyType.none">None</option>
+                <option value="json">JSON</option>
+                <option value="xml">XML</option>
+              </select>
+            </div>
+            <div class="form-field" id="monitor-automation-create-field">
+              <div class="checkbox-list">
+                <label class="checkbox" id="monitor-auto-incident-row">
+                  <input type="checkbox" id="monitor-auto-incident">
+                  <span data-i18n="monitoring.incidents.autoCreate">Create incidents on downtime</span>
+                </label>
+                <label class="checkbox">
+                  <input type="checkbox" id="monitor-auto-task-on-down">
+                  <span data-i18n="monitoring.tasks.autoCreate">Create tasks on downtime</span>
+                </label>
+                <label class="checkbox">
+                  <input type="checkbox" id="monitor-notify-tls">
+                  <span data-i18n="monitoring.certs.notifyToggle">Notify about TLS certificate expiry</span>
+                </label>
+                <label class="checkbox">
+                  <input type="checkbox" id="monitor-ignore-tls">
+                  <span data-i18n="monitoring.certs.ignoreTls">Ignore TLS/SSL errors</span>
+                </label>
+              </div>
             </div>
           </div>
-          <div class="form-field full">
-            <label class="checkbox">
-              <input type="checkbox" id="monitor-notify-tls">
-              <span data-i18n="monitoring.certs.notifyToggle">Notify about TLS certificate expiry</span>
-            </label>
-          </div>
-          <div class="form-field full">
-            <label class="checkbox">
-              <input type="checkbox" id="monitor-ignore-tls">
-              <span data-i18n="monitoring.certs.ignoreTls">Ignore TLS/SSL errors</span>
-            </label>
-          </div>
-          <div class="form-field">
-            <label data-i18n="monitoring.incidents.severity">Severity</label>
-            <select id="monitor-incident-severity">
-              <option value="low" data-i18n="incidents.severity.low">Low</option>
-              <option value="medium" data-i18n="incidents.severity.medium">Medium</option>
-              <option value="high" data-i18n="incidents.severity.high">High</option>
-              <option value="critical" data-i18n="incidents.severity.critical">Critical</option>
-            </select>
-          </div>
-          <div class="form-field full">
-            <label data-i18n="monitoring.notifications.linkTitle">Notifications</label>
-            <div class="muted" data-i18n="monitoring.notifications.linkHint">Leave empty to use default channel.</div>
-            <div id="monitor-notifications-list" class="monitor-notifications-list"></div>
+          <div class="monitor-form-col">
+            <div class="form-field required" id="monitor-url-field">
+              <label data-i18n="monitoring.field.url">URL</label>
+              <input id="monitor-url" placeholder="https://example.com" data-i18n-placeholder="monitoring.placeholder.url">
+            </div>
+            <div class="form-field required" id="monitor-port-field" hidden>
+              <label data-i18n="monitoring.field.port">Port</label>
+              <input type="number" id="monitor-port" min="1" max="65535">
+            </div>
+            <div class="form-field">
+              <label data-i18n="monitoring.field.retries">Retries</label>
+              <input type="number" id="monitor-retries" min="0" max="5">
+            </div>
+            <div class="form-field" id="monitor-status-field">
+              <label data-i18n="monitoring.field.allowedStatus">Allowed status</label>
+              <input id="monitor-allowed-status" placeholder="200-299, 301, 302" data-i18n-placeholder="monitoring.placeholder.allowedStatus">
+            </div>
+            <div class="form-field" id="monitor-body-field">
+              <label data-i18n="monitoring.field.body">Body</label>
+              <textarea id="monitor-body" rows="3"></textarea>
+            </div>
+            <div class="form-field monitor-notifications-field">
+              <label data-i18n="monitoring.notifications.linkTitle">Notifications</label>
+              <div class="muted" data-i18n="monitoring.notifications.linkHint">Leave empty to use default channel.</div>
+              <div id="monitor-notifications-list" class="monitor-notifications-list"></div>
+            </div>
           </div>
         </form>
         <div class="form-actions">
@@ -603,83 +607,87 @@
       </div>
       <div class="modal-content">
         <div class="alert" id="notification-modal-alert" hidden></div>
-        <form id="notification-form" class="form-grid two-column">
-          <div class="form-field required">
-            <label data-i18n="monitoring.notifications.type">Type</label>
-            <select id="notification-type">
-              <option value="telegram">Telegram</option>
-            </select>
-          </div>
-          <div class="form-field required">
-            <label data-i18n="monitoring.notifications.name">Name</label>
-            <input id="notification-name" required>
-          </div>
-          <div class="form-field required">
-            <label data-i18n="monitoring.notifications.token">Bot token</label>
-            <div class="input-icon-field">
-              <input id="notification-token" type="password" autocomplete="new-password">
-              <button class="icon-btn input-icon-btn" type="button" id="notification-token-toggle" aria-label="Show token">рџ‘Ѓ</button>
+        <form id="notification-form" class="form-grid two-column notification-form-grid">
+          <div class="notification-form-col">
+            <div class="form-field required">
+              <label data-i18n="monitoring.notifications.type">Type</label>
+              <select id="notification-type">
+                <option value="telegram">Telegram</option>
+              </select>
+            </div>
+            <div class="form-field required">
+              <label data-i18n="monitoring.notifications.token">Bot token</label>
+              <div class="input-icon-field">
+                <input id="notification-token" type="password" autocomplete="new-password">
+                <button class="icon-btn input-icon-btn" type="button" id="notification-token-toggle" aria-label="Show token">&#128065;</button>
+              </div>
+            </div>
+            <div class="form-field">
+              <label data-i18n="monitoring.notifications.thread">Thread ID</label>
+              <input id="notification-thread-id" type="number">
+            </div>
+            <div class="form-field">
+              <label data-i18n="monitoring.notifications.quietTz">Timezone</label>
+              <input id="notification-quiet-tz" class="input-compact" placeholder="UTC">
+            </div>
+            <div class="form-field">
+              <label class="checkbox">
+                <input type="checkbox" id="notification-quiet-enabled">
+                <span data-i18n="monitoring.notifications.quietEnabled">Enable quiet hours</span>
+              </label>
+            </div>
+            <div class="form-field">
+              <label data-i18n="monitoring.notifications.quietStart">Quiet start</label>
+              <input id="notification-quiet-start" class="input-compact" type="time">
+            </div>
+            <div class="form-field">
+              <label data-i18n="monitoring.notifications.quietEnd">Quiet end</label>
+              <input id="notification-quiet-end" class="input-compact" type="time">
             </div>
           </div>
-          <div class="form-field required">
-            <label data-i18n="monitoring.notifications.chat">Chat ID</label>
-            <input id="notification-chat-id">
-          </div>
-          <div class="form-field">
-            <label data-i18n="monitoring.notifications.thread">Thread ID</label>
-            <input id="notification-thread-id" type="number">
-          </div>
-          <div class="form-field full">
-            <label data-i18n="monitoring.notifications.template">Template</label>
-            <textarea id="notification-template" rows="3" data-i18n-placeholder="monitoring.notifications.templatePlaceholder" placeholder="{message}"></textarea>
-          </div>
-          <div class="form-field">
-            <label class="checkbox">
-              <input type="checkbox" id="notification-quiet-enabled">
-              <span data-i18n="monitoring.notifications.quietEnabled">Enable quiet hours</span>
-            </label>
-          </div>
-          <div class="form-field">
-            <label data-i18n="monitoring.notifications.quietStart">Quiet start</label>
-            <input id="notification-quiet-start" type="time">
-          </div>
-          <div class="form-field">
-            <label data-i18n="monitoring.notifications.quietEnd">Quiet end</label>
-            <input id="notification-quiet-end" type="time">
-          </div>
-          <div class="form-field">
-            <label data-i18n="monitoring.notifications.quietTz">Timezone</label>
-            <input id="notification-quiet-tz" placeholder="UTC">
-          </div>
-          <div class="form-field">
-            <label class="checkbox">
-              <input type="checkbox" id="notification-silent">
-              <span data-i18n="monitoring.notifications.silent">Send silently</span>
-            </label>
-          </div>
-          <div class="form-field">
-            <label class="checkbox">
-              <input type="checkbox" id="notification-protect">
-              <span data-i18n="monitoring.notifications.protect">Protect content</span>
-            </label>
-          </div>
-          <div class="form-field">
-            <label class="checkbox">
-              <input type="checkbox" id="notification-default">
-              <span data-i18n="monitoring.notifications.defaultUse">Use as default</span>
-            </label>
-          </div>
-          <div class="form-field">
-            <label class="checkbox">
-              <input type="checkbox" id="notification-active" checked>
-              <span data-i18n="monitoring.notifications.active">Active</span>
-            </label>
-          </div>
-          <div class="form-field full" id="notification-apply-all-row">
-            <label class="checkbox">
-              <input type="checkbox" id="notification-apply-all">
-              <span data-i18n="monitoring.notifications.applyAll">Apply to all existing monitors</span>
-            </label>
+          <div class="notification-form-col">
+            <div class="form-field required">
+              <label data-i18n="monitoring.notifications.name">Name</label>
+              <input id="notification-name" required>
+            </div>
+            <div class="form-field required">
+              <label data-i18n="monitoring.notifications.chat">Chat ID</label>
+              <input id="notification-chat-id">
+            </div>
+            <div class="form-field">
+              <label data-i18n="monitoring.notifications.template">Template</label>
+              <textarea id="notification-template" rows="3" data-i18n-placeholder="monitoring.notifications.templatePlaceholder" placeholder="{message}"></textarea>
+            </div>
+            <div class="form-field">
+              <label class="checkbox">
+                <input type="checkbox" id="notification-silent">
+                <span data-i18n="monitoring.notifications.silent">Send silently</span>
+              </label>
+            </div>
+            <div class="form-field">
+              <label class="checkbox">
+                <input type="checkbox" id="notification-protect">
+                <span data-i18n="monitoring.notifications.protect">Protect content</span>
+              </label>
+            </div>
+            <div class="form-field">
+              <label class="checkbox">
+                <input type="checkbox" id="notification-default">
+                <span data-i18n="monitoring.notifications.defaultUse">Use as default</span>
+              </label>
+            </div>
+            <div class="form-field">
+              <label class="checkbox">
+                <input type="checkbox" id="notification-active" checked>
+                <span data-i18n="monitoring.notifications.active">Active</span>
+              </label>
+            </div>
+            <div class="form-field" id="notification-apply-all-row">
+              <label class="checkbox">
+                <input type="checkbox" id="notification-apply-all">
+                <span data-i18n="monitoring.notifications.applyAll">Apply to all existing monitors</span>
+              </label>
+            </div>
           </div>
         </form>
         <div class="form-actions">
@@ -714,13 +722,6 @@
               <select id="maintenance-monitors" class="select" multiple></select>
               <div class="selected-hint" id="maintenance-monitors-hint"></div>
             </div>
-            <div class="form-field">
-              <label data-i18n="monitoring.maintenance.field.timezone">Timezone</label>
-              <select id="maintenance-timezone"></select>
-            </div>
-          </div>
-
-          <div class="maintenance-modal-col">
             <div class="form-field">
               <label data-i18n="monitoring.maintenance.field.strategy">Strategy</label>
               <select id="maintenance-strategy">
@@ -793,13 +794,8 @@
 
           <div class="maintenance-modal-col">
             <div class="form-field">
-              <label class="checkbox maintenance-state">
-                <span data-i18n="monitoring.maintenance.field.state">State</span>
-                <div class="maintenance-state-inline">
-                  <input type="checkbox" id="maintenance-active" checked>
-                  <span data-i18n="monitoring.maintenance.state.enabled">Enabled</span>
-                </div>
-              </label>
+              <label data-i18n="monitoring.maintenance.field.timezone">Timezone</label>
+              <select id="maintenance-timezone"></select>
             </div>
             <div class="form-field required">
               <label data-i18n="monitoring.maintenance.field.activeFrom">Start date/time</label>
@@ -808,6 +804,15 @@
             <div class="form-field required">
               <label data-i18n="monitoring.maintenance.field.activeUntil">End date/time</label>
               <input type="datetime-local" id="maintenance-ends-at" class="input">
+            </div>
+            <div class="form-field">
+              <label class="checkbox maintenance-state">
+                <span data-i18n="monitoring.maintenance.field.state">State</span>
+                <div class="maintenance-state-inline">
+                  <input type="checkbox" id="maintenance-active" checked>
+                  <span data-i18n="monitoring.maintenance.state.enabled">Enabled</span>
+                </div>
+              </label>
             </div>
           </div>
         </form>

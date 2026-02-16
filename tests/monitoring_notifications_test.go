@@ -213,6 +213,7 @@ func TestMonitoringAutoIncidentCreateAndClose(t *testing.T) {
 	settings, _ := ms.GetSettings(context.Background())
 	settings.AllowPrivateNetworks = true
 	settings.EngineEnabled = true
+	settings.AutoIncidentCloseOnUp = true
 	if err := ms.UpdateSettings(context.Background(), settings); err != nil {
 		t.Fatalf("settings update: %v", err)
 	}
@@ -264,6 +265,57 @@ func TestMonitoringAutoIncidentCreateAndClose(t *testing.T) {
 	closed, err := is.GetIncident(context.Background(), inc.ID)
 	if err != nil || closed == nil || closed.Status != "closed" {
 		t.Fatalf("expected incident to be closed")
+	}
+}
+
+func TestMonitoringAutoIncidentNotClosedWhenFlagDisabled(t *testing.T) {
+	ms, is, _, enc, cleanup := setupMonitoringDeps(t)
+	defer cleanup()
+	settings, _ := ms.GetSettings(context.Background())
+	settings.AllowPrivateNetworks = true
+	settings.EngineEnabled = true
+	settings.AutoIncidentCloseOnUp = false
+	if err := ms.UpdateSettings(context.Background(), settings); err != nil {
+		t.Fatalf("settings update: %v", err)
+	}
+	var code int32 = 500
+	srv := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		w.WriteHeader(int(atomic.LoadInt32(&code)))
+	}))
+	defer srv.Close()
+	mon := &store.Monitor{
+		Name:             "Incident no-close monitor",
+		Type:             "http",
+		URL:              srv.URL,
+		Method:           "GET",
+		AllowedStatus:    []string{"200-299"},
+		IntervalSec:      60,
+		TimeoutSec:       2,
+		IsActive:         true,
+		CreatedBy:        1,
+		AutoIncident:     true,
+		IncidentSeverity: "high",
+	}
+	id, err := ms.CreateMonitor(context.Background(), mon)
+	if err != nil {
+		t.Fatalf("create monitor: %v", err)
+	}
+	sender := &mockTelegramSender{}
+	engine := monitoring.NewEngineWithDeps(ms, is, nil, "INC-{seq}", enc, sender, utils.NewLogger())
+	if err := engine.CheckNow(context.Background(), id); err != nil {
+		t.Fatalf("check down: %v", err)
+	}
+	inc, err := is.FindOpenIncidentBySource(context.Background(), "monitoring", id)
+	if err != nil || inc == nil {
+		t.Fatalf("expected auto incident to be created")
+	}
+	atomic.StoreInt32(&code, 200)
+	if err := engine.CheckNow(context.Background(), id); err != nil {
+		t.Fatalf("check up: %v", err)
+	}
+	stillOpen, err := is.FindOpenIncidentBySource(context.Background(), "monitoring", id)
+	if err != nil || stillOpen == nil || stillOpen.ID != inc.ID {
+		t.Fatalf("expected incident to remain open when auto close is disabled")
 	}
 }
 

@@ -252,7 +252,7 @@ func (s *Server) withSession(next http.HandlerFunc) http.HandlerFunc {
 			if s.logger != nil {
 				s.logger.Printf("AUTH fail (missing cookie) %s %s", r.Method, r.URL.Path)
 			}
-			http.Error(w, "unauthorized", http.StatusUnauthorized)
+			s.respondUnauthorized(w, r)
 			return
 		}
 		sr, err := s.sessions.GetSession(r.Context(), cookie.Value)
@@ -260,7 +260,7 @@ func (s *Server) withSession(next http.HandlerFunc) http.HandlerFunc {
 			if s.logger != nil {
 				s.logger.Printf("AUTH fail (session not found) %s %s: %v", r.Method, r.URL.Path, err)
 			}
-			http.Error(w, "unauthorized", http.StatusUnauthorized)
+			s.respondUnauthorized(w, r)
 			return
 		}
 		user, _, err := s.users.FindByUsername(r.Context(), sr.Username)
@@ -269,7 +269,7 @@ func (s *Server) withSession(next http.HandlerFunc) http.HandlerFunc {
 				s.logger.Printf("AUTH fail (user inactive/missing) %s %s: %v", r.Method, r.URL.Path, err)
 			}
 			_ = s.sessions.DeleteSession(r.Context(), sr.ID, sr.Username)
-			http.Error(w, "unauthorized", http.StatusUnauthorized)
+			s.respondUnauthorized(w, r)
 			return
 		}
 		if user.RequirePasswordChange && !allowedForPasswordChange(r.URL.Path) && r.URL.Path != "/api/auth/me" {
@@ -306,6 +306,32 @@ func (s *Server) withSession(next http.HandlerFunc) http.HandlerFunc {
 		}
 		next.ServeHTTP(w, r.WithContext(ctx))
 	}
+}
+
+func (s *Server) respondUnauthorized(w http.ResponseWriter, r *http.Request) {
+	if shouldRedirectToLogin(r) {
+		http.Redirect(w, r, "/login", http.StatusFound)
+		return
+	}
+	http.Error(w, "unauthorized", http.StatusUnauthorized)
+}
+
+func shouldRedirectToLogin(r *http.Request) bool {
+	if r == nil || r.URL == nil || r.Method != http.MethodGet {
+		return false
+	}
+	path := strings.TrimSpace(r.URL.Path)
+	if path == "" {
+		return false
+	}
+	if strings.HasPrefix(path, "/api/") || strings.HasPrefix(path, "/static/") {
+		return false
+	}
+	accept := strings.ToLower(strings.TrimSpace(r.Header.Get("Accept")))
+	if accept == "" {
+		return true
+	}
+	return strings.Contains(accept, "text/html") || strings.Contains(accept, "*/*")
 }
 
 func (s *Server) allowOnlyOfficeServiceAccess(r *http.Request) bool {

@@ -159,3 +159,34 @@ func TestSecurityHeadersSkipHSTSForUntrustedProxy(t *testing.T) {
 		t.Fatalf("expected no HSTS header for untrusted proxy source")
 	}
 }
+
+func TestWithSessionRedirectsPageRequestToLoginWhenUnauthorized(t *testing.T) {
+	s := &Server{}
+	h := s.withSession(func(w http.ResponseWriter, r *http.Request) {
+		w.WriteHeader(http.StatusOK)
+	})
+	req := httptest.NewRequest(http.MethodGet, "/docs/10", nil)
+	req.Header.Set("Accept", "text/html")
+	rr := httptest.NewRecorder()
+	h(rr, req)
+	if rr.Code != http.StatusFound {
+		t.Fatalf("expected redirect status, got %d", rr.Code)
+	}
+	if loc := rr.Header().Get("Location"); loc != "/login" {
+		t.Fatalf("expected redirect to /login, got %q", loc)
+	}
+}
+
+func TestWithSessionKeepsAPIUnauthorizedResponse(t *testing.T) {
+	s := &Server{}
+	h := s.withSession(func(w http.ResponseWriter, r *http.Request) {
+		w.WriteHeader(http.StatusOK)
+	})
+	req := httptest.NewRequest(http.MethodGet, "/api/docs", nil)
+	req.Header.Set("Accept", "application/json")
+	rr := httptest.NewRecorder()
+	h(rr, req)
+	if rr.Code != http.StatusUnauthorized {
+		t.Fatalf("expected unauthorized status for api request, got %d", rr.Code)
+	}
+}

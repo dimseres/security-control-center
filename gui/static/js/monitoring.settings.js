@@ -22,6 +22,7 @@
     els.notifyMaintenance = document.getElementById('monitoring-notify-maintenance');
     els.autoTLSIncident = document.getElementById('monitoring-auto-tls-incident');
     els.autoTLSIncidentDays = document.getElementById('monitoring-auto-tls-incident-days');
+    els.autoIncidentCloseOnUp = document.getElementById('monitoring-auto-incident-close-on-up');
 
     if (!MonitoringPage.hasPermission('monitoring.settings.manage')) {
       const card = els.form?.closest('.card');
@@ -66,6 +67,7 @@
     if (els.notifyMaintenance) els.notifyMaintenance.checked = !!settings.notify_maintenance;
     if (els.autoTLSIncident) els.autoTLSIncident.checked = !!settings.auto_tls_incident;
     if (els.autoTLSIncidentDays) els.autoTLSIncidentDays.value = settings.auto_tls_incident_days || 14;
+    if (els.autoIncidentCloseOnUp) els.autoIncidentCloseOnUp.checked = !!settings.auto_incident_close_on_up;
   }
 
   async function saveSettings() {
@@ -88,6 +90,7 @@
       notify_maintenance: !!els.notifyMaintenance.checked,
       auto_tls_incident: !!els.autoTLSIncident?.checked,
       auto_tls_incident_days: parseInt(els.autoTLSIncidentDays?.value, 10) || 0,
+      auto_incident_close_on_up: !!els.autoIncidentCloseOnUp?.checked,
     };
     try {
       const res = await Api.put('/api/monitoring/settings', payload);

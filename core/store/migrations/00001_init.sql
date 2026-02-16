@@ -764,6 +764,7 @@ CREATE TABLE IF NOT EXISTS monitoring_settings (
 	auto_task_on_down INTEGER NOT NULL DEFAULT 1,
 	auto_tls_incident INTEGER NOT NULL DEFAULT 1,
 	auto_tls_incident_days INTEGER NOT NULL DEFAULT 14,
+	auto_incident_close_on_up INTEGER NOT NULL DEFAULT 0,
 	default_retries INTEGER NOT NULL DEFAULT 2,
 	default_retry_interval_sec INTEGER NOT NULL DEFAULT 30,
 	default_sla_target_pct REAL NOT NULL DEFAULT 90,

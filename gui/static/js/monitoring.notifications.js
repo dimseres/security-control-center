@@ -169,7 +169,7 @@
       els.quietEnabled.checked = !!channel.quiet_hours_enabled;
       els.quietStart.value = channel.quiet_hours_start || '';
       els.quietEnd.value = channel.quiet_hours_end || '';
-      els.quietTz.value = channel.quiet_hours_tz || '';
+      els.quietTz.value = channel.quiet_hours_tz || defaultQuietTimezone();
       els.silent.checked = !!channel.silent;
       els.protect.checked = !!channel.protect_content;
       els.default.checked = !!channel.is_default;
@@ -181,7 +181,7 @@
       els.quietEnabled.checked = false;
       els.quietStart.value = '';
       els.quietEnd.value = '';
-      els.quietTz.value = 'UTC';
+      els.quietTz.value = defaultQuietTimezone();
       els.default.checked = false;
       els.active.checked = true;
     }
@@ -189,6 +189,16 @@
       els.token.type = 'password';
     }
     els.modal.hidden = false;
+  }
+
+  function defaultQuietTimezone() {
+    if (typeof AppTime !== 'undefined' && AppTime.getTimeZone) {
+      return AppTime.getTimeZone() || 'UTC';
+    }
+    if (typeof Preferences !== 'undefined' && Preferences.load) {
+      return Preferences.load().timeZone || 'UTC';
+    }
+    return 'UTC';
   }
 
   async function saveChannel() {

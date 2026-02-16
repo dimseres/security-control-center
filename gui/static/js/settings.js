@@ -236,6 +236,7 @@ const SettingsPage = (() => {
   const TAB_PERMISSIONS = {
     'settings-general': 'settings.general',
     'settings-advanced': 'settings.advanced',
+    'settings-cleanup': 'settings.advanced',
     'settings-https': 'settings.advanced',
     'settings-hardening': 'settings.advanced',
     'settings-tags': 'settings.tags',
@@ -243,6 +244,39 @@ const SettingsPage = (() => {
     'settings-incidents': 'settings.incident_options',
     'settings-controls': 'settings.controls',
     'settings-sources': 'settings.detection_sources',
+  };
+  const CLEANUP_TARGETS = {
+    dashboard: { keys: [], prefixes: ['dashboard.'] },
+    monitoring: { keys: [], prefixes: ['monitoring.'] },
+    controls: {
+      keys: ['controls.customOptions'],
+      prefixes: [],
+      onAfter: () => {
+        if (window.ControlsPage?.saveCustomOptions) {
+          window.ControlsPage.saveCustomOptions({ domains: [] });
+        }
+      },
+    },
+    tasks: { keys: [], prefixes: ['tasks.'] },
+    incidents: {
+      keys: ['incidents.customOptions'],
+      prefixes: [],
+      remoteCleanup: cleanupIncidentsRemote,
+      onAfter: () => {
+        if (window.IncidentsPage?.saveCustomOptions) {
+          window.IncidentsPage.saveCustomOptions({ incidentTypes: [], detectionSources: [] });
+        }
+      },
+    },
+    reports: { keys: [], prefixes: ['reports.'] },
+    docs: {
+      keys: ['berkut.tags'],
+      prefixes: [],
+      remoteCleanup: cleanupDocsRemote,
+    },
+    accounts: { keys: [], prefixes: ['accounts.'] },
+    logs: { keys: [], prefixes: ['logs.saved_views.'] },
+    settings: { keys: ['berkut_prefs', 'berkut_lang', 'berkut.classifications'], prefixes: [] },
   };
 
   function init(onChange) {
@@ -608,7 +642,7 @@ const SettingsPage = (() => {
       }
       const scope = cleanupScope.value;
       const includeActive = scope === 'all';
-      const confirmed = window.confirm(BerkutI18n.t('settings.approvalsCleanupConfirm'));
+      const confirmed = await confirmSettingsCleanup(BerkutI18n.t('settings.approvalsCleanupConfirm'));
       if (!confirmed) return;
       try {
         await Api.post('/api/approvals/cleanup', includeActive ? { all: true } : {});
@@ -682,50 +716,172 @@ const SettingsPage = (() => {
   function bindTabsCleanup(alertBox) {
     const cleanupSection = document.getElementById('tabs-cleanup-section');
     const cleanupBtn = document.getElementById('tabs-cleanup-btn');
-    const cleanupTarget = document.getElementById('tabs-cleanup-target');
-    if (!cleanupSection || !cleanupBtn || !cleanupTarget) return;
-    cleanupBtn.onclick = () => {
+    const selectAllBtn = document.getElementById('tabs-cleanup-select-all');
+    const clearAllBtn = document.getElementById('tabs-cleanup-clear-all');
+    const optionsRoot = document.getElementById('tabs-cleanup-options');
+    if (!cleanupSection || !cleanupBtn || !optionsRoot) return;
+
+    const checkboxes = () => Array.from(optionsRoot.querySelectorAll('input[type="checkbox"]'));
+    const selectedTargets = () => checkboxes().filter((cb) => cb.checked).map((cb) => cb.value);
+
+    if (selectAllBtn) {
+      selectAllBtn.onclick = () => {
+        checkboxes().forEach((cb) => { cb.checked = true; });
+      };
+    }
+    if (clearAllBtn) {
+      clearAllBtn.onclick = () => {
+        checkboxes().forEach((cb) => { cb.checked = false; });
+      };
+    }
+
+    cleanupBtn.onclick = async () => {
       if (alertBox) {
         alertBox.hidden = true;
         alertBox.classList.remove('success');
       }
-      const target = cleanupTarget.value || '';
-      const confirmed = window.confirm(BerkutI18n.t('settings.tabsCleanupConfirm'));
+      const targets = selectedTargets();
+      if (!targets.length) {
+        if (alertBox) {
+          alertBox.textContent = BerkutI18n.t('settings.tabsCleanupPickAtLeastOne');
+          alertBox.hidden = false;
+        }
+        return;
+      }
+      const confirmed = await confirmSettingsCleanup(BerkutI18n.t('settings.tabsCleanupConfirm'));
       if (!confirmed) return;
-      cleanupTabStorage(target);
-      if (alertBox) {
-        alertBox.textContent = BerkutI18n.t('settings.tabsCleanupDone');
-        alertBox.classList.add('success');
-        alertBox.hidden = false;
+      try {
+        let removed = 0;
+        for (const target of targets) {
+          removed += await cleanupTabStorage(target);
+        }
+        if (alertBox) {
+          alertBox.textContent = BerkutI18n.t('settings.tabsCleanupDone').replace('{count}', `${removed}`);
+          alertBox.classList.add('success');
+          alertBox.hidden = false;
+        }
+      } catch (err) {
+        if (alertBox) {
+          alertBox.textContent = err?.message || BerkutI18n.t('common.error');
+          alertBox.classList.remove('success');
+          alertBox.hidden = false;
+        }
       }
     };
   }
 
-  function cleanupTabStorage(tab) {
-    const keyMap = {
-      controls: { keys: ['controls.customOptions'], prefixes: [] },
-      tasks: { keys: [], prefixes: ['tasks.'] },
-      incidents: { keys: ['incidents.customOptions'], prefixes: [] },
-      docs: { keys: ['berkut.tags'], prefixes: [] },
-      reports: { keys: [], prefixes: ['reports.'] },
-      settings: { keys: ['berkut_prefs', 'berkut_lang', 'berkut.classifications'], prefixes: [] },
-    };
-    const cfg = keyMap[tab] || { keys: [], prefixes: [] };
+  async function cleanupTabStorage(tab) {
+    const cfg = CLEANUP_TARGETS[tab] || { keys: [], prefixes: [] };
     const remove = new Set(cfg.keys || []);
     const prefixes = cfg.prefixes || [];
-    const keys = [];
+    const keysToRemove = [];
     for (let i = 0; i < localStorage.length; i += 1) {
       const key = localStorage.key(i);
       if (!key) continue;
       if (remove.has(key)) {
-        keys.push(key);
+        keysToRemove.push(key);
         continue;
       }
       if (prefixes.some(prefix => key.startsWith(prefix))) {
-        keys.push(key);
+        keysToRemove.push(key);
       }
     }
-    keys.forEach(key => localStorage.removeItem(key));
+    keysToRemove.forEach((key) => localStorage.removeItem(key));
+    let remoteRemoved = 0;
+    if (typeof cfg.remoteCleanup === 'function') {
+      remoteRemoved = await cfg.remoteCleanup();
+    }
+    if (typeof cfg.onAfter === 'function') {
+      cfg.onAfter();
+    }
+    return keysToRemove.length + remoteRemoved;
+  }
+
+  async function cleanupDocsRemote() {
+    let removed = 0;
+    for (let i = 0; i < 100; i += 1) {
+      const list = extractListItems(await Api.get('/api/docs?limit=200&offset=0'));
+      if (!list.length) break;
+      let removedThisPass = 0;
+      for (const doc of list) {
+        if (!doc?.id) continue;
+        try {
+          await Api.del(`/api/docs/${doc.id}`);
+          removed += 1;
+          removedThisPass += 1;
+        } catch (err) {
+          const msg = (err?.message || '').trim();
+          if (msg === 'not found' || msg === 'forbidden') continue;
+          throw err;
+        }
+      }
+      if (removedThisPass === 0) break;
+    }
+    return removed;
+  }
+
+  async function cleanupIncidentsRemote() {
+    let removed = 0;
+    for (let i = 0; i < 100; i += 1) {
+      const list = extractListItems(await Api.get('/api/incidents?limit=200'));
+      if (!list.length) break;
+      let removedThisPass = 0;
+      for (const incident of list) {
+        if (!incident?.id) continue;
+        try {
+          await Api.del(`/api/incidents/${incident.id}`);
+          removed += 1;
+          removedThisPass += 1;
+        } catch (err) {
+          const msg = (err?.message || '').trim();
+          if (
+            msg === 'incidents.closedReadOnly' ||
+            msg === 'incidents.notFound' ||
+            msg === 'not found' ||
+            msg === 'forbidden'
+          ) {
+            continue;
+          }
+          throw err;
+        }
+      }
+      if (removedThisPass === 0) break;
+    }
+    return removed;
+  }
+
+  function extractListItems(payload) {
+    if (Array.isArray(payload)) return payload;
+    if (payload && Array.isArray(payload.items)) return payload.items;
+    return [];
+  }
+
+  function confirmSettingsCleanup(message) {
+    const modal = document.getElementById('settings-cleanup-confirm-modal');
+    if (!modal) {
+      return Promise.resolve(window.confirm(message || BerkutI18n.t('common.confirm')));
+    }
+    const titleEl = document.getElementById('settings-cleanup-confirm-title');
+    const msgEl = document.getElementById('settings-cleanup-confirm-message');
+    const yesBtn = document.getElementById('settings-cleanup-confirm-yes');
+    const noBtn = document.getElementById('settings-cleanup-confirm-no');
+    const closeBtn = document.getElementById('settings-cleanup-confirm-close');
+    if (titleEl) titleEl.textContent = BerkutI18n.t('common.confirm');
+    if (msgEl) msgEl.textContent = message || '';
+    modal.hidden = false;
+    return new Promise((resolve) => {
+      const cleanup = (result) => {
+        modal.hidden = true;
+        if (yesBtn) yesBtn.onclick = null;
+        if (noBtn) noBtn.onclick = null;
+        if (closeBtn) closeBtn.onclick = null;
+        resolve(result);
+      };
+      if (yesBtn) yesBtn.onclick = () => cleanup(true);
+      if (noBtn) noBtn.onclick = () => cleanup(false);
+      if (closeBtn) closeBtn.onclick = () => cleanup(false);
+      if (yesBtn) yesBtn.focus();
+    });
   }
 
   function bindTagSettings() {

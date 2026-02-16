@@ -515,11 +515,40 @@ func (h *DocsHandler) GetContent(w http.ResponseWriter, r *http.Request) {
 	if strings.TrimSpace(r.URL.Query().Get("audit")) != "0" {
 		h.svc.Log(r.Context(), user.Username, "doc.view", doc.RegNumber)
 	}
+	if isTrueQuery(r, "raw") {
+		w.Header().Set("Content-Type", contentTypeForDocFormat(ver.Format))
+		w.Header().Set("Content-Disposition", "inline")
+		w.Header().Set("Cache-Control", "no-store")
+		w.WriteHeader(http.StatusOK)
+		_, _ = w.Write(content)
+		return
+	}
 	writeJSON(w, http.StatusOK, map[string]any{
 		"format":  ver.Format,
 		"version": ver.Version,
 		"content": string(content),
 	})
+}
+
+func isTrueQuery(r *http.Request, key string) bool {
+	if r == nil {
+		return false
+	}
+	v := strings.ToLower(strings.TrimSpace(r.URL.Query().Get(key)))
+	return v == "1" || v == "true" || v == "yes"
+}
+
+func contentTypeForDocFormat(format string) string {
+	switch strings.ToLower(strings.TrimSpace(format)) {
+	case docs.FormatPDF:
+		return "application/pdf"
+	case docs.FormatDocx:
+		return "application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+	case docs.FormatTXT:
+		return "text/plain; charset=utf-8"
+	default:
+		return "text/markdown; charset=utf-8"
+	}
 }
 
 func (h *DocsHandler) UpdateContent(w http.ResponseWriter, r *http.Request) {

@@ -315,14 +315,28 @@
 
     const formatDocDetails = (code) => {
       if (!code) return '';
-      return (code.startsWith('PUB') || code.startsWith('CONF') || code.startsWith('SEC'))
-        ? `${labels.document} ${code}`
-        : `${labels.document} #${code}`;
+      const parts = String(code).split('|').map((part) => part.trim()).filter(Boolean);
+      const docCode = parts[0] || '';
+      const base = (docCode.startsWith('PUB') || docCode.startsWith('CONF') || docCode.startsWith('SEC'))
+        ? `${labels.document} ${docCode}`
+        : `${labels.document} #${docCode}`;
+      if (parts.length <= 1) return base;
+      const detailMap = labels?.doc || {};
+      const extra = parts.slice(1).map((part) => detailMap[part] || part);
+      return `${base} | ${extra.join(' | ')}`;
     };
 
     if (act.startsWith('doc.')) return formatDocDetails(details);
     if (act === 'settings.updates.check') {
       return formatUpdateCheckDetails(details, labels);
+    }
+    if (act === 'settings.hardening.read') {
+      const m = /^score=(.+)$/i.exec(details);
+      if (m && m[1]) {
+        const caption = labels?.settings?.score || 'Score';
+        return `${caption}: ${m[1]}`;
+      }
+      return details;
     }
     if (act.startsWith('approval')) {
       if (!details) return '';
@@ -382,13 +396,27 @@
       'backups.invalid_request': 'backups.error.invalidRequest',
       'backups.internal': 'backups.error.internal',
     };
-    const pairs = details.split(/\s+/).map((chunk) => chunk.trim()).filter(Boolean);
-    const rendered = pairs.map((pair) => {
-      const eq = pair.indexOf('=');
-      if (eq <= 0) return pair;
-      const key = pair.slice(0, eq).trim();
-      const rawValue = pair.slice(eq + 1).trim();
-      if (!key) return pair;
+    const segments = details.split('|').map((chunk) => chunk.trim()).filter(Boolean);
+    const pairs = segments.flatMap((segment) => {
+      const eq = segment.indexOf('=');
+      const colon = segment.indexOf(':');
+      if (eq > 0) return [[segment.slice(0, eq).trim(), segment.slice(eq + 1).trim()]];
+      if (colon > 0) return [[segment.slice(0, colon).trim(), segment.slice(colon + 1).trim()]];
+      if (segment.includes('=')) {
+        return segment
+          .split(/\s+/)
+          .map((token) => token.trim())
+          .filter(Boolean)
+          .map((token) => {
+            const tokenEq = token.indexOf('=');
+            if (tokenEq <= 0) return [token, ''];
+            return [token.slice(0, tokenEq).trim(), token.slice(tokenEq + 1).trim()];
+          });
+      }
+      return [[segment, '']];
+    });
+    const rendered = pairs.map(([key, rawValue]) => {
+      if (!key) return '';
       const keyLabel = dict[key] || key;
       if ((key === 'code' || key === 'reason_code') && rawValue) {
         const i18nKey = codeToKey[rawValue];
@@ -408,6 +436,12 @@
         const value = resultLabels[normalized] || rawValue;
         return `${keyLabel}: ${value}`;
       }
+      if (key === 'resource' && rawValue) {
+        const normalized = rawValue.toLowerCase();
+        const value = dict[`resource_${normalized}`] || rawValue;
+        return `${keyLabel}: ${value}`;
+      }
+      if (!rawValue) return keyLabel;
       return `${keyLabel}: ${rawValue}`;
     });
     return rendered.join(' | ');
@@ -505,9 +539,14 @@
       'doc.restore': 'Документы: восстановление версии',
       'doc.import': 'Документы: импорт',
       'doc.export': 'Документы: экспорт',
+      'doc.export.blocked_policy': 'Документы: экспорт заблокирован политикой',
+      'doc.export.approval.used': 'Документы: согласование экспорта использовано',
+      'doc.export.approval.granted': 'Документы: согласование экспорта выдано',
       'doc.acl.view': 'Документы: просмотр прав',
       'doc.acl.update': 'Документы: изменение прав',
       'doc.classification.change': 'Документы: смена грифа',
+      'doc.security.copy_blocked': 'Документы: блокировка копирования',
+      'doc.security.screenshot_attempt': 'Документы: попытка скриншота',
       'folder.list': 'Папки: просмотр списка',
       'folder.create': 'Папки: создание',
       'folder.update': 'Папки: обновление',
@@ -748,6 +787,7 @@
       'backups.retention.deleted': 'Бэкапы: удаление по ретенции',
       'settings.updates.check': 'Настройки: проверка обновлений',
       'settings.updates.toggle': 'Настройки: автопроверка обновлений',
+      'settings.hardening.read': 'Настройки: hardening-проверка',
     },
     en: {
       'login_success': 'Authentication: login success',
@@ -772,9 +812,14 @@
       'doc.restore': 'Documents: restore version',
       'doc.import': 'Documents: import',
       'doc.export': 'Documents: export',
+      'doc.export.blocked_policy': 'Documents: export blocked by policy',
+      'doc.export.approval.used': 'Documents: export approval consumed',
+      'doc.export.approval.granted': 'Documents: export approval granted',
       'doc.acl.view': 'Documents: permissions view',
       'doc.acl.update': 'Documents: permissions update',
       'doc.classification.change': 'Documents: classification change',
+      'doc.security.copy_blocked': 'Documents: copy blocked',
+      'doc.security.screenshot_attempt': 'Documents: screenshot attempt',
       'folder.list': 'Folders: list view',
       'folder.create': 'Folders: create',
       'folder.update': 'Folders: update',
@@ -1015,6 +1060,7 @@
       'backups.retention.deleted': 'Backups: retention deleted',
       'settings.updates.check': 'Settings: update check',
       'settings.updates.toggle': 'Settings: update checks toggled',
+      'settings.hardening.read': 'Settings: hardening read',
     },
   };
 
@@ -1040,6 +1086,10 @@
         notify_suppress: 'Подавление уведомлений (мин)',
         notify_repeat: 'Повтор down-уведомлений (мин)',
         notify_maintenance: 'Уведомлять об обслуживании',
+        auto_incident_close_on_up: 'Автозакрытие инцидента при UP',
+      },
+      doc: {
+        approval_required: 'требуется согласование экспорта',
       },
       backups: {
         result: 'Результат',
@@ -1048,11 +1098,13 @@
         event: 'Событие',
         backup_id: 'Бэкап',
         restore_id: 'Восстановление',
+        resource: 'Ресурс',
         id: 'ID',
         filename: 'Файл',
         size: 'Размер',
         size_bytes: 'Размер',
         dry_run: 'Сухой прогон',
+        resource_integrity: 'Целостность',
         result_requested: 'Запрошено',
         result_queued: 'В очереди',
         result_success: 'Успешно',
@@ -1071,6 +1123,9 @@
         source: 'Источник',
         true: 'да',
         false: 'нет',
+      },
+      settings: {
+        score: 'Оценка',
       },
     },
     en: {
@@ -1094,6 +1149,10 @@
         notify_suppress: 'Suppress notifications (min)',
         notify_repeat: 'Repeat down notifications (min)',
         notify_maintenance: 'Notify maintenance',
+        auto_incident_close_on_up: 'Auto-close incident on UP',
+      },
+      doc: {
+        approval_required: 'export approval required',
       },
       backups: {
         result: 'Result',
@@ -1102,11 +1161,13 @@
         event: 'Event',
         backup_id: 'Backup',
         restore_id: 'Restore',
+        resource: 'Resource',
         id: 'ID',
         filename: 'File',
         size: 'Size',
         size_bytes: 'Size',
         dry_run: 'Dry run',
+        resource_integrity: 'Integrity',
         result_requested: 'Requested',
         result_queued: 'Queued',
         result_success: 'Success',
@@ -1125,6 +1186,9 @@
         source: 'Source',
         true: 'yes',
         false: 'no',
+      },
+      settings: {
+        score: 'Score',
       },
     },
   };

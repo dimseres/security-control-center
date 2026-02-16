@@ -1,4 +1,4 @@
-﻿package monitoring
+package monitoring
 
 import (
 	"context"
@@ -9,7 +9,7 @@ import (
 	"berkut-scc/core/store"
 )
 
-func (e *Engine) handleAutoIncident(ctx context.Context, m store.Monitor, prev, next *store.MonitorState, rawStatus string, now time.Time) {
+func (e *Engine) handleAutoIncident(ctx context.Context, m store.Monitor, prev, next *store.MonitorState, rawStatus string, now time.Time, settings store.MonitorSettings) {
 	if e.incidents == nil || !m.AutoIncident {
 		return
 	}
@@ -79,6 +79,9 @@ func (e *Engine) handleAutoIncident(ctx context.Context, m store.Monitor, prev, 
 		return
 	}
 	if rawStatus == "up" && prevStatus == "down" {
+		if !settings.AutoIncidentCloseOnUp {
+			return
+		}
 		existing, _ := e.incidents.FindOpenIncidentBySource(ctx, "monitoring", m.ID)
 		if existing == nil {
 			return

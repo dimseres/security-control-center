@@ -34,8 +34,6 @@
     els.notifyTLS = document.getElementById('monitor-notify-tls');
     els.ignoreTLS = document.getElementById('monitor-ignore-tls');
     els.notifications = document.getElementById('monitor-notifications-list');
-    els.tagInput = document.getElementById('monitor-tags-new');
-    els.tagAdd = document.getElementById('monitor-tags-add');
     document.querySelectorAll('[data-close="#monitor-modal"]').forEach(btn => {
       btn.addEventListener('click', () => {
         if (els.modal) els.modal.hidden = true;
@@ -50,12 +48,6 @@
     }
     if (els.save) {
       els.save.addEventListener('click', submitForm);
-    }
-    if (els.tagAdd) {
-      els.tagAdd.addEventListener('click', (e) => {
-        e.preventDefault();
-        addTagOption();
-      });
     }
     if (els.tags && DocsPage?.enhanceMultiSelects) {
       DocsPage.enhanceMultiSelects([els.tags.id]);
@@ -238,17 +230,6 @@
       MonitoringPage.showAlert(els.alert, MonitoringPage.t('monitoring.error.invalidHeaders'), false);
       return null;
     }
-  }
-
-  function addTagOption() {
-    const val = (els.tagInput.value || '').trim();
-    if (!val) return;
-    const opt = document.createElement('option');
-    opt.value = val;
-    opt.textContent = val;
-    opt.selected = true;
-    els.tags.appendChild(opt);
-    els.tagInput.value = '';
   }
 
   function fillTagOptions(selected) {

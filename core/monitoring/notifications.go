@@ -138,7 +138,7 @@ func (e *Engine) handleAutomation(ctx context.Context, m store.Monitor, prev, ne
 	e.handleNotifications(ctx, m, prev, next, rawStatus, now, st, tlsRecord, result, settings)
 	e.handleAutoTaskOnDown(ctx, m, prev, next, now)
 	e.handleAutoTLSIncident(ctx, m, prev, next, tlsRecord, now, settings)
-	e.handleAutoIncident(ctx, m, prev, next, rawStatus, now)
+	e.handleAutoIncident(ctx, m, prev, next, rawStatus, now, settings)
 	_ = e.store.UpsertNotificationState(ctx, st)
 }
 

@@ -157,9 +157,6 @@ const DocEditor = (() => {
       }
       currentFormat = cont.format || 'md';
       currentDocVersion = Number(cont.version || 0);
-      if (!canEditFormat(currentFormat) && currentMode === 'edit') {
-        currentMode = 'view';
-      }
       renderMeta(meta);
       await renderContent(cont);
       await loadLinks();
@@ -226,7 +223,7 @@ const DocEditor = (() => {
       els.viewer.hidden = false;
       els.nonMdBlock.hidden = true;
       els.pdfFrame.hidden = false;
-      els.pdfFrame.src = `/api/docs/${currentDocId}/export?format=pdf&inline=1`;
+      els.pdfFrame.src = `/api/docs/${currentDocId}/content?raw=1`;
     } else if (format === 'docx') {
       currentFormat = format;
       if (els.content) els.content.hidden = true;
@@ -339,7 +336,8 @@ const DocEditor = (() => {
     if (!currentDocId) return;
     if (saveInFlight) return;
     const reason = (els.reason && els.reason.value || '').trim();
-    if (!reason) {
+    const contentEditable = currentFormat === 'docx' || currentFormat === 'md' || currentFormat === 'txt';
+    if (contentEditable && !reason) {
       showAlert(BerkutI18n.t('editor.reasonRequired'));
       return;
     }
@@ -373,7 +371,17 @@ const DocEditor = (() => {
       return;
     }
     if (currentFormat !== 'md' && currentFormat !== 'txt') {
-      showAlert(BerkutI18n.t('editor.readonly'));
+      try {
+        const changed = await maybeUpdateClassification();
+        if (changed) {
+          showAlert(BerkutI18n.t('editor.saved'), true);
+          if (callbacks.onSave) callbacks.onSave(currentDocId);
+        } else {
+          showAlert(BerkutI18n.t('editor.readonly'));
+        }
+      } catch (err) {
+        showAlert(err.message || 'save failed');
+      }
       return;
     }
     try {
@@ -422,15 +430,19 @@ const DocEditor = (() => {
     const nextTags = Array.from(document.querySelectorAll('#editor-tags option:checked')).map(opt => opt.value);
     const currentLevelCode = DocUI.levelCodeByIndex(meta.classification_level);
     const changed = nextLevel !== currentLevelCode || JSON.stringify(nextTags.sort()) !== JSON.stringify((meta.classification_tags || []).map(t => t.toUpperCase()).sort());
-    if (!changed) return;
+    if (!changed) return false;
     try {
       await Api.post(`/api/docs/${currentDocId}/classification`, {
         classification_level: nextLevel,
         classification_tags: nextTags,
         inherit_classification: meta.inherit_classification,
       });
+      meta.classification_level = nextLevel;
+      meta.classification_tags = nextTags;
+      return true;
     } catch (err) {
       showAlert(err.message || 'classification not updated');
+      return false;
     }
   }
 
@@ -648,12 +660,7 @@ const DocEditor = (() => {
 
   function setMode(mode) {
     const requestedMode = mode === 'edit' ? 'edit' : 'view';
-    if (requestedMode === 'edit' && !canEditFormat(currentFormat)) {
-      currentMode = 'view';
-      showAlert(BerkutI18n.t('editor.readonly'));
-    } else {
-      currentMode = requestedMode;
-    }
+    currentMode = requestedMode;
     applyMode();
     if (callbacks.onModeChange && currentDocId) {
       callbacks.onModeChange(currentDocId, currentMode);
@@ -756,18 +763,15 @@ const DocEditor = (() => {
     if (!els.panel) return;
     const editable = canEditFormat(currentFormat);
     const binary = isBinaryFormat(currentFormat);
-    if (!editable && currentMode === 'edit') {
-      currentMode = 'view';
-    }
-    const viewOnly = currentMode !== 'edit' || !editable;
+    const viewOnly = currentMode !== 'edit';
     els.panel.classList.toggle('view-only', viewOnly);
     els.panel.classList.toggle('binary-mode', binary);
     if (els.editToggle) {
-      els.editToggle.hidden = !editable;
+      els.editToggle.hidden = false;
       els.editToggle.textContent = viewOnly ? (BerkutI18n.t('editor.edit') || 'Edit') : (BerkutI18n.t('editor.view') || 'View');
     }
     if (els.reason) els.reason.hidden = viewOnly;
-    if (els.saveBtn) els.saveBtn.hidden = !canEditFormat(currentFormat) || viewOnly;
+    if (els.saveBtn) els.saveBtn.hidden = viewOnly;
     if (els.toolbar) els.toolbar.hidden = !isEditableFormat(currentFormat) || viewOnly;
     if (els.convertBtn) els.convertBtn.hidden = binary || viewOnly;
     if (els.onlyOfficeOpenBtn) els.onlyOfficeOpenBtn.hidden = true;

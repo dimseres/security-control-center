@@ -165,6 +165,7 @@ type MonitorSettings struct {
 	AutoTaskOnDown          bool      `json:"auto_task_on_down"`
 	AutoTLSIncident         bool      `json:"auto_tls_incident"`
 	AutoTLSIncidentDays     int       `json:"auto_tls_incident_days"`
+	AutoIncidentCloseOnUp   bool      `json:"auto_incident_close_on_up"`
 	DefaultRetries          int       `json:"default_retries"`
 	DefaultRetryIntervalSec int       `json:"default_retry_interval_sec"`
 	DefaultSLATargetPct     float64   `json:"default_sla_target_pct"`
