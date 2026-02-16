@@ -1,6 +1,6 @@
 ﻿# Berkut SCC Documentation (EN)
 
-Documentation version baseline: `1.0.4`
+Documentation version baseline: `1.0.6`
 
 ## Sections
 1. Architecture: `docs/eng/architecture.md`
@@ -23,3 +23,8 @@ Documentation is aligned with current runtime reality:
 - server-side zero-trust authorization
 - `.bscc` backups module (create/import/download/restore/plan/scheduler/retention)
 - monitoring SLA module (SLA tab, closed periods, background evaluator, incident policy)
+
+## Included for 1.0.6
+- Settings: dedicated Cleanup tab with selective per-module data cleanup.
+- Monitoring: server-side flag to auto-close incidents when monitor recovers (`DOWN -> UP`).
+- Localization and UX: fixes for logs/monitoring UI alignment and missing i18n labels.

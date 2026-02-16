@@ -8,7 +8,7 @@
 
 Berkut Solutions - Security Control Center (SCC) is a self-hosted platform for security operations and compliance management.
 
-Current version: `1.0.5`
+Current version: `1.0.6`
 
 ## Product Overview
 Berkut SCC is a unified workspace for security teams where operational workflows, compliance artifacts, and control activities are managed in one system.
@@ -36,6 +36,10 @@ It replaces fragmented spreadsheets, chat approvals, and disconnected trackers w
   operational events, availability metrics, SLA policy, and maintenance windows.
 - Monitoring automation:
   per-monitor rules for creating incidents/tasks on downtime and TLS risk conditions.
+- Monitoring notifications center:
+  quiet hours, message templates, and delivery history with acknowledgment.
+- Settings cleanup:
+  selective per-module cleanup with in-app confirmation and deleted-items feedback.
 - Task management:
   spaces, boards, tasks, comments, links, and scheduling.
 - Access control:
