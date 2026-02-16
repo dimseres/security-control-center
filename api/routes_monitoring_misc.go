@@ -38,9 +38,5 @@ func (s *Server) registerLogsAndSettingsRoutes(apiRouter chi.Router, h routeHand
 	routegroups.RegisterLogsAndSettings(apiRouter, routegroups.Guards{
 		WithSession:       s.withSession,
 		RequirePermission: func(p string) func(http.HandlerFunc) http.HandlerFunc { return s.requirePermission(rbac.Permission(p)) },
-<<<<<<< HEAD
-	}, h.logs, h.https, h.runtime)
-=======
 	}, h.logs, h.https, h.runtime, h.hardening)
->>>>>>> 2adc2fe (v1.0.5)
 }

@@ -21,11 +21,8 @@ func RegisterRoutes(deps RouteDeps) http.Handler {
 	require := deps.RequirePermission
 
 	r.MethodFunc(http.MethodGet, "/backups", withSession(require(corebackups.PermRead)(h.ListBackups)))
-<<<<<<< HEAD
-=======
 	r.MethodFunc(http.MethodGet, "/backups/integrity", withSession(require(corebackups.PermRead)(h.GetIntegrityStatus)))
 	r.MethodFunc(http.MethodPost, "/backups/integrity/run", withSession(require(corebackups.PermRestore)(h.RunIntegrityTest)))
->>>>>>> 2adc2fe (v1.0.5)
 	r.MethodFunc(http.MethodGet, "/backups/plan", withSession(require(corebackups.PermRead)(h.GetPlan)))
 	r.MethodFunc(http.MethodPut, "/backups/plan", withSession(require(corebackups.PermPlanUpdate)(h.UpdatePlan)))
 	r.MethodFunc(http.MethodPost, "/backups/plan/enable", withSession(require(corebackups.PermPlanUpdate)(h.EnablePlan)))

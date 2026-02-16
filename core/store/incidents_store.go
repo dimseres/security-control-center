@@ -14,29 +14,6 @@ import (
 var ErrConflict = errors.New("conflict")
 
 type Incident struct {
-<<<<<<< HEAD
-	ID            int64      `json:"id"`
-	RegNo         string     `json:"reg_no"`
-	Title         string     `json:"title"`
-	Description   string     `json:"description"`
-	Severity      string     `json:"severity"`
-	Status        string     `json:"status"`
-	Source        string     `json:"source,omitempty"`
-	SourceRefID   *int64     `json:"source_ref_id,omitempty"`
-	ClosedAt      *time.Time `json:"closed_at,omitempty"`
-	ClosedBy      *int64     `json:"closed_by,omitempty"`
-	OwnerUserID   int64      `json:"owner_user_id"`
-	AssigneeUserID *int64    `json:"assignee_user_id,omitempty"`
-	ClassificationLevel int   `json:"classification_level"`
-	ClassificationTags  []string `json:"classification_tags,omitempty"`
-	CreatedBy     int64      `json:"created_by"`
-	UpdatedBy     int64      `json:"updated_by"`
-	CreatedAt     time.Time  `json:"created_at"`
-	UpdatedAt     time.Time  `json:"updated_at"`
-	Version       int        `json:"version"`
-	DeletedAt     *time.Time `json:"deleted_at,omitempty"`
-	Meta          IncidentMeta `json:"meta,omitempty"`
-=======
 	ID                  int64        `json:"id"`
 	RegNo               string       `json:"reg_no"`
 	Title               string       `json:"title"`
@@ -58,7 +35,6 @@ type Incident struct {
 	Version             int          `json:"version"`
 	DeletedAt           *time.Time   `json:"deleted_at,omitempty"`
 	Meta                IncidentMeta `json:"meta,omitempty"`
->>>>>>> 2adc2fe (v1.0.5)
 }
 
 type IncidentParticipant struct {
@@ -74,10 +50,7 @@ type IncidentMeta struct {
 	DetectionSource       string   `json:"detection_source,omitempty"`
 	SLAResponse           string   `json:"sla_response,omitempty"`
 	FirstResponseDeadline string   `json:"first_response_deadline,omitempty"`
-<<<<<<< HEAD
-=======
 	ResolveDeadline       string   `json:"resolve_deadline,omitempty"`
->>>>>>> 2adc2fe (v1.0.5)
 	WhatHappened          string   `json:"what_happened,omitempty"`
 	DetectedAt            string   `json:"detected_at,omitempty"`
 	AffectedSystems       string   `json:"affected_systems,omitempty"`
@@ -86,36 +59,6 @@ type IncidentMeta struct {
 	Assets                string   `json:"assets,omitempty"`
 	Tags                  []string `json:"tags,omitempty"`
 	ClosureOutcome        string   `json:"closure_outcome,omitempty"`
-<<<<<<< HEAD
-}
-
-type IncidentStage struct {
-	ID         int64     `json:"id"`
-	IncidentID int64     `json:"incident_id"`
-	Title      string    `json:"title"`
-	Position   int       `json:"position"`
-	CreatedBy  int64     `json:"created_by"`
-	UpdatedBy  int64     `json:"updated_by"`
-	CreatedAt  time.Time `json:"created_at"`
-	UpdatedAt  time.Time `json:"updated_at"`
-	Status     string    `json:"status"`
-	ClosedAt   *time.Time `json:"closed_at,omitempty"`
-	ClosedBy   *int64     `json:"closed_by,omitempty"`
-	IsDefault  bool      `json:"is_default"`
-	Version    int       `json:"version"`
-}
-
-type IncidentStageEntry struct {
-	ID          int64     `json:"id"`
-	StageID     int64     `json:"stage_id"`
-	Content     string    `json:"content"`
-	ChangeReason string   `json:"change_reason"`
-	CreatedBy   int64     `json:"created_by"`
-	UpdatedBy   int64     `json:"updated_by"`
-	CreatedAt   time.Time `json:"created_at"`
-	UpdatedAt   time.Time `json:"updated_at"`
-	Version     int       `json:"version"`
-=======
 	Postmortem            string   `json:"postmortem,omitempty"`
 }
 
@@ -145,7 +88,6 @@ type IncidentStageEntry struct {
 	CreatedAt    time.Time `json:"created_at"`
 	UpdatedAt    time.Time `json:"updated_at"`
 	Version      int       `json:"version"`
->>>>>>> 2adc2fe (v1.0.5)
 }
 
 type IncidentLink struct {
@@ -203,18 +145,6 @@ type IncidentTimelineEvent struct {
 }
 
 type IncidentFilter struct {
-<<<<<<< HEAD
-	Search         string
-	Status         string
-	StatusIn       []string
-	Severity       string
-	MineUserID     int64
-	AssignedUserID int64
-	CreatedByUserID int64
-	IncludeDeleted bool
-	Limit          int
-	Offset         int
-=======
 	Search          string
 	Status          string
 	StatusIn        []string
@@ -225,7 +155,6 @@ type IncidentFilter struct {
 	IncludeDeleted  bool
 	Limit           int
 	Offset          int
->>>>>>> 2adc2fe (v1.0.5)
 }
 
 type IncidentsStore interface {
@@ -752,10 +681,7 @@ func NormalizeIncidentMeta(meta IncidentMeta) IncidentMeta {
 	meta.DetectionSource = strings.TrimSpace(meta.DetectionSource)
 	meta.SLAResponse = strings.TrimSpace(meta.SLAResponse)
 	meta.FirstResponseDeadline = strings.TrimSpace(meta.FirstResponseDeadline)
-<<<<<<< HEAD
-=======
 	meta.ResolveDeadline = strings.TrimSpace(meta.ResolveDeadline)
->>>>>>> 2adc2fe (v1.0.5)
 	meta.WhatHappened = strings.TrimSpace(meta.WhatHappened)
 	meta.DetectedAt = strings.TrimSpace(meta.DetectedAt)
 	meta.AffectedSystems = strings.TrimSpace(meta.AffectedSystems)
@@ -764,10 +690,7 @@ func NormalizeIncidentMeta(meta IncidentMeta) IncidentMeta {
 	meta.Assets = strings.TrimSpace(meta.Assets)
 	meta.Tags = normalizeTags(meta.Tags)
 	meta.ClosureOutcome = strings.TrimSpace(meta.ClosureOutcome)
-<<<<<<< HEAD
-=======
 	meta.Postmortem = strings.TrimSpace(meta.Postmortem)
->>>>>>> 2adc2fe (v1.0.5)
 	return meta
 }
 

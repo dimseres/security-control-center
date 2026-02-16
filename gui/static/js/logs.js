@@ -1,10 +1,7 @@
 ﻿const LogsPage = (() => {
   const state = {
     items: [],
-<<<<<<< HEAD
-=======
     savedViews: [],
->>>>>>> 2adc2fe (v1.0.5)
     filters: {
       section: '',
       action: '',
@@ -27,24 +24,18 @@
     els.from = document.getElementById('logs-filter-from');
     els.to = document.getElementById('logs-filter-to');
     els.reset = document.getElementById('logs-filter-reset');
-<<<<<<< HEAD
-=======
     els.saveView = document.getElementById('logs-save-view');
     els.savedViews = document.getElementById('logs-saved-views');
     els.exportBtn = document.getElementById('logs-export');
->>>>>>> 2adc2fe (v1.0.5)
 
     applyDateInputLocale();
 
     if (els.refresh) els.refresh.onclick = () => load();
-<<<<<<< HEAD
-=======
     if (els.saveView) els.saveView.onclick = () => saveCurrentView();
     if (els.exportBtn) els.exportBtn.onclick = () => exportCurrentView();
     if (els.savedViews) {
       els.savedViews.addEventListener('change', applySavedViewFromSelect);
     }
->>>>>>> 2adc2fe (v1.0.5)
 
     const onFilterChange = () => {
       syncFilters();
@@ -65,10 +56,7 @@
     }
 
     await load();
-<<<<<<< HEAD
-=======
     loadSavedViews();
->>>>>>> 2adc2fe (v1.0.5)
   }
 
   function applyDateInputLocale() {
@@ -84,12 +72,8 @@
     if (els.tbody) els.tbody.innerHTML = '';
     let items = [];
     try {
-<<<<<<< HEAD
-      const res = await Api.get('/api/logs');
-=======
       const params = buildQueryFromFilters();
       const res = await Api.get(`/api/logs?${params.toString()}`);
->>>>>>> 2adc2fe (v1.0.5)
       items = res.items || [];
     } catch (err) {
       console.error('logs load', err);
@@ -115,8 +99,6 @@
     if (els.from) els.from.value = '';
     if (els.to) els.to.value = '';
     syncFilters();
-<<<<<<< HEAD
-=======
     if (els.savedViews) els.savedViews.value = '';
   }
 
@@ -199,7 +181,6 @@
   function exportCurrentView() {
     const params = buildQueryFromFilters();
     window.open(`/api/logs/export?${params.toString()}`, '_blank');
->>>>>>> 2adc2fe (v1.0.5)
   }
 
   function applyFilters() {

@@ -10,10 +10,7 @@ import (
 
 	"berkut-scc/core/store"
 	"berkut-scc/core/utils"
-<<<<<<< HEAD
-=======
 	"berkut-scc/tasks"
->>>>>>> 2adc2fe (v1.0.5)
 )
 
 type Engine struct {
@@ -23,10 +20,7 @@ type Engine struct {
 	encryptor         *utils.Encryptor
 	sender            TelegramSender
 	incidentRegFormat string
-<<<<<<< HEAD
-=======
 	taskStore         tasks.Store
->>>>>>> 2adc2fe (v1.0.5)
 	logger            *utils.Logger
 	cancel            context.CancelFunc
 	running           bool
@@ -59,8 +53,6 @@ func NewEngineWithDeps(store store.MonitoringStore, incidents store.IncidentsSto
 	}
 }
 
-<<<<<<< HEAD
-=======
 func (e *Engine) SetTaskStore(taskStore tasks.Store) {
 	if e == nil {
 		return
@@ -68,7 +60,6 @@ func (e *Engine) SetTaskStore(taskStore tasks.Store) {
 	e.taskStore = taskStore
 }
 
->>>>>>> 2adc2fe (v1.0.5)
 func (e *Engine) Start() {
 	e.StartWithContext(context.Background())
 }

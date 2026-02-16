@@ -89,10 +89,7 @@ func (s *Scheduler) RunOnce(ctx context.Context, now time.Time) error {
 	if s == nil || s.svc == nil || !s.cfg.Enabled {
 		return nil
 	}
-<<<<<<< HEAD
-=======
 	_ = s.svc.RunAutoRestoreTest(ctx, now.UTC())
->>>>>>> 2adc2fe (v1.0.5)
 	plan, err := s.svc.GetPlan(ctx)
 	if err != nil || plan == nil || !plan.Enabled {
 		return err

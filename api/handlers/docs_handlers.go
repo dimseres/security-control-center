@@ -750,8 +750,6 @@ func (h *DocsHandler) Export(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "not found", http.StatusNotFound)
 		return
 	}
-<<<<<<< HEAD
-=======
 	if h.requiresDualExportApproval(doc) {
 		approval, err := h.store.ConsumeDocExportApproval(r.Context(), doc.ID, user.ID)
 		if err != nil {
@@ -765,7 +763,6 @@ func (h *DocsHandler) Export(w http.ResponseWriter, r *http.Request) {
 		}
 		h.svc.Log(r.Context(), user.Username, "doc.export.approval.used", fmt.Sprintf("%s|approved_by=%d", doc.RegNumber, approval.ApprovedBy))
 	}
->>>>>>> 2adc2fe (v1.0.5)
 	ver, err := h.store.GetVersion(r.Context(), doc.ID, doc.CurrentVersion)
 	if err != nil || ver == nil {
 		http.Error(w, "not found", http.StatusNotFound)

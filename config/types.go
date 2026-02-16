@@ -7,11 +7,7 @@ type AppConfig struct {
 	DBURL          string          `yaml:"db_url" env:"BERKUT_DB_URL" env-default:"postgres://berkut:berkut@localhost:5432/berkut?sslmode=disable"`
 	DBPath         string          `yaml:"db_path"` // deprecated
 	ListenAddr     string          `yaml:"listen_addr" env:"BERKUT_LISTEN_ADDR" env-default:"0.0.0.0:8080"`
-<<<<<<< HEAD
-	SessionTTL     time.Duration   `yaml:"session_ttl" env:"BERKUT_SESSION_TTL" env-default:"24h"`
-=======
 	SessionTTL     time.Duration   `yaml:"session_ttl" env:"BERKUT_SESSION_TTL" env-default:"3h"`
->>>>>>> 2adc2fe (v1.0.5)
 	AppEnv         string          `yaml:"app_env" env:"BERKUT_APP_ENV"`
 	DeploymentMode string          `yaml:"deployment_mode" env:"BERKUT_DEPLOYMENT_MODE" env-default:"enterprise"`
 	CSRFKey        string          `yaml:"csrf_key" env:"BERKUT_CSRF_KEY"`
@@ -44,24 +40,18 @@ type DocsConfig struct {
 	Watermark          WatermarkConfig   `yaml:"watermark"`
 	Converters         ConvertersConfig  `yaml:"converters"`
 	OnlyOffice         OnlyOfficeConfig  `yaml:"onlyoffice"`
-<<<<<<< HEAD
-=======
 	DLP                DocsDLPConfig     `yaml:"dlp"`
->>>>>>> 2adc2fe (v1.0.5)
 	AllowDowngrade     bool              `yaml:"allow_downgrade"`
 	WatermarkMinLevel  string            `yaml:"watermark_min_level"` // deprecated; kept for compatibility
 	ClassificationTags map[string]string `yaml:"classification_tags"` // optional mapping of tag codes to descriptions
 }
 
-<<<<<<< HEAD
-=======
 type DocsDLPConfig struct {
 	Enabled                  bool `yaml:"enabled" env:"BERKUT_DOCS_DLP_ENABLED" env-default:"true"`
 	DualApprovalMinutes      int  `yaml:"dual_approval_minutes" env:"BERKUT_DOCS_DLP_APPROVAL_MINUTES" env-default:"30"`
 	ProtectClipboardAndPrint bool `yaml:"protect_clipboard_and_print" env:"BERKUT_DOCS_DLP_PROTECT_CLIPBOARD_PRINT" env-default:"true"`
 }
 
->>>>>>> 2adc2fe (v1.0.5)
 type WatermarkConfig struct {
 	Enabled      bool   `yaml:"enabled" env:"BERKUT_DOCS_WATERMARK_ENABLED" env-default:"true"`
 	MinLevel     string `yaml:"min_level" env:"BERKUT_DOCS_WATERMARK_MIN_LEVEL" env-default:"CONFIDENTIAL"`
@@ -95,10 +85,7 @@ type SecurityConfig struct {
 	OnlineWindowSec     int      `yaml:"online_window_sec" env:"BERKUT_SECURITY_ONLINE_WINDOW_SEC" env-default:"300"`
 	LegacyImportEnabled bool     `yaml:"legacy_import_enabled" env:"BERKUT_SECURITY_LEGACY_IMPORT_ENABLED" env-default:"false"`
 	TrustedProxies      []string `yaml:"trusted_proxies" env:"BERKUT_SECURITY_TRUSTED_PROXIES" env-separator:","`
-<<<<<<< HEAD
-=======
 	AuthLockoutIncident bool     `yaml:"auth_lockout_incident" env:"BERKUT_SECURITY_AUTH_LOCKOUT_INCIDENT" env-default:"true"`
->>>>>>> 2adc2fe (v1.0.5)
 }
 
 type IncidentsConfig struct {
@@ -114,13 +101,6 @@ type SchedulerConfig struct {
 }
 
 type BackupsConfig struct {
-<<<<<<< HEAD
-	Path           string `yaml:"path" env:"BERKUT_BACKUP_PATH" env-default:"data/backups"`
-	EncryptionKey  string `yaml:"encryption_key" env:"BERKUT_BACKUP_ENCRYPTION_KEY"`
-	MaxParallel    int    `yaml:"max_parallel" env:"BERKUT_BACKUP_MAX_PARALLEL" env-default:"1"`
-	PGDumpBin      string `yaml:"pgdump_bin" env:"BERKUT_BACKUP_PGDUMP_BIN" env-default:"pg_dump"`
-	UploadMaxBytes int64  `yaml:"upload_max_bytes" env:"BERKUT_BACKUP_UPLOAD_MAX_BYTES" env-default:"536870912"`
-=======
 	Path                     string `yaml:"path" env:"BERKUT_BACKUP_PATH" env-default:"data/backups"`
 	EncryptionKey            string `yaml:"encryption_key" env:"BERKUT_BACKUP_ENCRYPTION_KEY"`
 	MaxParallel              int    `yaml:"max_parallel" env:"BERKUT_BACKUP_MAX_PARALLEL" env-default:"1"`
@@ -141,5 +121,4 @@ func (c *AppConfig) EffectiveSessionTTL() time.Duration {
 		return maxUserSessionTTL
 	}
 	return ttl
->>>>>>> 2adc2fe (v1.0.5)
 }

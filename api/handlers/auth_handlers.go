@@ -22,23 +22,15 @@ type AuthHandler struct {
 	cfg            *config.AppConfig
 	users          store.UsersStore
 	sessions       store.SessionStore
-<<<<<<< HEAD
-=======
 	incidents      store.IncidentsStore
->>>>>>> 2adc2fe (v1.0.5)
 	sessionManager *auth.SessionManager
 	policy         *rbac.Policy
 	audits         store.AuditStore
 	logger         *utils.Logger
 }
 
-<<<<<<< HEAD
-func NewAuthHandler(cfg *config.AppConfig, users store.UsersStore, sessions store.SessionStore, sm *auth.SessionManager, policy *rbac.Policy, audits store.AuditStore, logger *utils.Logger) *AuthHandler {
-	return &AuthHandler{cfg: cfg, users: users, sessions: sessions, sessionManager: sm, policy: policy, audits: audits, logger: logger}
-=======
 func NewAuthHandler(cfg *config.AppConfig, users store.UsersStore, sessions store.SessionStore, incidents store.IncidentsStore, sm *auth.SessionManager, policy *rbac.Policy, audits store.AuditStore, logger *utils.Logger) *AuthHandler {
 	return &AuthHandler{cfg: cfg, users: users, sessions: sessions, incidents: incidents, sessionManager: sm, policy: policy, audits: audits, logger: logger}
->>>>>>> 2adc2fe (v1.0.5)
 }
 
 func (h *AuthHandler) Login(w http.ResponseWriter, r *http.Request) {
@@ -90,10 +82,7 @@ func (h *AuthHandler) Login(w http.ResponseWriter, r *http.Request) {
 			if user.FailedAttempts >= 5 {
 				applyLockout(user, 1, now, "auto")
 				h.audits.Log(r.Context(), cred.Username, "auth.lockout", "stage=1 dur=1h")
-<<<<<<< HEAD
-=======
 				h.ensureAuthLockoutIncident(r.Context(), user, 1, now)
->>>>>>> 2adc2fe (v1.0.5)
 				_ = h.users.Update(r.Context(), user, nil)
 				msg := localizedUntil(lang, "auth.lockedUntil", *user.LockedUntil)
 				http.Error(w, msg, http.StatusForbidden)
@@ -112,10 +101,7 @@ func (h *AuthHandler) Login(w http.ResponseWriter, r *http.Request) {
 			}
 			applyLockout(user, nextStage, now, "auto")
 			h.audits.Log(r.Context(), cred.Username, "auth.lockout", "stage="+strconv.Itoa(nextStage))
-<<<<<<< HEAD
-=======
 			h.ensureAuthLockoutIncident(r.Context(), user, nextStage, now)
->>>>>>> 2adc2fe (v1.0.5)
 			_ = h.users.Update(r.Context(), user, nil)
 			if isPermanentLock(user) {
 				http.Error(w, localized(lang, "auth.lockedPermanent"), http.StatusForbidden)
@@ -131,12 +117,9 @@ func (h *AuthHandler) Login(w http.ResponseWriter, r *http.Request) {
 	}
 	sess, err := h.sessionManager.Create(r.Context(), user, roles, clientIP(r, h.cfg), r.UserAgent())
 	if err != nil {
-<<<<<<< HEAD
-=======
 		if h.logger != nil {
 			h.logger.Errorf("auth login session create failed for %s: %v", cred.Username, err)
 		}
->>>>>>> 2adc2fe (v1.0.5)
 		http.Error(w, "server error", http.StatusInternalServerError)
 		return
 	}
@@ -147,23 +130,15 @@ func (h *AuthHandler) Login(w http.ResponseWriter, r *http.Request) {
 	user.LockStage = 0
 	user.LastFailedAt = nil
 	_ = h.users.Update(r.Context(), user, nil)
-<<<<<<< HEAD
-	h.audits.Log(r.Context(), user.Username, "auth.login_success", "")
-=======
 	h.resolveAuthLockoutIncident(r.Context(), user, now)
 	h.audits.Log(r.Context(), user.Username, "auth.login_success", "")
 	cookieSecure := isSecureRequest(r, h.cfg)
->>>>>>> 2adc2fe (v1.0.5)
 	cookie := http.Cookie{
 		Name:     SessionCookieName,
 		Value:    sess.ID,
 		Path:     "/",
 		HttpOnly: true,
-<<<<<<< HEAD
-		Secure:   h.cfg.TLSEnabled,
-=======
 		Secure:   cookieSecure,
->>>>>>> 2adc2fe (v1.0.5)
 		SameSite: http.SameSiteLaxMode,
 		Expires:  sess.ExpiresAt,
 	}
@@ -173,11 +148,7 @@ func (h *AuthHandler) Login(w http.ResponseWriter, r *http.Request) {
 		Value:    sess.CSRFToken,
 		Path:     "/",
 		HttpOnly: false,
-<<<<<<< HEAD
-		Secure:   h.cfg.TLSEnabled,
-=======
 		Secure:   cookieSecure,
->>>>>>> 2adc2fe (v1.0.5)
 		SameSite: http.SameSiteLaxMode,
 		Expires:  sess.ExpiresAt,
 	})
@@ -209,21 +180,14 @@ func (h *AuthHandler) Logout(w http.ResponseWriter, r *http.Request) {
 	if err == nil && cookie.Value != "" {
 		_ = h.sessions.DeleteSession(r.Context(), cookie.Value, actor)
 	}
-<<<<<<< HEAD
-=======
 	cookieSecure := isSecureRequest(r, h.cfg)
->>>>>>> 2adc2fe (v1.0.5)
 	http.SetCookie(w, &http.Cookie{
 		Name:     SessionCookieName,
 		Value:    "",
 		Path:     "/",
 		MaxAge:   -1,
 		HttpOnly: true,
-<<<<<<< HEAD
-		Secure:   h.cfg.TLSEnabled,
-=======
 		Secure:   cookieSecure,
->>>>>>> 2adc2fe (v1.0.5)
 		SameSite: http.SameSiteLaxMode,
 	})
 	http.SetCookie(w, &http.Cookie{
@@ -231,10 +195,7 @@ func (h *AuthHandler) Logout(w http.ResponseWriter, r *http.Request) {
 		Value:    "",
 		Path:     "/",
 		MaxAge:   -1,
-<<<<<<< HEAD
-=======
 		Secure:   cookieSecure,
->>>>>>> 2adc2fe (v1.0.5)
 		SameSite: http.SameSiteLaxMode,
 	})
 	h.audits.Log(r.Context(), actor, "auth.logout", "")
@@ -244,11 +205,7 @@ func (h *AuthHandler) Logout(w http.ResponseWriter, r *http.Request) {
 func (h *AuthHandler) Ping(w http.ResponseWriter, r *http.Request) {
 	sr := r.Context().Value(auth.SessionContextKey).(*store.SessionRecord)
 	now := time.Now().UTC()
-<<<<<<< HEAD
-	_ = h.sessions.UpdateActivity(r.Context(), sr.ID, now, h.cfg.SessionTTL)
-=======
 	_ = h.sessions.UpdateActivity(r.Context(), sr.ID, now, h.cfg.EffectiveSessionTTL())
->>>>>>> 2adc2fe (v1.0.5)
 	writeJSON(w, http.StatusOK, map[string]any{"status": "ok", "last_seen_at": now})
 }
 
@@ -540,18 +497,6 @@ func clientIP(r *http.Request, cfg *config.AppConfig) string {
 		return ip
 	}
 	if xff := strings.TrimSpace(r.Header.Get("X-Forwarded-For")); xff != "" {
-<<<<<<< HEAD
-		parts := strings.Split(xff, ",")
-		for _, part := range parts {
-			candidate := strings.TrimSpace(part)
-			if candidate != "" {
-				return candidate
-			}
-		}
-	}
-	if realIP := strings.TrimSpace(r.Header.Get("X-Real-IP")); realIP != "" {
-		return realIP
-=======
 		if candidate := extractClientIPFromXFF(xff, cfg.Security.TrustedProxies); candidate != "" {
 			return candidate
 		}
@@ -560,13 +505,10 @@ func clientIP(r *http.Request, cfg *config.AppConfig) string {
 		if parsed := net.ParseIP(realIP); parsed != nil {
 			return parsed.String()
 		}
->>>>>>> 2adc2fe (v1.0.5)
 	}
 	return ip
 }
 
-<<<<<<< HEAD
-=======
 func isSecureRequest(r *http.Request, cfg *config.AppConfig) bool {
 	if r == nil {
 		return false
@@ -608,7 +550,6 @@ func extractClientIPFromXFF(xff string, trusted []string) string {
 	return ""
 }
 
->>>>>>> 2adc2fe (v1.0.5)
 func isTrustedProxy(ip string, trusted []string) bool {
 	parsed := net.ParseIP(strings.TrimSpace(ip))
 	if parsed == nil {

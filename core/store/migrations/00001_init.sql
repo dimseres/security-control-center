@@ -257,8 +257,6 @@ CREATE TABLE IF NOT EXISTS approval_participants (
 		FOREIGN KEY(approval_id) REFERENCES approvals(id) ON DELETE CASCADE
 	);
 
-<<<<<<< HEAD
-=======
 CREATE TABLE IF NOT EXISTS doc_export_approvals (
 		id INTEGER PRIMARY KEY AUTOINCREMENT,
 		doc_id INTEGER NOT NULL,
@@ -271,7 +269,6 @@ CREATE TABLE IF NOT EXISTS doc_export_approvals (
 		FOREIGN KEY(doc_id) REFERENCES docs(id) ON DELETE CASCADE
 	);
 
->>>>>>> 2adc2fe (v1.0.5)
 CREATE TABLE IF NOT EXISTS approval_comments (
 		id INTEGER PRIMARY KEY AUTOINCREMENT,
 		approval_id INTEGER NOT NULL,
@@ -446,11 +443,8 @@ CREATE INDEX IF NOT EXISTS idx_doc_versions_doc ON doc_versions(doc_id);
 
 CREATE INDEX IF NOT EXISTS idx_approvals_doc ON approvals(doc_id);
 
-<<<<<<< HEAD
-=======
 CREATE INDEX IF NOT EXISTS idx_doc_export_approvals_doc ON doc_export_approvals(doc_id, requested_by, expires_at);
 
->>>>>>> 2adc2fe (v1.0.5)
 CREATE INDEX IF NOT EXISTS idx_entity_links_doc ON entity_links(doc_id);
 
 CREATE INDEX IF NOT EXISTS idx_incidents_status ON incidents(status);
@@ -670,16 +664,10 @@ CREATE TABLE IF NOT EXISTS monitors (
 		tags_json TEXT NOT NULL DEFAULT '[]',
 		group_id INTEGER,
 		sla_target_pct REAL,
-<<<<<<< HEAD
-		auto_incident INTEGER NOT NULL DEFAULT 0,
-		incident_severity TEXT NOT NULL DEFAULT 'low',
-		incident_type_id TEXT NOT NULL DEFAULT '',
-=======
 	auto_incident INTEGER NOT NULL DEFAULT 0,
 	auto_task_on_down INTEGER NOT NULL DEFAULT 0,
 	incident_severity TEXT NOT NULL DEFAULT 'low',
 	incident_type_id TEXT NOT NULL DEFAULT '',
->>>>>>> 2adc2fe (v1.0.5)
 		created_by INTEGER,
 		created_at TIMESTAMP NOT NULL,
 		updated_at TIMESTAMP NOT NULL
@@ -761,25 +749,6 @@ CREATE TABLE IF NOT EXISTS monitor_maintenance (
 	);
 
 CREATE TABLE IF NOT EXISTS monitoring_settings (
-<<<<<<< HEAD
-		id INTEGER PRIMARY KEY AUTOINCREMENT,
-		retention_days INTEGER NOT NULL DEFAULT 30,
-		max_concurrent_checks INTEGER NOT NULL DEFAULT 10,
-		default_timeout_sec INTEGER NOT NULL DEFAULT 5,
-		default_interval_sec INTEGER NOT NULL DEFAULT 60,
-		engine_enabled INTEGER NOT NULL DEFAULT 1,
-		allow_private_networks INTEGER NOT NULL DEFAULT 1,
-		tls_refresh_hours INTEGER NOT NULL DEFAULT 24,
-		tls_expiring_days INTEGER NOT NULL DEFAULT 30,
-		notify_suppress_minutes INTEGER NOT NULL DEFAULT 5,
-		notify_repeat_down_minutes INTEGER NOT NULL DEFAULT 30,
-		notify_maintenance INTEGER NOT NULL DEFAULT 0,
-		default_retries INTEGER NOT NULL DEFAULT 2,
-		default_retry_interval_sec INTEGER NOT NULL DEFAULT 30,
-		default_sla_target_pct REAL NOT NULL DEFAULT 90,
-		updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
-	);
-=======
 	id INTEGER PRIMARY KEY AUTOINCREMENT,
 	retention_days INTEGER NOT NULL DEFAULT 30,
 	max_concurrent_checks INTEGER NOT NULL DEFAULT 10,
@@ -800,7 +769,6 @@ CREATE TABLE IF NOT EXISTS monitoring_settings (
 	default_sla_target_pct REAL NOT NULL DEFAULT 90,
 	updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
 );
->>>>>>> 2adc2fe (v1.0.5)
 
 CREATE TABLE IF NOT EXISTS notification_channels (
 		id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -809,14 +777,11 @@ CREATE TABLE IF NOT EXISTS notification_channels (
 		telegram_bot_token BLOB NOT NULL,
 		telegram_chat_id TEXT NOT NULL,
 		telegram_thread_id INTEGER,
-<<<<<<< HEAD
-=======
 		template_text TEXT NOT NULL DEFAULT '',
 		quiet_hours_enabled INTEGER NOT NULL DEFAULT 0,
 		quiet_hours_start TEXT NOT NULL DEFAULT '',
 		quiet_hours_end TEXT NOT NULL DEFAULT '',
 		quiet_hours_tz TEXT NOT NULL DEFAULT '',
->>>>>>> 2adc2fe (v1.0.5)
 		silent INTEGER NOT NULL DEFAULT 0,
 		protect_content INTEGER NOT NULL DEFAULT 0,
 		is_default INTEGER NOT NULL DEFAULT 0,
@@ -846,8 +811,6 @@ CREATE TABLE IF NOT EXISTS monitor_notification_state (
 		FOREIGN KEY(monitor_id) REFERENCES monitors(id) ON DELETE CASCADE
 	);
 
-<<<<<<< HEAD
-=======
 CREATE TABLE IF NOT EXISTS monitor_notification_deliveries (
 		id INTEGER PRIMARY KEY AUTOINCREMENT,
 		monitor_id INTEGER,
@@ -863,7 +826,6 @@ CREATE TABLE IF NOT EXISTS monitor_notification_deliveries (
 		FOREIGN KEY(notification_channel_id) REFERENCES notification_channels(id) ON DELETE CASCADE
 	);
 
->>>>>>> 2adc2fe (v1.0.5)
 CREATE TABLE IF NOT EXISTS app_https_settings (
 		id INTEGER PRIMARY KEY AUTOINCREMENT,
 		mode TEXT NOT NULL DEFAULT 'disabled',
@@ -896,13 +858,10 @@ CREATE INDEX IF NOT EXISTS idx_notification_channels_default ON notification_cha
 
 CREATE INDEX IF NOT EXISTS idx_monitor_notifications_monitor ON monitor_notifications(monitor_id);
 
-<<<<<<< HEAD
-=======
 CREATE INDEX IF NOT EXISTS idx_monitor_notification_deliveries_created ON monitor_notification_deliveries(created_at);
 
 CREATE INDEX IF NOT EXISTS idx_monitor_notification_deliveries_status ON monitor_notification_deliveries(status, acknowledged_at);
 
->>>>>>> 2adc2fe (v1.0.5)
 CREATE TABLE IF NOT EXISTS task_boards (
 		id INTEGER PRIMARY KEY AUTOINCREMENT,
 		organization_id TEXT NOT NULL DEFAULT '',

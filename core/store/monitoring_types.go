@@ -26,10 +26,7 @@ type Monitor struct {
 	GroupID           *int64            `json:"group_id,omitempty"`
 	SLATargetPct      *float64          `json:"sla_target_pct,omitempty"`
 	AutoIncident      bool              `json:"auto_incident"`
-<<<<<<< HEAD
-=======
 	AutoTaskOnDown    bool              `json:"auto_task_on_down"`
->>>>>>> 2adc2fe (v1.0.5)
 	IncidentSeverity  string            `json:"incident_severity,omitempty"`
 	IncidentTypeID    string            `json:"incident_type_id,omitempty"`
 	CreatedBy         int64             `json:"created_by"`
@@ -165,12 +162,9 @@ type MonitorSettings struct {
 	NotifySuppressMinutes   int       `json:"notify_suppress_minutes"`
 	NotifyRepeatDownMinutes int       `json:"notify_repeat_down_minutes"`
 	NotifyMaintenance       bool      `json:"notify_maintenance"`
-<<<<<<< HEAD
-=======
 	AutoTaskOnDown          bool      `json:"auto_task_on_down"`
 	AutoTLSIncident         bool      `json:"auto_tls_incident"`
 	AutoTLSIncidentDays     int       `json:"auto_tls_incident_days"`
->>>>>>> 2adc2fe (v1.0.5)
 	DefaultRetries          int       `json:"default_retries"`
 	DefaultRetryIntervalSec int       `json:"default_retry_interval_sec"`
 	DefaultSLATargetPct     float64   `json:"default_sla_target_pct"`
@@ -210,14 +204,11 @@ type NotificationChannel struct {
 	TelegramBotTokenEnc []byte    `json:"-"`
 	TelegramChatID      string    `json:"telegram_chat_id"`
 	TelegramThreadID    *int64    `json:"telegram_thread_id,omitempty"`
-<<<<<<< HEAD
-=======
 	TemplateText        string    `json:"template_text"`
 	QuietHoursEnabled   bool      `json:"quiet_hours_enabled"`
 	QuietHoursStart     string    `json:"quiet_hours_start"`
 	QuietHoursEnd       string    `json:"quiet_hours_end"`
 	QuietHoursTZ        string    `json:"quiet_hours_tz"`
->>>>>>> 2adc2fe (v1.0.5)
 	Silent              bool      `json:"silent"`
 	ProtectContent      bool      `json:"protect_content"`
 	IsDefault           bool      `json:"is_default"`
@@ -226,8 +217,6 @@ type NotificationChannel struct {
 	IsActive            bool      `json:"is_active"`
 }
 
-<<<<<<< HEAD
-=======
 type MonitorNotificationDelivery struct {
 	ID                    int64      `json:"id"`
 	MonitorID             *int64     `json:"monitor_id,omitempty"`
@@ -241,7 +230,6 @@ type MonitorNotificationDelivery struct {
 	AcknowledgedBy        *int64     `json:"acknowledged_by,omitempty"`
 }
 
->>>>>>> 2adc2fe (v1.0.5)
 type MonitorNotification struct {
 	ID                    int64 `json:"id"`
 	MonitorID             int64 `json:"monitor_id"`

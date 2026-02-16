@@ -14,10 +14,7 @@ const DocEditor = (() => {
   let pendingDocxMode = null;
   let saveInFlight = false;
   let currentDocVersion = 0;
-<<<<<<< HEAD
-=======
   let lastSecurityEventAt = 0;
->>>>>>> 2adc2fe (v1.0.5)
 
   function isEditableFormat(format) {
     return EDITABLE_FORMATS.has((format || '').toLowerCase());
@@ -146,10 +143,7 @@ const DocEditor = (() => {
     if (els.reason) els.reason.value = '';
     try {
       meta = await Api.get(`/api/docs/${docId}`);
-<<<<<<< HEAD
-=======
       bindSecurityGuards();
->>>>>>> 2adc2fe (v1.0.5)
       let cont;
       try {
         cont = await Api.get(`/api/docs/${docId}/content?audit=0`);
@@ -693,8 +687,6 @@ const DocEditor = (() => {
     }
   }
 
-<<<<<<< HEAD
-=======
   function isProtectedDoc() {
     if (!meta) return false;
     const level = Number(meta.classification_level || 0);
@@ -760,7 +752,6 @@ const DocEditor = (() => {
     }
   }
 
->>>>>>> 2adc2fe (v1.0.5)
   function applyMode() {
     if (!els.panel) return;
     const editable = canEditFormat(currentFormat);

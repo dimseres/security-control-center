@@ -77,14 +77,11 @@ func (s *monitoringStore) CreateMaintenance(ctx context.Context, m *MonitorMaint
 		return 0, err
 	}
 	id, _ := res.LastInsertId()
-<<<<<<< HEAD
-=======
 	if m != nil {
 		m.ID = id
 		m.CreatedAt = now
 		m.UpdatedAt = now
 	}
->>>>>>> 2adc2fe (v1.0.5)
 	return id, nil
 }
 

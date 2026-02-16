@@ -21,11 +21,8 @@
   "reports.tabs.templates": "Шаблоны",
   "reports.tabs.settings": "Настройки",
   "reports.new": "Новый отчет",
-<<<<<<< HEAD
-=======
   "reports.auditPackage.action": "Скачать пакет аудита",
   "reports.auditPackage.formatPrompt": "Выберите формат пакета (md/pdf/docx/json)",
->>>>>>> 2adc2fe (v1.0.5)
   "reports.searchPlaceholder": "Поиск отчетов",
   "reports.filter.status": "Статус",
   "reports.filter.classification": "Гриф",
@@ -441,10 +438,7 @@
   "settings.tabs.general": "Основные",
   "settings.tabs.advanced": "Дополнительные",
   "settings.tabs.https": "HTTPS",
-<<<<<<< HEAD
-=======
   "settings.tabs.hardening": "Укрепление безопасности",
->>>>>>> 2adc2fe (v1.0.5)
   "settings.tabs.tags": "Теги",
   "settings.tabs.classifications": "Грифы",
   "settings.tabs.incidents": "Инциденты",
@@ -460,8 +454,6 @@
   "settings.about.description": "Security Control Center — автономный центр для работы с документами и инцидентами. Включает RBAC и объектные ACL, контроль допуска, шифрованное хранение, версии, согласования, аудит и безопасный экспорт для регулируемых сред.",
   "settings.about.projectLink": "GitHub проекта",
   "settings.about.profileLink": "GitHub BerkutSolutions",
-<<<<<<< HEAD
-=======
   "settings.hardening.title": "Базовый аудит безопасности",
   "settings.hardening.hint": "Проверка zero-trust и hardening",
   "settings.hardening.score": "Итоговый балл",
@@ -501,7 +493,6 @@
   "settings.hardening.check.password.ok": "Базовые параметры паролей настроены.",
   "settings.hardening.check.password.warn": "Проверьте настройки парольной политики.",
   "settings.hardening.check.password.fail": "Минимальные параметры парольной политики не выполнены.",
->>>>>>> 2adc2fe (v1.0.5)
   "settings.tags.title": "Теги",
   "settings.tags.subtitle": "Добавляйте и управляйте тегами для документов и инцидентов",
   "settings.tags.placeholder": "Новый тег",
@@ -587,10 +578,7 @@
   "common.cancel": "Отмена",
   "common.confirm": "Подтвердить",
   "common.error": "Ошибка",
-<<<<<<< HEAD
-=======
   "common.empty": "Пусто",
->>>>>>> 2adc2fe (v1.0.5)
   "common.errors": "Ошибки",
   "common.badRequest": "Некорректный запрос",
   "common.serverError": "Ошибка сервера",
@@ -695,10 +683,7 @@
   "docs.menu.versions": "Версии",
   "docs.menu.approval": "Отправить на согласование",
   "docs.menu.export": "Экспорт",
-<<<<<<< HEAD
-=======
   "docs.menu.exportApprove": "Согласовать экспорт",
->>>>>>> 2adc2fe (v1.0.5)
   "docs.menu.open": "Открыть",
   "docs.menu.newFolder": "Создать папку",
   "docs.menu.newDoc": "Создать документ",
@@ -760,8 +745,6 @@
   "docs.aclEmpty": "Права не заданы",
   "docs.deleteConfirm": "Удалить этот документ?",
   "docs.exportPrompt": "Формат экспорта (md/pdf/docx/txt)?",
-<<<<<<< HEAD
-=======
   "docs.exportApprovalRequired": "Для экспорта требуется согласование другим сотрудником.",
   "docs.exportApproveRequesterPrompt": "Введите логин сотрудника-запросившего экспорт",
   "docs.exportApproveReasonPrompt": "Причина согласования",
@@ -769,7 +752,6 @@
   "docs.export.requesterRequired": "Не указан пользователь-запросивший",
   "docs.export.selfApprovalForbidden": "Нельзя согласовать экспорт самому себе",
   "docs.security.invalidEvent": "Некорректное событие безопасности",
->>>>>>> 2adc2fe (v1.0.5)
   "editor.subtitle": "Встроенный редактор Markdown",
   "editor.edit": "Редактировать",
   "editor.view": "Просмотр",
@@ -968,11 +950,8 @@
   "incidents.form.sla": "Требуемое время реакции",
   "incidents.form.slaDefault": "2 часа",
   "incidents.form.slaDeadline": "Крайний срок первичного ответа",
-<<<<<<< HEAD
-=======
   "incidents.form.resolveDeadline": "Срок устранения",
   "incidents.form.slaState": "Состояние SLA",
->>>>>>> 2adc2fe (v1.0.5)
   "incidents.form.assets": "Затронутые активы",
   "incidents.form.assetsPlaceholder": "Например: CRM, AD, файловые сервера",
   "incidents.form.tags": "Теги",
@@ -983,11 +962,8 @@
   "incidents.form.risks": "Есть ли риск утечки/простоя",
   "incidents.form.riskPlaceholder": "Опишите возможный ущерб или влияние на бизнес",
   "incidents.form.actions": "Что предпринято",
-<<<<<<< HEAD
-=======
   "incidents.form.postmortem": "Постмортем",
   "incidents.form.postmortemSave": "Сохранить постмортем",
->>>>>>> 2adc2fe (v1.0.5)
   "incidents.form.save": "Сохранить",
   "incidents.form.cancel": "Отмена",
   "incidents.form.nameRequired": "Укажите название инцидента",
@@ -1010,15 +986,12 @@
   "incidents.close.missingClosure": "Требуется этап закрытия",
   "incidents.close.stageNotDone": "Стадия закрытия должна быть завершена",
   "incidents.close.noDecisions": "Добавьте хотя бы одно решение на этап закрытия",
-<<<<<<< HEAD
-=======
   "incidents.postmortemRequired": "Для high/critical инцидентов постмортем обязателен",
   "incidents.postmortemSaveFailed": "Не удалось сохранить постмортем",
   "incidents.sla.firstResponseLate": "Просрочен первый ответ",
   "incidents.sla.firstResponseOk": "Первый ответ в SLA",
   "incidents.sla.resolveLate": "Просрочено устранение",
   "incidents.sla.resolveOk": "Устранение в SLA",
->>>>>>> 2adc2fe (v1.0.5)
   "incidents.closeFailed": "Не удалось закрыть инцидент",
   "incidents.accessDeniedTitle": "Нет доступа / Не найдено",
   "incidents.accessDeniedBody": "Запрошенный инцидент недоступен или не найден.",
@@ -1081,11 +1054,7 @@
   "incidents.stage.blocks.decisions.selected": "Выбранный вариант",
   "incidents.stage.blocks.decisions.selectedPlaceholder": "Выбранный путь / опция",
   "incidents.stage.blocks.decisions.options": "Варианты",
-<<<<<<< HEAD
-  "incidents.stage.blocks.decisions.optionsHint": "",
-=======
   "incidents.stage.blocks.decisions.optionsHint": "Введите варианты через запятую",
->>>>>>> 2adc2fe (v1.0.5)
   "incidents.stage.blocks.decisions.optionPlaceholder": "Описание варианта",
   "incidents.stage.blocks.decisions.addOption": "Добавить вариант",
   "incidents.stage.blocks.decisions.placeholder": "Кратко о решении",
@@ -1194,11 +1163,7 @@
   "incidents.aclInvalid": "Неверные правила доступа",
   "logs.title": "Логи",
   "logs.subtitle": "Журнал событий системы",
-<<<<<<< HEAD
-  "logs.placeholder": "",
-=======
   "logs.placeholder": "Поиск по действию, пользователю или деталям",
->>>>>>> 2adc2fe (v1.0.5)
   "logs.table.time": "Время",
   "logs.table.user": "Пользователь",
   "logs.table.action": "Действие",
@@ -1213,13 +1178,10 @@
   "logs.filter.from": "С",
   "logs.filter.to": "По",
   "logs.filter.reset": "Сбросить",
-<<<<<<< HEAD
-=======
   "logs.views.save": "Сохранить вид",
   "logs.views.placeholder": "Сохраненные виды",
   "logs.views.prompt": "Введите название вида",
   "logs.export": "Экспорт CSV",
->>>>>>> 2adc2fe (v1.0.5)
   "logs.section.docs": "Документы",
   "logs.section.folders": "Папки",
   "logs.section.approvals": "Согласование",
@@ -1867,10 +1829,6 @@
   "monitoring.notifications.testFailed": "Ошибка тестового уведомления",
   "monitoring.notifications.testSuccess": "Тестовое уведомление отправлено",
   "monitoring.notifications.channelRequired": "Канал уведомлений не настроен",
-<<<<<<< HEAD
-  "monitoring.certs.notifyNoMonitors": "Выберите хотя бы один HTTPS монитор для теста",
-  "monitoring.incidents.autoCreate": "Создавать инциденты автоматически",
-=======
   "monitoring.notifications.template": "Шаблон",
   "monitoring.notifications.templatePlaceholder": "Используйте {message} для подстановки текста события",
   "monitoring.notifications.quietEnabled": "Тихие часы",
@@ -1891,7 +1849,6 @@
   "monitoring.certs.notifyNoMonitors": "Выберите хотя бы один HTTPS монитор для теста",
   "monitoring.incidents.autoCreate": "Создание инцидентов при недоступности",
   "monitoring.tasks.autoCreate": "Создание задач при недоступности",
->>>>>>> 2adc2fe (v1.0.5)
   "monitoring.incidents.severity": "Серьезность",
   "monitoring.incidents.type": "Тип инцидента",
   "monitoring.incidents.typeEmpty": "Не выбрано",
@@ -2074,12 +2031,9 @@
   "monitoring.settings.notifySuppress": "Подавление уведомлений (минуты)",
   "monitoring.settings.notifyRepeatDown": "Повтор DOWN через (минуты)",
   "monitoring.settings.notifyMaintenance": "Уведомлять о обслуживании",
-<<<<<<< HEAD
-=======
   "monitoring.settings.autoTaskOnDown": "Автоматизация: создавать задачу при недоступности монитора",
   "monitoring.settings.autoTLSIncident": "Автоматизация: создавать инцидент при истечении TLS",
   "monitoring.settings.autoTLSIncidentDays": "Порог TLS-сертификата (дни)",
->>>>>>> 2adc2fe (v1.0.5)
   "monitoring.settings.saved": "Настройки мониторинга сохранены",
   "monitoring.certs.title": "Сертификаты",
   "monitoring.certs.subtitle": "Сроки действия TLS для HTTPS мониторов",
@@ -2270,8 +2224,6 @@
   "backups.overview.lastSuccessful": "Последний успешный бэкап",
   "backups.overview.lastRun": "Последний запуск",
   "backups.overview.newBackupOptions": "Параметры нового бэкапа",
-<<<<<<< HEAD
-=======
   "backups.integrity.title": "Проверка целостности бэкапов",
   "backups.integrity.status": "Статус",
   "backups.integrity.lastTest": "Последний тест восстановления",
@@ -2285,7 +2237,6 @@
   "backups.integrity.restoreTestMissing": "Тест восстановления еще не выполнялся",
   "backups.integrity.restoreTestFailed": "Последний тест восстановления завершился ошибкой",
   "backups.integrity.restoreTestStale": "Тест восстановления устарел",
->>>>>>> 2adc2fe (v1.0.5)
   "backups.create.fields.label": "Название бэкапа",
   "backups.create.fields.labelPlaceholder": "Месячный снимок",
   "backups.create.fields.includeFiles": "Включать файлы в бэкап",

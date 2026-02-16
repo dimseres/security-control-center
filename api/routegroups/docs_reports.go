@@ -24,11 +24,8 @@ func RegisterDocs(apiRouter chi.Router, g Guards, docs *handlers.DocsHandler, in
 		docsRouter.MethodFunc("GET", "/{id:[0-9]+}/versions/{ver:[0-9]+}/content", g.SessionPerm("docs.versions.view", docs.GetVersionContent))
 		docsRouter.MethodFunc("POST", "/{id:[0-9]+}/versions/{ver:[0-9]+}/restore", g.SessionPerm("docs.versions.restore", docs.RestoreVersion))
 		docsRouter.MethodFunc("GET", "/{id:[0-9]+}/export", g.SessionPerm("docs.export", docs.Export))
-<<<<<<< HEAD
-=======
 		docsRouter.MethodFunc("POST", "/{id:[0-9]+}/export-approve", g.SessionPerm("docs.export", docs.ApproveExport))
 		docsRouter.MethodFunc("POST", "/{id:[0-9]+}/security-events", g.SessionPerm("docs.view", docs.LogSecurityEvent))
->>>>>>> 2adc2fe (v1.0.5)
 		docsRouter.MethodFunc("GET", "/{id:[0-9]+}/acl", g.SessionPerm("docs.manage", docs.GetACL))
 		docsRouter.MethodFunc("PUT", "/{id:[0-9]+}/acl", g.SessionPerm("docs.manage", docs.UpdateACL))
 		docsRouter.MethodFunc("POST", "/{id:[0-9]+}/classification", g.SessionPerm("docs.classification.set", docs.UpdateClassification))
@@ -52,10 +49,7 @@ func RegisterReports(apiRouter chi.Router, g Guards, reports *handlers.ReportsHa
 	apiRouter.Route("/reports", func(reportsRouter chi.Router) {
 		reportsRouter.MethodFunc("GET", "/", g.SessionPerm("reports.view", reports.List))
 		reportsRouter.MethodFunc("GET", "/export", g.SessionPerm("reports.export", reports.ExportBundle))
-<<<<<<< HEAD
-=======
 		reportsRouter.MethodFunc("GET", "/audit-package", g.SessionPerm("reports.export", reports.ExportAuditPackage))
->>>>>>> 2adc2fe (v1.0.5)
 		reportsRouter.MethodFunc("POST", "/", g.SessionPerm("reports.create", reports.Create))
 		reportsRouter.MethodFunc("GET", "/{id:[0-9]+}", g.SessionPerm("reports.view", reports.Get))
 		reportsRouter.MethodFunc("PUT", "/{id:[0-9]+}", g.SessionPerm("reports.edit", reports.UpdateMeta))

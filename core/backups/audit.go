@@ -28,10 +28,7 @@ const (
 	AuditStartRestore      = "backups.restore.start"
 	AuditRestoreRequested  = "backups.restore.requested"
 	AuditRestoreDryRun     = "backups.restore.dry_run.requested"
-<<<<<<< HEAD
-=======
 	AuditRestoreDryRunAuto = "backups.restore.dry_run.auto"
->>>>>>> 2adc2fe (v1.0.5)
 	AuditRestoreSuccess    = "backups.restore.success"
 	AuditRestoreFailed     = "backups.restore.failed"
 	AuditMaintenanceEnter  = "backups.maintenance.enter"

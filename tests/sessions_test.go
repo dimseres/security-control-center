@@ -42,18 +42,11 @@ func setupSessionEnv(t *testing.T) (store.SessionStore, store.UsersStore, *handl
 	roles := store.NewRolesStore(db)
 	groups := store.NewGroupsStore(db)
 	audits := store.NewAuditStore(db)
-<<<<<<< HEAD
-	policy := rbac.NewPolicy([]rbac.Role{{Name: "admin", Permissions: []rbac.Permission{"accounts.manage"}}})
-	sm := auth.NewSessionManager(sessions, cfg, logger)
-	acc := handlers.NewAccountsHandler(users, groups, roles, sessions, policy, sm, cfg, audits, logger, nil)
-	authHandler := handlers.NewAuthHandler(cfg, users, sessions, sm, policy, audits, logger)
-=======
 	incidents := store.NewIncidentsStore(db)
 	policy := rbac.NewPolicy([]rbac.Role{{Name: "admin", Permissions: []rbac.Permission{"accounts.manage"}}})
 	sm := auth.NewSessionManager(sessions, cfg, logger)
 	acc := handlers.NewAccountsHandler(users, groups, roles, sessions, policy, sm, cfg, audits, logger, nil)
 	authHandler := handlers.NewAuthHandler(cfg, users, sessions, incidents, sm, policy, audits, logger)
->>>>>>> 2adc2fe (v1.0.5)
 	cleanup := func() { db.Close() }
 	return sessions, users, acc, authHandler, cfg, db, roles, groups, logger, cleanup
 }

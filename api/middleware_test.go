@@ -2,18 +2,12 @@ package api
 
 import (
 	"context"
-<<<<<<< HEAD
-=======
 	"crypto/tls"
->>>>>>> 2adc2fe (v1.0.5)
 	"net/http"
 	"net/http/httptest"
 	"testing"
 
-<<<<<<< HEAD
-=======
 	"berkut-scc/config"
->>>>>>> 2adc2fe (v1.0.5)
 	"berkut-scc/core/auth"
 	"berkut-scc/core/rbac"
 	"berkut-scc/core/store"
@@ -35,8 +29,6 @@ func TestRequirePermissionDeniesMissingPermission(t *testing.T) {
 		t.Fatalf("expected forbidden, got %d", rr.Code)
 	}
 }
-<<<<<<< HEAD
-=======
 
 func TestIsHTTPSRequestWithTLS(t *testing.T) {
 	req := httptest.NewRequest(http.MethodGet, "/login", nil)
@@ -167,4 +159,3 @@ func TestSecurityHeadersSkipHSTSForUntrustedProxy(t *testing.T) {
 		t.Fatalf("expected no HSTS header for untrusted proxy source")
 	}
 }
->>>>>>> 2adc2fe (v1.0.5)

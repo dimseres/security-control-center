@@ -4320,14 +4320,11 @@ body.auth-locked #main-screen {
     word-break: break-word;
   }
 
-<<<<<<< HEAD
-=======
   #docs-page #doc-editor.docs-privacy-shield {
     filter: blur(2px);
     transition: filter 0.2s ease;
   }
 
->>>>>>> 2adc2fe (v1.0.5)
   .editor-actions input {
     background: rgba(10, 14, 24, 0.8);
     border: 1px solid rgba(125, 155, 255, 0.35);
@@ -5350,8 +5347,6 @@ body.auth-locked #main-screen {
   flex-wrap: wrap;
 }
 
-<<<<<<< HEAD
-=======
 #backups-page .backups-actions-spaced {
   margin-top: 10px;
 }
@@ -5364,7 +5359,6 @@ body.auth-locked #main-screen {
   margin-top: 10px;
 }
 
->>>>>>> 2adc2fe (v1.0.5)
 #backups-page .steps-list {
   list-style: none;
   padding: 0;
@@ -7231,12 +7225,6 @@ body.auth-locked #main-screen {
     max-width: 420px;
   }
 
-<<<<<<< HEAD
-  #incidents-page .confirm-modal .confirm-message {
-    margin: 12px 0;
-    line-height: 1.4;
-  }
-=======
 #incidents-page .confirm-modal .confirm-message {
   margin: 12px 0;
   line-height: 1.4;
@@ -7256,7 +7244,6 @@ body.auth-locked #main-screen {
   background: linear-gradient(180deg, #d44343 0%, #b73232 100%);
   border-color: #a92b2b;
 }
->>>>>>> 2adc2fe (v1.0.5)
 
   @media (max-width: 900px) {
     #incidents-page .incident-meta .meta-field.wide {

@@ -20,11 +20,8 @@
     els.notifySuppress = document.getElementById('monitoring-notify-suppress');
     els.notifyRepeat = document.getElementById('monitoring-notify-repeat');
     els.notifyMaintenance = document.getElementById('monitoring-notify-maintenance');
-<<<<<<< HEAD
-=======
     els.autoTLSIncident = document.getElementById('monitoring-auto-tls-incident');
     els.autoTLSIncidentDays = document.getElementById('monitoring-auto-tls-incident-days');
->>>>>>> 2adc2fe (v1.0.5)
 
     if (!MonitoringPage.hasPermission('monitoring.settings.manage')) {
       const card = els.form?.closest('.card');
@@ -67,11 +64,8 @@
     if (els.notifySuppress) els.notifySuppress.value = settings.notify_suppress_minutes || 5;
     if (els.notifyRepeat) els.notifyRepeat.value = settings.notify_repeat_down_minutes || 30;
     if (els.notifyMaintenance) els.notifyMaintenance.checked = !!settings.notify_maintenance;
-<<<<<<< HEAD
-=======
     if (els.autoTLSIncident) els.autoTLSIncident.checked = !!settings.auto_tls_incident;
     if (els.autoTLSIncidentDays) els.autoTLSIncidentDays.value = settings.auto_tls_incident_days || 14;
->>>>>>> 2adc2fe (v1.0.5)
   }
 
   async function saveSettings() {
@@ -92,11 +86,8 @@
       notify_suppress_minutes: parseInt(els.notifySuppress.value, 10) || 0,
       notify_repeat_down_minutes: parseInt(els.notifyRepeat.value, 10) || 0,
       notify_maintenance: !!els.notifyMaintenance.checked,
-<<<<<<< HEAD
-=======
       auto_tls_incident: !!els.autoTLSIncident?.checked,
       auto_tls_incident_days: parseInt(els.autoTLSIncidentDays?.value, 10) || 0,
->>>>>>> 2adc2fe (v1.0.5)
     };
     try {
       const res = await Api.put('/api/monitoring/settings', payload);

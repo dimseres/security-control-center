@@ -14,11 +14,8 @@ import (
 	"berkut-scc/core/monitoring"
 	"berkut-scc/core/store"
 	"berkut-scc/core/utils"
-<<<<<<< HEAD
-=======
 	"berkut-scc/tasks"
 	taskstore "berkut-scc/tasks/store"
->>>>>>> 2adc2fe (v1.0.5)
 )
 
 type mockTelegramSender struct {
@@ -30,11 +27,7 @@ func (m *mockTelegramSender) Send(ctx context.Context, msg monitoring.TelegramMe
 	return nil
 }
 
-<<<<<<< HEAD
-func setupMonitoringDeps(t *testing.T) (store.MonitoringStore, store.IncidentsStore, *utils.Encryptor, func()) {
-=======
 func setupMonitoringDeps(t *testing.T) (store.MonitoringStore, store.IncidentsStore, tasks.Store, *utils.Encryptor, func()) {
->>>>>>> 2adc2fe (v1.0.5)
 	t.Helper()
 	dir := t.TempDir()
 	cfg := &config.AppConfig{DBPath: filepath.Join(dir, "monitoring_notify.db")}
@@ -51,11 +44,7 @@ func setupMonitoringDeps(t *testing.T) (store.MonitoringStore, store.IncidentsSt
 	if err != nil {
 		t.Fatalf("encryptor: %v", err)
 	}
-<<<<<<< HEAD
-	return store.NewMonitoringStore(db), store.NewIncidentsStore(db), enc, func() { db.Close() }
-=======
 	return store.NewMonitoringStore(db), store.NewIncidentsStore(db), taskstore.NewStore(db), enc, func() { db.Close() }
->>>>>>> 2adc2fe (v1.0.5)
 }
 
 func addTelegramChannel(t *testing.T, ms store.MonitoringStore, enc *utils.Encryptor) int64 {
@@ -82,10 +71,6 @@ func addTelegramChannel(t *testing.T, ms store.MonitoringStore, enc *utils.Encry
 	return id
 }
 
-<<<<<<< HEAD
-func TestMonitoringTelegramDownUp(t *testing.T) {
-	ms, is, enc, cleanup := setupMonitoringDeps(t)
-=======
 func createTaskDestination(t *testing.T, ts tasks.Store) (int64, int64) {
 	t.Helper()
 	createdBy := int64(1)
@@ -126,7 +111,6 @@ func createTaskDestination(t *testing.T, ts tasks.Store) (int64, int64) {
 
 func TestMonitoringTelegramDownUp(t *testing.T) {
 	ms, is, _, enc, cleanup := setupMonitoringDeps(t)
->>>>>>> 2adc2fe (v1.0.5)
 	defer cleanup()
 	settings, _ := ms.GetSettings(context.Background())
 	settings.AllowPrivateNetworks = true
@@ -178,11 +162,7 @@ func TestMonitoringTelegramDownUp(t *testing.T) {
 }
 
 func TestMonitoringSuppression(t *testing.T) {
-<<<<<<< HEAD
-	ms, is, enc, cleanup := setupMonitoringDeps(t)
-=======
 	ms, is, _, enc, cleanup := setupMonitoringDeps(t)
->>>>>>> 2adc2fe (v1.0.5)
 	defer cleanup()
 	settings, _ := ms.GetSettings(context.Background())
 	settings.AllowPrivateNetworks = true
@@ -228,11 +208,7 @@ func TestMonitoringSuppression(t *testing.T) {
 }
 
 func TestMonitoringAutoIncidentCreateAndClose(t *testing.T) {
-<<<<<<< HEAD
-	ms, is, enc, cleanup := setupMonitoringDeps(t)
-=======
 	ms, is, _, enc, cleanup := setupMonitoringDeps(t)
->>>>>>> 2adc2fe (v1.0.5)
 	defer cleanup()
 	settings, _ := ms.GetSettings(context.Background())
 	settings.AllowPrivateNetworks = true
@@ -292,11 +268,7 @@ func TestMonitoringAutoIncidentCreateAndClose(t *testing.T) {
 }
 
 func TestMonitoringMaintenanceSuppression(t *testing.T) {
-<<<<<<< HEAD
-	ms, is, enc, cleanup := setupMonitoringDeps(t)
-=======
 	ms, is, _, enc, cleanup := setupMonitoringDeps(t)
->>>>>>> 2adc2fe (v1.0.5)
 	defer cleanup()
 	settings, _ := ms.GetSettings(context.Background())
 	settings.AllowPrivateNetworks = true
@@ -351,8 +323,6 @@ func TestMonitoringMaintenanceSuppression(t *testing.T) {
 	}
 }
 
-<<<<<<< HEAD
-=======
 func TestMonitoringAutoTaskOnDown(t *testing.T) {
 	ms, is, ts, enc, cleanup := setupMonitoringDeps(t)
 	defer cleanup()
@@ -484,7 +454,6 @@ func TestMonitoringAutoTLSIncidentBySettings(t *testing.T) {
 	}
 }
 
->>>>>>> 2adc2fe (v1.0.5)
 func containsText(haystack, needle string) bool {
 	return needle != "" && strings.Contains(haystack, needle)
 }

@@ -88,16 +88,11 @@ func setupTasksEnv(t *testing.T) *taskEnv {
 	analyst.ID = analystID
 
 	board := &tasks.Board{
-<<<<<<< HEAD
-=======
 		SpaceID:   1,
->>>>>>> 2adc2fe (v1.0.5)
 		Name:      "Board",
 		IsActive:  true,
 		CreatedBy: &admin.ID,
 	}
-<<<<<<< HEAD
-=======
 	space := &tasks.Space{
 		Name:      "Default space",
 		IsActive:  true,
@@ -108,7 +103,6 @@ func setupTasksEnv(t *testing.T) *taskEnv {
 		t.Fatalf("space create: %v", err)
 	}
 	board.SpaceID = spaceID
->>>>>>> 2adc2fe (v1.0.5)
 	acl := []tasks.ACLRule{
 		{SubjectType: "user", SubjectID: admin.Username, Permission: "manage"},
 		{SubjectType: "user", SubjectID: analyst.Username, Permission: "manage"},

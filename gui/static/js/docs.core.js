@@ -243,10 +243,7 @@ const DocsPage = (() => {
   async function init() {
     const page = document.getElementById('docs-page');
     if (!page) return;
-<<<<<<< HEAD
-=======
     const initialRoute = parseDocsRoute();
->>>>>>> 2adc2fe (v1.0.5)
     const dir = (typeof window !== 'undefined' && window.UserDirectory)
       ? window.UserDirectory
       : (typeof UserDirectory !== 'undefined' ? UserDirectory : null);
@@ -296,16 +293,9 @@ const DocsPage = (() => {
         window.__pendingDocOpen = null;
       }
     }
-<<<<<<< HEAD
-    const route = parseDocsRoute();
-    if (route?.docId) {
-      if (DocsPage.openDocTab) {
-        DocsPage.openDocTab(route.docId, route.mode === 'edit' ? 'edit' : 'view');
-=======
     if (initialRoute?.docId) {
       if (DocsPage.openDocTab) {
         DocsPage.openDocTab(initialRoute.docId, initialRoute.mode === 'edit' ? 'edit' : 'view');
->>>>>>> 2adc2fe (v1.0.5)
       }
     }
   }

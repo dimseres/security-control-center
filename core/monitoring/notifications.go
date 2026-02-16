@@ -1,8 +1,4 @@
-<<<<<<< HEAD
-﻿package monitoring
-=======
 package monitoring
->>>>>>> 2adc2fe (v1.0.5)
 
 import (
 	"bytes"
@@ -11,10 +7,7 @@ import (
 	"errors"
 	"fmt"
 	"net/http"
-<<<<<<< HEAD
-=======
 	"strconv"
->>>>>>> 2adc2fe (v1.0.5)
 	"strings"
 	"time"
 
@@ -51,17 +44,10 @@ func (s *HTTPTelegramSender) Send(ctx context.Context, msg TelegramMessage) erro
 		return errors.New("telegram token or chat id missing")
 	}
 	body := map[string]any{
-<<<<<<< HEAD
-		"chat_id":          msg.ChatID,
-		"text":             msg.Text,
-		"disable_notification": msg.Silent,
-		"protect_content":  msg.ProtectContent,
-=======
 		"chat_id":              msg.ChatID,
 		"text":                 msg.Text,
 		"disable_notification": msg.Silent,
 		"protect_content":      msg.ProtectContent,
->>>>>>> 2adc2fe (v1.0.5)
 	}
 	if msg.ThreadID != nil {
 		body["message_thread_id"] = *msg.ThreadID
@@ -108,17 +94,6 @@ func (e *Engine) TestTLSNotification(ctx context.Context, monitorID int64) error
 	}
 	now := time.Now().UTC()
 	tlsRecord := &store.MonitorTLS{
-<<<<<<< HEAD
-		MonitorID: mon.ID,
-		CheckedAt: now,
-		NotBefore: now.Add(-24 * time.Hour),
-		NotAfter:  now.Add(30 * 24 * time.Hour),
-		CommonName: strings.TrimSpace(mon.Name),
-		Issuer:    "Test CA",
-	}
-	msg := buildNotificationMessage("tls_expiring", "ru", *mon, CheckResult{}, tlsRecord, now, false)
-	if !e.dispatchNotification(ctx, channels, msg) {
-=======
 		MonitorID:  mon.ID,
 		CheckedAt:  now,
 		NotBefore:  now.Add(-24 * time.Hour),
@@ -128,7 +103,6 @@ func (e *Engine) TestTLSNotification(ctx context.Context, monitorID int64) error
 	}
 	msg := buildNotificationMessage("tls_expiring", "ru", *mon, CheckResult{}, tlsRecord, now, false)
 	if !e.dispatchNotification(ctx, channels, msg, "tls_expiring", &mon.ID) {
->>>>>>> 2adc2fe (v1.0.5)
 		return errors.New("monitoring.notifications.testFailed")
 	}
 	return nil
@@ -162,11 +136,8 @@ func (e *Engine) handleAutomation(ctx context.Context, m store.Monitor, prev, ne
 		st.DownSequence = 0
 	}
 	e.handleNotifications(ctx, m, prev, next, rawStatus, now, st, tlsRecord, result, settings)
-<<<<<<< HEAD
-=======
 	e.handleAutoTaskOnDown(ctx, m, prev, next, now)
 	e.handleAutoTLSIncident(ctx, m, prev, next, tlsRecord, now, settings)
->>>>>>> 2adc2fe (v1.0.5)
 	e.handleAutoIncident(ctx, m, prev, next, rawStatus, now)
 	_ = e.store.UpsertNotificationState(ctx, st)
 }
@@ -224,11 +195,7 @@ func (e *Engine) handleNotifications(ctx context.Context, m store.Monitor, prev,
 		if !next.MaintenanceActive {
 			kind = "maintenance_end"
 		}
-<<<<<<< HEAD
-		if e.dispatchNotification(ctx, channels, buildNotificationMessage(kind, "ru", m, result, tlsRecord, now, st.DownSequence > 1)) {
-=======
 		if e.dispatchNotification(ctx, channels, buildNotificationMessage(kind, "ru", m, result, tlsRecord, now, st.DownSequence > 1), kind, &m.ID) {
->>>>>>> 2adc2fe (v1.0.5)
 			st.LastNotifiedAt = &now
 			st.LastMaintenanceNotifiedAt = &now
 		}
@@ -239,11 +206,7 @@ func (e *Engine) handleNotifications(ctx context.Context, m store.Monitor, prev,
 		canNotifyDownOutage() &&
 		canSend(st.LastNotifiedAt) &&
 		canSend(st.LastDownNotifiedAt) {
-<<<<<<< HEAD
-		if e.dispatchNotification(ctx, channels, buildNotificationMessage("down", "ru", m, result, tlsRecord, now, st.DownSequence > 1)) {
-=======
 		if e.dispatchNotification(ctx, channels, buildNotificationMessage("down", "ru", m, result, tlsRecord, now, st.DownSequence > 1), "down", &m.ID) {
->>>>>>> 2adc2fe (v1.0.5)
 			st.LastNotifiedAt = &now
 			st.LastDownNotifiedAt = &now
 		}
@@ -255,11 +218,7 @@ func (e *Engine) handleNotifications(ctx context.Context, m store.Monitor, prev,
 		canNotifyUpRecover() &&
 		canSend(st.LastNotifiedAt) &&
 		canSend(st.LastUpNotifiedAt) {
-<<<<<<< HEAD
-		if e.dispatchNotification(ctx, channels, buildNotificationMessage("up", "ru", m, result, tlsRecord, now, false)) {
-=======
 		if e.dispatchNotification(ctx, channels, buildNotificationMessage("up", "ru", m, result, tlsRecord, now, false), "up", &m.ID) {
->>>>>>> 2adc2fe (v1.0.5)
 			st.LastNotifiedAt = &now
 			st.LastUpNotifiedAt = &now
 		}
@@ -275,11 +234,7 @@ func (e *Engine) handleNotifications(ctx context.Context, m store.Monitor, prev,
 			prevDays = *prev.TLSDaysLeft
 		}
 		if *next.TLSDaysLeft <= threshold && prevDays > threshold && canSend(st.LastNotifiedAt) && canSend(st.LastTLSNotifiedAt) {
-<<<<<<< HEAD
-			if e.dispatchNotification(ctx, channels, buildNotificationMessage("tls_expiring", "ru", m, result, tlsRecord, now, false)) {
-=======
 			if e.dispatchNotification(ctx, channels, buildNotificationMessage("tls_expiring", "ru", m, result, tlsRecord, now, false), "tls_expiring", &m.ID) {
->>>>>>> 2adc2fe (v1.0.5)
 				st.LastNotifiedAt = &now
 				st.LastTLSNotifiedAt = &now
 			}
@@ -287,20 +242,13 @@ func (e *Engine) handleNotifications(ctx context.Context, m store.Monitor, prev,
 	}
 }
 
-<<<<<<< HEAD
-func (e *Engine) dispatchNotification(ctx context.Context, channels []store.NotificationChannel, msg TelegramMessage) bool {
-	sent := false
-=======
 func (e *Engine) dispatchNotification(ctx context.Context, channels []store.NotificationChannel, msg TelegramMessage, eventType string, monitorID *int64) bool {
 	sent := false
 	baseText := msg.Text
->>>>>>> 2adc2fe (v1.0.5)
 	for _, ch := range channels {
 		if strings.ToLower(strings.TrimSpace(ch.Type)) != "telegram" || !ch.IsActive {
 			continue
 		}
-<<<<<<< HEAD
-=======
 		if isQuietHours(ch, time.Now().UTC()) {
 			e.logNotificationDelivery(ctx, store.MonitorNotificationDelivery{
 				MonitorID:             monitorID,
@@ -312,14 +260,11 @@ func (e *Engine) dispatchNotification(ctx context.Context, channels []store.Noti
 			})
 			continue
 		}
->>>>>>> 2adc2fe (v1.0.5)
 		tokenRaw, err := e.encryptor.DecryptBlob(ch.TelegramBotTokenEnc)
 		if err != nil {
 			if e.logger != nil {
 				e.logger.Errorf("monitoring decrypt token: %v", err)
 			}
-<<<<<<< HEAD
-=======
 			e.logNotificationDelivery(ctx, store.MonitorNotificationDelivery{
 				MonitorID:             monitorID,
 				NotificationChannelID: ch.ID,
@@ -328,7 +273,6 @@ func (e *Engine) dispatchNotification(ctx context.Context, channels []store.Noti
 				Error:                 "decrypt_failed",
 				BodyPreview:           previewMessage(msg.Text),
 			})
->>>>>>> 2adc2fe (v1.0.5)
 			continue
 		}
 		msg.Token = string(tokenRaw)
@@ -336,18 +280,11 @@ func (e *Engine) dispatchNotification(ctx context.Context, channels []store.Noti
 		msg.ThreadID = ch.TelegramThreadID
 		msg.Silent = ch.Silent
 		msg.ProtectContent = ch.ProtectContent
-<<<<<<< HEAD
-=======
 		msg.Text = applyNotificationTemplate(ch.TemplateText, baseText)
->>>>>>> 2adc2fe (v1.0.5)
 		if err := e.sender.Send(ctx, msg); err != nil {
 			if e.logger != nil {
 				e.logger.Errorf("monitoring telegram send: %v", err)
 			}
-<<<<<<< HEAD
-			continue
-		}
-=======
 			e.logNotificationDelivery(ctx, store.MonitorNotificationDelivery{
 				MonitorID:             monitorID,
 				NotificationChannelID: ch.ID,
@@ -365,14 +302,11 @@ func (e *Engine) dispatchNotification(ctx context.Context, channels []store.Noti
 			Status:                "sent",
 			BodyPreview:           previewMessage(msg.Text),
 		})
->>>>>>> 2adc2fe (v1.0.5)
 		sent = true
 	}
 	return sent
 }
 
-<<<<<<< HEAD
-=======
 func (e *Engine) logNotificationDelivery(ctx context.Context, item store.MonitorNotificationDelivery) {
 	if e == nil || e.store == nil {
 		return
@@ -382,7 +316,6 @@ func (e *Engine) logNotificationDelivery(ctx context.Context, item store.Monitor
 	}
 }
 
->>>>>>> 2adc2fe (v1.0.5)
 func (e *Engine) resolveNotificationChannels(ctx context.Context, monitorID int64) ([]store.NotificationChannel, error) {
 	links, err := e.store.ListMonitorNotifications(ctx, monitorID)
 	if err != nil {
@@ -470,34 +403,6 @@ func monitorTarget(m store.Monitor) string {
 func notifyText(lang, key string) string {
 	lang = strings.ToLower(strings.TrimSpace(lang))
 	ru := map[string]string{
-<<<<<<< HEAD
-		"monitoring.notify.downTitle": "\U0001F6A8 Монитор недоступен",
-		"monitoring.notify.upTitle": "\u2705 Монитор восстановлен",
-		"monitoring.notify.tlsTitle": "\u26A0\ufe0f Истекает сертификат",
-		"monitoring.notify.maintenanceStartTitle": "\U0001F6E0\ufe0f Начало обслуживания",
-		"monitoring.notify.maintenanceEndTitle": "\u2705 Обслуживание завершено",
-		"monitoring.notify.repeatDown": "\u26A0\ufe0f повторное падение",
-		"monitoring.notify.testTitle": "\u2705 Тестовое уведомление",
-		"monitoring.notify.latency": "Задержка",
-		"monitoring.notify.time": "Время",
-		"monitoring.notify.expires": "Истекает",
-		"monitoring.notify.daysLeft": "Дней осталось",
-		"monitoring.notify.footer": "Berkut SCC",
-	}
-	en := map[string]string{
-		"monitoring.notify.downTitle": "\U0001F6A8 Monitor down",
-		"monitoring.notify.upTitle": "\u2705 Monitor recovered",
-		"monitoring.notify.tlsTitle": "\u26A0\ufe0f TLS certificate expiring",
-		"monitoring.notify.maintenanceStartTitle": "\U0001F6E0\ufe0f Maintenance started",
-		"monitoring.notify.maintenanceEndTitle": "\u2705 Maintenance ended",
-		"monitoring.notify.repeatDown": "\u26A0\ufe0f repeated outage",
-		"monitoring.notify.testTitle": "\u2705 Test notification",
-		"monitoring.notify.latency": "Latency",
-		"monitoring.notify.time": "Time",
-		"monitoring.notify.expires": "Expires",
-		"monitoring.notify.daysLeft": "Days left",
-		"monitoring.notify.footer": "Berkut SCC",
-=======
 		"monitoring.notify.downTitle":             "\U0001F6A8 Монитор недоступен",
 		"monitoring.notify.upTitle":               "\u2705 Монитор восстановлен",
 		"monitoring.notify.tlsTitle":              "\u26A0\ufe0f Истекает сертификат",
@@ -524,7 +429,6 @@ func notifyText(lang, key string) string {
 		"monitoring.notify.expires":               "Expires",
 		"monitoring.notify.daysLeft":              "Days left",
 		"monitoring.notify.footer":                "Berkut SCC",
->>>>>>> 2adc2fe (v1.0.5)
 	}
 	if lang == "ru" {
 		if v, ok := ru[key]; ok {
@@ -537,8 +441,6 @@ func notifyText(lang, key string) string {
 	return key
 }
 
-<<<<<<< HEAD
-=======
 func applyNotificationTemplate(templateText, text string) string {
 	tpl := strings.TrimSpace(templateText)
 	if tpl == "" {
@@ -598,7 +500,6 @@ func isQuietHours(ch store.NotificationChannel, now time.Time) bool {
 	return curMin >= startMin || curMin < endMin
 }
 
->>>>>>> 2adc2fe (v1.0.5)
 func NotifyTestMessage(lang string) string {
 	lines := []string{
 		notifyText(lang, "monitoring.notify.testTitle"),

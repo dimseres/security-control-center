@@ -3,10 +3,7 @@ package handlers
 import (
 	"context"
 	"encoding/json"
-<<<<<<< HEAD
-=======
 	"errors"
->>>>>>> 2adc2fe (v1.0.5)
 	"net/http"
 	"strconv"
 	"strings"
@@ -16,33 +13,6 @@ import (
 )
 
 type notificationChannelPayload struct {
-<<<<<<< HEAD
-	Type             string `json:"type"`
-	Name             string `json:"name"`
-	TelegramBotToken string `json:"telegram_bot_token"`
-	TelegramChatID   string `json:"telegram_chat_id"`
-	TelegramThreadID *int64 `json:"telegram_thread_id"`
-	Silent           bool   `json:"silent"`
-	ProtectContent   bool   `json:"protect_content"`
-	IsDefault        bool   `json:"is_default"`
-	IsActive         *bool  `json:"is_active"`
-	ApplyToAll       bool   `json:"apply_to_all"`
-}
-
-type notificationChannelView struct {
-	ID               int64  `json:"id"`
-	Type             string `json:"type"`
-	Name             string `json:"name"`
-	TelegramBotToken string `json:"telegram_bot_token"`
-	TelegramChatID   string `json:"telegram_chat_id"`
-	TelegramThreadID *int64 `json:"telegram_thread_id,omitempty"`
-	Silent           bool   `json:"silent"`
-	ProtectContent   bool   `json:"protect_content"`
-	IsDefault        bool   `json:"is_default"`
-	CreatedBy        int64  `json:"created_by"`
-	CreatedAt        string `json:"created_at"`
-	IsActive         bool   `json:"is_active"`
-=======
 	Type              string `json:"type"`
 	Name              string `json:"name"`
 	TelegramBotToken  string `json:"telegram_bot_token"`
@@ -78,7 +48,6 @@ type notificationChannelView struct {
 	CreatedBy         int64  `json:"created_by"`
 	CreatedAt         string `json:"created_at"`
 	IsActive          bool   `json:"is_active"`
->>>>>>> 2adc2fe (v1.0.5)
 }
 
 func (h *MonitoringHandler) ListNotificationChannels(w http.ResponseWriter, r *http.Request) {
@@ -94,20 +63,6 @@ func (h *MonitoringHandler) ListNotificationChannels(w http.ResponseWriter, r *h
 			tokenValue = "******"
 		}
 		out = append(out, notificationChannelView{
-<<<<<<< HEAD
-			ID:               ch.ID,
-			Type:             ch.Type,
-			Name:             ch.Name,
-			TelegramBotToken: tokenValue,
-			TelegramChatID:   ch.TelegramChatID,
-			TelegramThreadID: ch.TelegramThreadID,
-			Silent:           ch.Silent,
-			ProtectContent:   ch.ProtectContent,
-			IsDefault:        ch.IsDefault,
-			CreatedBy:        ch.CreatedBy,
-			CreatedAt:        ch.CreatedAt.UTC().Format(timeLayout),
-			IsActive:         ch.IsActive,
-=======
 			ID:                ch.ID,
 			Type:              ch.Type,
 			Name:              ch.Name,
@@ -125,7 +80,6 @@ func (h *MonitoringHandler) ListNotificationChannels(w http.ResponseWriter, r *h
 			CreatedBy:         ch.CreatedBy,
 			CreatedAt:         ch.CreatedAt.UTC().Format(timeLayout),
 			IsActive:          ch.IsActive,
->>>>>>> 2adc2fe (v1.0.5)
 		})
 	}
 	writeJSON(w, http.StatusOK, map[string]any{"items": out})
@@ -153,13 +107,10 @@ func (h *MonitoringHandler) CreateNotificationChannel(w http.ResponseWriter, r *
 		http.Error(w, "monitoring.notifications.telegramRequired", http.StatusBadRequest)
 		return
 	}
-<<<<<<< HEAD
-=======
 	if err := validateQuietHoursPayload(payload); err != nil {
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
 	}
->>>>>>> 2adc2fe (v1.0.5)
 	enc, err := h.encryptor.EncryptToBlob([]byte(strings.TrimSpace(payload.TelegramBotToken)))
 	if err != nil {
 		http.Error(w, errServerError, http.StatusInternalServerError)
@@ -175,14 +126,11 @@ func (h *MonitoringHandler) CreateNotificationChannel(w http.ResponseWriter, r *
 		TelegramBotTokenEnc: enc,
 		TelegramChatID:      strings.TrimSpace(payload.TelegramChatID),
 		TelegramThreadID:    payload.TelegramThreadID,
-<<<<<<< HEAD
-=======
 		TemplateText:        strings.TrimSpace(payload.TemplateText),
 		QuietHoursEnabled:   payload.QuietHoursEnabled,
 		QuietHoursStart:     strings.TrimSpace(payload.QuietHoursStart),
 		QuietHoursEnd:       strings.TrimSpace(payload.QuietHoursEnd),
 		QuietHoursTZ:        strings.TrimSpace(payload.QuietHoursTZ),
->>>>>>> 2adc2fe (v1.0.5)
 		Silent:              payload.Silent,
 		ProtectContent:      payload.ProtectContent,
 		IsDefault:           payload.IsDefault,
@@ -201,20 +149,6 @@ func (h *MonitoringHandler) CreateNotificationChannel(w http.ResponseWriter, r *
 	}
 	h.audit(r, monitorAuditNotifChannelCreate, strconv.FormatInt(id, 10))
 	writeJSON(w, http.StatusCreated, notificationChannelView{
-<<<<<<< HEAD
-		ID:               id,
-		Type:             ch.Type,
-		Name:             ch.Name,
-		TelegramBotToken: maskToken(payload.TelegramBotToken),
-		TelegramChatID:   ch.TelegramChatID,
-		TelegramThreadID: ch.TelegramThreadID,
-		Silent:           ch.Silent,
-		ProtectContent:   ch.ProtectContent,
-		IsDefault:        ch.IsDefault,
-		CreatedBy:        ch.CreatedBy,
-		CreatedAt:        ch.CreatedAt.UTC().Format(timeLayout),
-		IsActive:         ch.IsActive,
-=======
 		ID:                id,
 		Type:              ch.Type,
 		Name:              ch.Name,
@@ -232,7 +166,6 @@ func (h *MonitoringHandler) CreateNotificationChannel(w http.ResponseWriter, r *
 		CreatedBy:         ch.CreatedBy,
 		CreatedAt:         ch.CreatedAt.UTC().Format(timeLayout),
 		IsActive:          ch.IsActive,
->>>>>>> 2adc2fe (v1.0.5)
 	})
 }
 
@@ -264,13 +197,10 @@ func (h *MonitoringHandler) UpdateNotificationChannel(w http.ResponseWriter, r *
 		http.Error(w, "monitoring.notifications.invalidType", http.StatusBadRequest)
 		return
 	}
-<<<<<<< HEAD
-=======
 	if err := validateQuietHoursPayload(payload); err != nil {
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
 	}
->>>>>>> 2adc2fe (v1.0.5)
 	if strings.TrimSpace(payload.Name) != "" {
 		existing.Name = strings.TrimSpace(payload.Name)
 	}
@@ -280,8 +210,6 @@ func (h *MonitoringHandler) UpdateNotificationChannel(w http.ResponseWriter, r *
 	if payload.TelegramThreadID != nil {
 		existing.TelegramThreadID = payload.TelegramThreadID
 	}
-<<<<<<< HEAD
-=======
 	if payload.TemplateText != "" || existing.TemplateText != "" {
 		existing.TemplateText = strings.TrimSpace(payload.TemplateText)
 	}
@@ -295,7 +223,6 @@ func (h *MonitoringHandler) UpdateNotificationChannel(w http.ResponseWriter, r *
 	if payload.QuietHoursTZ != "" || existing.QuietHoursTZ != "" {
 		existing.QuietHoursTZ = strings.TrimSpace(payload.QuietHoursTZ)
 	}
->>>>>>> 2adc2fe (v1.0.5)
 	if payload.TelegramBotToken != "" {
 		enc, err := h.encryptor.EncryptToBlob([]byte(strings.TrimSpace(payload.TelegramBotToken)))
 		if err != nil {
@@ -320,20 +247,6 @@ func (h *MonitoringHandler) UpdateNotificationChannel(w http.ResponseWriter, r *
 		tokenMasked = maskToken(payload.TelegramBotToken)
 	}
 	writeJSON(w, http.StatusOK, notificationChannelView{
-<<<<<<< HEAD
-		ID:               existing.ID,
-		Type:             existing.Type,
-		Name:             existing.Name,
-		TelegramBotToken: tokenMasked,
-		TelegramChatID:   existing.TelegramChatID,
-		TelegramThreadID: existing.TelegramThreadID,
-		Silent:           existing.Silent,
-		ProtectContent:   existing.ProtectContent,
-		IsDefault:        existing.IsDefault,
-		CreatedBy:        existing.CreatedBy,
-		CreatedAt:        existing.CreatedAt.UTC().Format(timeLayout),
-		IsActive:         existing.IsActive,
-=======
 		ID:                existing.ID,
 		Type:              existing.Type,
 		Name:              existing.Name,
@@ -351,7 +264,6 @@ func (h *MonitoringHandler) UpdateNotificationChannel(w http.ResponseWriter, r *
 		CreatedBy:         existing.CreatedBy,
 		CreatedAt:         existing.CreatedAt.UTC().Format(timeLayout),
 		IsActive:          existing.IsActive,
->>>>>>> 2adc2fe (v1.0.5)
 	})
 }
 
@@ -476,8 +388,6 @@ func (h *MonitoringHandler) applyChannelToAllMonitors(ctx context.Context, chann
 	return applied
 }
 
-<<<<<<< HEAD
-=======
 func (h *MonitoringHandler) ListNotificationDeliveries(w http.ResponseWriter, r *http.Request) {
 	limit := 100
 	if raw := strings.TrimSpace(r.URL.Query().Get("limit")); raw != "" {
@@ -507,7 +417,6 @@ func (h *MonitoringHandler) AcknowledgeNotificationDelivery(w http.ResponseWrite
 	writeJSON(w, http.StatusOK, map[string]string{"status": "ok"})
 }
 
->>>>>>> 2adc2fe (v1.0.5)
 const timeLayout = "2006-01-02 15:04:05"
 
 func maskToken(token string) string {
@@ -520,8 +429,6 @@ func maskToken(token string) string {
 	}
 	return raw[:4] + "..." + raw[len(raw)-4:]
 }
-<<<<<<< HEAD
-=======
 
 func validateQuietHoursPayload(payload notificationChannelPayload) error {
 	if !payload.QuietHoursEnabled {
@@ -541,4 +448,3 @@ func validateQuietHoursPayload(payload notificationChannelPayload) error {
 	}
 	return nil
 }
->>>>>>> 2adc2fe (v1.0.5)

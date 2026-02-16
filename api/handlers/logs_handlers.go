@@ -1,15 +1,11 @@
 package handlers
 
 import (
-<<<<<<< HEAD
-	"net/http"
-=======
 	"encoding/csv"
 	"net/http"
 	"strconv"
 	"strings"
 	"time"
->>>>>>> 2adc2fe (v1.0.5)
 
 	"berkut-scc/core/store"
 )
@@ -23,23 +19,16 @@ func NewLogsHandler(audits store.AuditStore) *LogsHandler {
 }
 
 func (h *LogsHandler) List(w http.ResponseWriter, r *http.Request) {
-<<<<<<< HEAD
-	items, err := h.audits.List(r.Context())
-=======
 	if h == nil || h.audits == nil {
 		writeJSON(w, http.StatusOK, map[string]any{"items": []store.AuditRecord{}})
 		return
 	}
 	filter := parseLogFilter(r)
 	items, err := h.filteredLogs(r, filter)
->>>>>>> 2adc2fe (v1.0.5)
 	if err != nil {
 		http.Error(w, "server error", http.StatusInternalServerError)
 		return
 	}
-<<<<<<< HEAD
-	writeJSON(w, http.StatusOK, map[string]any{"items": items})
-=======
 	writeJSON(w, http.StatusOK, map[string]any{
 		"items":  items,
 		"filter": filter,
@@ -140,5 +129,4 @@ func parseDateTime(raw string) (time.Time, error) {
 		}
 	}
 	return time.Time{}, strconv.ErrSyntax
->>>>>>> 2adc2fe (v1.0.5)
 }

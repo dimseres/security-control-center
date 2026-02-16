@@ -128,15 +128,11 @@
         { label: BerkutI18n.t('docs.menu.edit'), handler: () => DocsPage.openDocTab(docId, 'edit') },
         { label: BerkutI18n.t('docs.menu.versions'), handler: () => DocsPage.openVersions(docId) },
         { label: BerkutI18n.t('docs.menu.approval'), handler: () => DocsPage.openApprovalModal(docId) },
-<<<<<<< HEAD
-        { label: BerkutI18n.t('docs.menu.export'), handler: () => DocsPage.exportDoc(docId) },
-=======
         { label: `${BerkutI18n.t('docs.menu.export')} PDF`, handler: () => DocsPage.exportDoc(docId, 'pdf') },
         { label: `${BerkutI18n.t('docs.menu.export')} DOCX`, handler: () => DocsPage.exportDoc(docId, 'docx') },
         { label: `${BerkutI18n.t('docs.menu.export')} MD`, handler: () => DocsPage.exportDoc(docId, 'md') },
         { label: `${BerkutI18n.t('docs.menu.export')} JSON`, handler: () => DocsPage.exportDoc(docId, 'json') },
         { label: BerkutI18n.t('docs.menu.exportApprove'), handler: () => DocsPage.approveExport(docId) },
->>>>>>> 2adc2fe (v1.0.5)
         { label: BerkutI18n.t('docs.menu.delete'), danger: true, handler: () => DocsPage.deleteDoc(docId) },
         {
           label: BerkutI18n.t('docs.menu.newDoc'),

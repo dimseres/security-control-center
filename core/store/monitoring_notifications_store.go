@@ -10,11 +10,7 @@ import (
 
 func (s *monitoringStore) ListNotificationChannels(ctx context.Context) ([]NotificationChannel, error) {
 	rows, err := s.db.QueryContext(ctx, `
-<<<<<<< HEAD
-		SELECT id, type, name, telegram_bot_token, telegram_chat_id, telegram_thread_id, silent, protect_content, is_default, created_by, created_at, is_active
-=======
 		SELECT id, type, name, telegram_bot_token, telegram_chat_id, telegram_thread_id, template_text, quiet_hours_enabled, quiet_hours_start, quiet_hours_end, quiet_hours_tz, silent, protect_content, is_default, created_by, created_at, is_active
->>>>>>> 2adc2fe (v1.0.5)
 		FROM notification_channels
 		ORDER BY name`)
 	if err != nil {
@@ -34,11 +30,7 @@ func (s *monitoringStore) ListNotificationChannels(ctx context.Context) ([]Notif
 
 func (s *monitoringStore) GetNotificationChannel(ctx context.Context, id int64) (*NotificationChannel, error) {
 	row := s.db.QueryRowContext(ctx, `
-<<<<<<< HEAD
-		SELECT id, type, name, telegram_bot_token, telegram_chat_id, telegram_thread_id, silent, protect_content, is_default, created_by, created_at, is_active
-=======
 		SELECT id, type, name, telegram_bot_token, telegram_chat_id, telegram_thread_id, template_text, quiet_hours_enabled, quiet_hours_start, quiet_hours_end, quiet_hours_tz, silent, protect_content, is_default, created_by, created_at, is_active
->>>>>>> 2adc2fe (v1.0.5)
 		FROM notification_channels WHERE id=?`, id)
 	return scanNotificationChannel(row)
 }
@@ -56,18 +48,11 @@ func (s *monitoringStore) CreateNotificationChannel(ctx context.Context, ch *Not
 		}
 	}
 	res, err := tx.ExecContext(ctx, `
-<<<<<<< HEAD
-		INSERT INTO notification_channels(type, name, telegram_bot_token, telegram_chat_id, telegram_thread_id, silent, protect_content, is_default, created_by, created_at, is_active)
-		VALUES(?,?,?,?,?,?,?,?,?,?,?)`,
-		strings.ToLower(strings.TrimSpace(ch.Type)), strings.TrimSpace(ch.Name), ch.TelegramBotTokenEnc,
-		strings.TrimSpace(ch.TelegramChatID), nullableID(ch.TelegramThreadID),
-=======
 		INSERT INTO notification_channels(type, name, telegram_bot_token, telegram_chat_id, telegram_thread_id, template_text, quiet_hours_enabled, quiet_hours_start, quiet_hours_end, quiet_hours_tz, silent, protect_content, is_default, created_by, created_at, is_active)
 		VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)`,
 		strings.ToLower(strings.TrimSpace(ch.Type)), strings.TrimSpace(ch.Name), ch.TelegramBotTokenEnc,
 		strings.TrimSpace(ch.TelegramChatID), nullableID(ch.TelegramThreadID), strings.TrimSpace(ch.TemplateText), boolToInt(ch.QuietHoursEnabled),
 		strings.TrimSpace(ch.QuietHoursStart), strings.TrimSpace(ch.QuietHoursEnd), strings.TrimSpace(ch.QuietHoursTZ),
->>>>>>> 2adc2fe (v1.0.5)
 		boolToInt(ch.Silent), boolToInt(ch.ProtectContent), boolToInt(ch.IsDefault), ch.CreatedBy, now, boolToInt(ch.IsActive))
 	if err != nil {
 		tx.Rollback()
@@ -95,18 +80,11 @@ func (s *monitoringStore) UpdateNotificationChannel(ctx context.Context, ch *Not
 	}
 	_, err = tx.ExecContext(ctx, `
 		UPDATE notification_channels
-<<<<<<< HEAD
-		SET type=?, name=?, telegram_bot_token=?, telegram_chat_id=?, telegram_thread_id=?, silent=?, protect_content=?, is_default=?, is_active=?
-		WHERE id=?`,
-		strings.ToLower(strings.TrimSpace(ch.Type)), strings.TrimSpace(ch.Name), ch.TelegramBotTokenEnc,
-		strings.TrimSpace(ch.TelegramChatID), nullableID(ch.TelegramThreadID),
-=======
 		SET type=?, name=?, telegram_bot_token=?, telegram_chat_id=?, telegram_thread_id=?, template_text=?, quiet_hours_enabled=?, quiet_hours_start=?, quiet_hours_end=?, quiet_hours_tz=?, silent=?, protect_content=?, is_default=?, is_active=?
 		WHERE id=?`,
 		strings.ToLower(strings.TrimSpace(ch.Type)), strings.TrimSpace(ch.Name), ch.TelegramBotTokenEnc,
 		strings.TrimSpace(ch.TelegramChatID), nullableID(ch.TelegramThreadID), strings.TrimSpace(ch.TemplateText), boolToInt(ch.QuietHoursEnabled),
 		strings.TrimSpace(ch.QuietHoursStart), strings.TrimSpace(ch.QuietHoursEnd), strings.TrimSpace(ch.QuietHoursTZ),
->>>>>>> 2adc2fe (v1.0.5)
 		boolToInt(ch.Silent), boolToInt(ch.ProtectContent), boolToInt(ch.IsDefault), boolToInt(ch.IsActive), ch.ID)
 	if err != nil {
 		tx.Rollback()
@@ -167,11 +145,7 @@ func (s *monitoringStore) ReplaceMonitorNotifications(ctx context.Context, monit
 
 func (s *monitoringStore) ListDefaultNotificationChannels(ctx context.Context) ([]NotificationChannel, error) {
 	rows, err := s.db.QueryContext(ctx, `
-<<<<<<< HEAD
-		SELECT id, type, name, telegram_bot_token, telegram_chat_id, telegram_thread_id, silent, protect_content, is_default, created_by, created_at, is_active
-=======
 		SELECT id, type, name, telegram_bot_token, telegram_chat_id, telegram_thread_id, template_text, quiet_hours_enabled, quiet_hours_start, quiet_hours_end, quiet_hours_tz, silent, protect_content, is_default, created_by, created_at, is_active
->>>>>>> 2adc2fe (v1.0.5)
 		FROM notification_channels WHERE is_default=1 AND is_active=1
 		ORDER BY name`)
 	if err != nil {
@@ -252,13 +226,8 @@ func scanNotificationChannel(row interface {
 }) (*NotificationChannel, error) {
 	var ch NotificationChannel
 	var threadID sql.NullInt64
-<<<<<<< HEAD
-	var silent, protect, def, active int
-	if err := row.Scan(&ch.ID, &ch.Type, &ch.Name, &ch.TelegramBotTokenEnc, &ch.TelegramChatID, &threadID, &silent, &protect, &def, &ch.CreatedBy, &ch.CreatedAt, &active); err != nil {
-=======
 	var silent, protect, def, active, quietEnabled int
 	if err := row.Scan(&ch.ID, &ch.Type, &ch.Name, &ch.TelegramBotTokenEnc, &ch.TelegramChatID, &threadID, &ch.TemplateText, &quietEnabled, &ch.QuietHoursStart, &ch.QuietHoursEnd, &ch.QuietHoursTZ, &silent, &protect, &def, &ch.CreatedBy, &ch.CreatedAt, &active); err != nil {
->>>>>>> 2adc2fe (v1.0.5)
 		if errors.Is(err, sql.ErrNoRows) {
 			return nil, nil
 		}
@@ -271,10 +240,6 @@ func scanNotificationChannel(row interface {
 	ch.ProtectContent = protect == 1
 	ch.IsDefault = def == 1
 	ch.IsActive = active == 1
-<<<<<<< HEAD
-	return &ch, nil
-}
-=======
 	ch.QuietHoursEnabled = quietEnabled == 1
 	return &ch, nil
 }
@@ -346,4 +311,3 @@ func (s *monitoringStore) AcknowledgeNotificationDelivery(ctx context.Context, i
 		WHERE id=? AND acknowledged_at IS NULL`, time.Now().UTC(), userID, id)
 	return err
 }
->>>>>>> 2adc2fe (v1.0.5)

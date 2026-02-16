@@ -266,15 +266,9 @@
           <p data-i18n="accounts.users.subtitle">IAM управление</p>
         </div>
         <div class="actions">
-<<<<<<< HEAD
-          <button class="btn secondary" id="refresh-users" data-i18n="common.refresh">????????</button>
-          <button class="btn secondary" id="open-import" data-i18n="accounts.importCsv">?????? CSV</button>
-          <button class="btn primary" id="open-create" data-i18n="accounts.create">???????</button>
-=======
           <button class="btn secondary" id="refresh-users" data-i18n="common.refresh">Обновить</button>
           <button class="btn secondary" id="open-import" data-i18n="accounts.importCsv">Импортировать CSV-файл</button>
           <button class="btn primary" id="open-create" data-i18n="accounts.create">Создать пользователя</button>
->>>>>>> 2adc2fe (v1.0.5)
         </div>
       </div>
       <div class="card-body">
@@ -357,21 +351,6 @@
         <form id="user-form" class="form-grid three-column user-form">
           <div class="form-column">
             <div class="form-field required">
-<<<<<<< HEAD
-              <label data-i18n="accounts.username">?>????????</label>
-              <input name="username" required>
-            </div>
-            <div class="form-field required">
-              <label data-i18n="accounts.fullName">??????</label>
-              <input name="full_name" required>
-            </div>
-            <div class="form-field">
-              <label data-i18n="accounts.department">???'?????></label>
-              <input name="department">
-            </div>
-            <div class="form-field">
-              <label data-i18n="accounts.position">?"???>?????????'??</label>
-=======
               <label data-i18n="accounts.username">Логин</label>
               <input name="username" required>
             </div>
@@ -385,28 +364,11 @@
             </div>
             <div class="form-field">
               <label data-i18n="accounts.position">Должность</label>
->>>>>>> 2adc2fe (v1.0.5)
               <input name="position">
             </div>
           </div>
           <div class="form-column">
             <div class="form-field">
-<<<<<<< HEAD
-              <label data-i18n="accounts.clearanceTags">???????? ???????????????</label>
-              <div id="user-clearance-tags" class="checkbox-grid"></div>
-            </div>
-            <div class="form-field">
-              <label data-i18n="accounts.roles">?????>??</label>
-              <select name="roles" id="user-roles" multiple></select>
-            </div>
-            <div class="form-field">
-              <label data-i18n="accounts.groups.title">?"?????????<</label>
-              <select name="groups" id="user-groups" multiple></select>
-            </div>
-            <div class="form-actions centered">
-              <button type="submit" class="btn primary" data-i18n="common.save">?????:?????????'??</button>
-              <button type="button" class="btn ghost" id="cancel-modal" data-i18n="common.cancel">???'????????</button>
-=======
               <label data-i18n="accounts.clearanceTags">Теги допуска</label>
               <div id="user-clearance-tags" class="checkbox-grid"></div>
             </div>
@@ -421,16 +383,11 @@
             <div class="form-actions centered">
               <button type="submit" class="btn primary" data-i18n="common.save">Сохранить</button>
               <button type="button" class="btn ghost" id="cancel-modal" data-i18n="common.cancel">Отмена</button>
->>>>>>> 2adc2fe (v1.0.5)
             </div>
           </div>
           <div class="form-column">
             <div class="form-field">
-<<<<<<< HEAD
-              <label data-i18n="accounts.password">?????????>??</label>
-=======
               <label data-i18n="accounts.password">Пароль</label>
->>>>>>> 2adc2fe (v1.0.5)
               <div class="input-icon-field two-icons">
                 <input name="password" id="user-password" type="password" autocomplete="new-password">
                 <button type="button" class="input-icon-btn alt" id="toggle-password-visibility" aria-label="Toggle password visibility" title="Toggle password visibility">&#128065;</button>
@@ -438,23 +395,6 @@
               </div>
             </div>
             <div class="form-field">
-<<<<<<< HEAD
-              <label data-i18n="accounts.passwordConfirm">???????'?????????????????? ?????????>??</label>
-              <input name="password_confirm" id="user-password-confirm" type="password" autocomplete="new-password">
-            </div>
-            <div class="form-field checkbox">
-              <label><input type="checkbox" name="require_password_change"> <span data-i18n="accounts.requireChange">???????+???????'?? ?????????? ?????????>??</span></label>
-            </div>
-            <div class="form-field">
-              <label data-i18n="accounts.status">???'???'????</label>
-              <select name="status">
-                <option value="active" data-i18n="accounts.active">?????'????????</option>
-                <option value="disabled" data-i18n="accounts.disabled">???'???>??????????</option>
-              </select>
-            </div>
-            <div class="form-field">
-              <label data-i18n="accounts.clearance">?????????????? ???????????????</label>
-=======
               <label data-i18n="accounts.passwordConfirm">Подтверждение пароля</label>
               <input name="password_confirm" id="user-password-confirm" type="password" autocomplete="new-password">
             </div>
@@ -470,7 +410,6 @@
             </div>
             <div class="form-field">
               <label data-i18n="accounts.clearance">Уровень допуска</label>
->>>>>>> 2adc2fe (v1.0.5)
               <select name="clearance_level" id="user-clearance">
                 <option value="0" data-i18n="accounts.clearanceLevel.public">Public</option>
                 <option value="1" data-i18n="accounts.clearanceLevel.internal">Internal</option>
@@ -614,11 +553,7 @@
     <div class="modal-backdrop"></div>
     <div class="modal-body wide">
       <div class="modal-header">
-<<<<<<< HEAD
-        <h3 data-i18n="accounts.importCsv">?????? ?????????????</h3>
-=======
         <h3 data-i18n="accounts.importCsv">Импортировать CSV-файл</h3>
->>>>>>> 2adc2fe (v1.0.5)
         <button class="btn ghost" id="close-user-import" aria-label="Close">x</button>
       </div>
       <div class="modal-content">
@@ -667,21 +602,13 @@
             <select id="import-map-clearance_tags"></select>
           </div>
           <div class="form-field">
-<<<<<<< HEAD
-            <label data-i18n="accounts.importOptionTempPassword">???????????? ????????? ??????</label>
-=======
             <label data-i18n="accounts.importOptionTempPassword">Сгенерировать временные пароли</label>
->>>>>>> 2adc2fe (v1.0.5)
             <div class="checkbox">
               <label><input type="checkbox" id="import-temp-password" checked> <span data-i18n="accounts.importOptionTempPassword"></span></label>
             </div>
           </div>
           <div class="form-field">
-<<<<<<< HEAD
-            <label data-i18n="accounts.importOptionMustChange">????????? ????? ??????</label>
-=======
             <label data-i18n="accounts.importOptionMustChange">Требовать смену пароля при первом входе</label>
->>>>>>> 2adc2fe (v1.0.5)
             <div class="checkbox">
               <label><input type="checkbox" id="import-must-change" checked> <span data-i18n="accounts.importOptionMustChange"></span></label>
             </div>
@@ -700,23 +627,14 @@
           <div id="user-import-errors"></div>
           <div id="user-import-passwords" hidden>
             <div class="actions">
-<<<<<<< HEAD
-              <button class="btn secondary" type="button" id="download-import-passwords" data-i18n="accounts.importDownloadPasswords">??????? ?????? (CSV)</button>
-=======
               <button class="btn secondary" type="button" id="download-import-passwords" data-i18n="accounts.importDownloadPasswords">Скачать пароли (CSV)</button>
->>>>>>> 2adc2fe (v1.0.5)
             </div>
             <div id="user-import-passwords-table"></div>
           </div>
         </div>
         <div class="form-actions">
-<<<<<<< HEAD
-          <button type="submit" class="btn primary" form="user-import-form" data-i18n="accounts.importCommit">?????????????</button>
-          <button type="button" class="btn ghost" id="cancel-user-import" data-i18n="common.cancel">??????</button>
-=======
           <button type="submit" class="btn primary" form="user-import-form" data-i18n="accounts.importCommit">Импорт</button>
           <button type="button" class="btn ghost" id="cancel-user-import" data-i18n="common.cancel">Отмена</button>
->>>>>>> 2adc2fe (v1.0.5)
         </div>
       </div>
     </div>

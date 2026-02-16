@@ -6,29 +6,19 @@ import (
 	"crypto/hmac"
 	"crypto/sha256"
 	"crypto/subtle"
-<<<<<<< HEAD
-=======
 	"encoding/base64"
->>>>>>> 2adc2fe (v1.0.5)
 	"encoding/json"
 	"errors"
 	"io"
 	"net"
 	"net/http"
-<<<<<<< HEAD
-	"encoding/base64"
-=======
->>>>>>> 2adc2fe (v1.0.5)
 	"runtime/debug"
 	"strconv"
 	"strings"
 	"sync"
 	"time"
 
-<<<<<<< HEAD
-=======
 	"berkut-scc/config"
->>>>>>> 2adc2fe (v1.0.5)
 	"berkut-scc/core/auth"
 	"berkut-scc/core/rbac"
 	"berkut-scc/core/store"
@@ -164,11 +154,7 @@ func (s *Server) securityHeadersMiddleware(next http.Handler) http.Handler {
 		w.Header().Set("X-Content-Type-Options", "nosniff")
 		w.Header().Set("X-Frame-Options", "SAMEORIGIN")
 		w.Header().Set("Referrer-Policy", "no-referrer")
-<<<<<<< HEAD
-		if s.cfg.TLSEnabled {
-=======
 		if isHTTPSRequest(r, s.cfg) {
->>>>>>> 2adc2fe (v1.0.5)
 			w.Header().Set("Strict-Transport-Security", "max-age=63072000; includeSubDomains")
 		}
 		next.ServeHTTP(w, r)
@@ -316,11 +302,7 @@ func (s *Server) withSession(next http.HandlerFunc) http.HandlerFunc {
 			interval = custom
 		}
 		if s.activityTracker == nil || s.activityTracker.shouldUpdate(sr.ID, now, interval) {
-<<<<<<< HEAD
-			_ = s.sessions.UpdateActivity(r.Context(), sr.ID, now, s.cfg.SessionTTL)
-=======
 			_ = s.sessions.UpdateActivity(r.Context(), sr.ID, now, s.cfg.EffectiveSessionTTL())
->>>>>>> 2adc2fe (v1.0.5)
 		}
 		next.ServeHTTP(w, r.WithContext(ctx))
 	}
@@ -337,10 +319,6 @@ func (s *Server) allowOnlyOfficeServiceAccess(r *http.Request) bool {
 	purpose := ""
 	switch {
 	case strings.HasSuffix(path, "/office/file"):
-<<<<<<< HEAD
-		purpose = "file"
-	case strings.HasSuffix(path, "/office/callback"):
-=======
 		if r.Method != http.MethodGet && r.Method != http.MethodHead {
 			return false
 		}
@@ -349,7 +327,6 @@ func (s *Server) allowOnlyOfficeServiceAccess(r *http.Request) bool {
 		if r.Method != http.MethodPost {
 			return false
 		}
->>>>>>> 2adc2fe (v1.0.5)
 		purpose = "callback"
 	default:
 		return false
@@ -579,18 +556,6 @@ func (s *Server) clientIP(r *http.Request) string {
 		return ip
 	}
 	if xff := strings.TrimSpace(r.Header.Get("X-Forwarded-For")); xff != "" {
-<<<<<<< HEAD
-		parts := strings.Split(xff, ",")
-		for _, part := range parts {
-			candidate := strings.TrimSpace(part)
-			if candidate != "" {
-				return candidate
-			}
-		}
-	}
-	if realIP := strings.TrimSpace(r.Header.Get("X-Real-IP")); realIP != "" {
-		return realIP
-=======
 		if candidate := extractClientIPFromXFF(xff, s.cfg.Security.TrustedProxies); candidate != "" {
 			return candidate
 		}
@@ -599,13 +564,10 @@ func (s *Server) clientIP(r *http.Request) string {
 		if parsed := net.ParseIP(realIP); parsed != nil {
 			return parsed.String()
 		}
->>>>>>> 2adc2fe (v1.0.5)
 	}
 	return ip
 }
 
-<<<<<<< HEAD
-=======
 func isHTTPSRequest(r *http.Request, cfg *config.AppConfig) bool {
 	if r == nil {
 		return false
@@ -647,7 +609,6 @@ func extractClientIPFromXFF(xff string, trusted []string) string {
 	return ""
 }
 
->>>>>>> 2adc2fe (v1.0.5)
 func isTrustedProxy(ip string, trusted []string) bool {
 	parsed := net.ParseIP(strings.TrimSpace(ip))
 	if parsed == nil {

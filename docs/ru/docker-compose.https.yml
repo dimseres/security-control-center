@@ -53,11 +53,7 @@ services:
       BERKUT_BACKUP_MAX_PARALLEL: ${BERKUT_BACKUP_MAX_PARALLEL:-1}
       BERKUT_BACKUP_PGDUMP_BIN: ${BERKUT_BACKUP_PGDUMP_BIN:-pg_dump}
       BERKUT_BACKUP_UPLOAD_MAX_BYTES: ${BERKUT_BACKUP_UPLOAD_MAX_BYTES:-536870912}
-<<<<<<< HEAD
-      BERKUT_SECURITY_TRUSTED_PROXIES: ${BERKUT_SECURITY_TRUSTED_PROXIES:-127.0.0.1,10.0.0.0/8}
-=======
       BERKUT_SECURITY_TRUSTED_PROXIES: ${BERKUT_SECURITY_TRUSTED_PROXIES:-}
->>>>>>> 2adc2fe (v1.0.5)
       CSRF_KEY: ${CSRF_KEY:-change-me-csrf-key}
       PEPPER: ${PEPPER:-change-me-password-pepper}
       DOCS_ENCRYPTION_KEY: ${DOCS_ENCRYPTION_KEY:-change-me-docs-encryption-key}
@@ -68,11 +64,7 @@ services:
       BERKUT_TLS_KEY: ${BERKUT_TLS_KEY:-}
       HTTPS_MODE: ${HTTPS_MODE:-disabled}
       HTTPS_PORT: ${HTTPS_PORT:-${PORT:-8080}}
-<<<<<<< HEAD
-      HTTPS_TRUSTED_PROXIES: ${HTTPS_TRUSTED_PROXIES:-127.0.0.1,10.0.0.0/8}
-=======
       HTTPS_TRUSTED_PROXIES: ${HTTPS_TRUSTED_PROXIES:-}
->>>>>>> 2adc2fe (v1.0.5)
       HTTPS_EXTERNAL_PROXY_HINT: ${HTTPS_EXTERNAL_PROXY_HINT:-nginx}
       HTTPS_BUILTIN_CERT_PATH: ${HTTPS_BUILTIN_CERT_PATH:-}
       HTTPS_BUILTIN_KEY_PATH: ${HTTPS_BUILTIN_KEY_PATH:-}
@@ -138,11 +130,7 @@ services:
             proxy_pass http://berkut:8080;
             proxy_http_version 1.1;
             proxy_set_header Host $$host;
-<<<<<<< HEAD
-            proxy_set_header X-Forwarded-Proto http;
-=======
             proxy_set_header X-Forwarded-Proto $$scheme;
->>>>>>> 2adc2fe (v1.0.5)
             proxy_set_header X-Forwarded-For $$proxy_add_x_forwarded_for;
             proxy_set_header X-Real-IP $$remote_addr;
             proxy_set_header Upgrade $$http_upgrade;
@@ -153,11 +141,7 @@ services:
             proxy_pass http://onlyoffice/;
             proxy_http_version 1.1;
             proxy_set_header Host $$host;
-<<<<<<< HEAD
-            proxy_set_header X-Forwarded-Proto http;
-=======
             proxy_set_header X-Forwarded-Proto $$scheme;
->>>>>>> 2adc2fe (v1.0.5)
             proxy_set_header X-Forwarded-For $$proxy_add_x_forwarded_for;
             proxy_set_header X-Real-IP $$remote_addr;
             proxy_set_header Upgrade $$http_upgrade;
@@ -168,11 +152,7 @@ services:
             proxy_pass http://onlyoffice/cache/;
             proxy_http_version 1.1;
             proxy_set_header Host $$host;
-<<<<<<< HEAD
-            proxy_set_header X-Forwarded-Proto http;
-=======
             proxy_set_header X-Forwarded-Proto $$scheme;
->>>>>>> 2adc2fe (v1.0.5)
             proxy_set_header X-Forwarded-For $$proxy_add_x_forwarded_for;
             proxy_set_header X-Real-IP $$remote_addr;
           }
@@ -181,11 +161,7 @@ services:
             proxy_pass http://onlyoffice/printfile/;
             proxy_http_version 1.1;
             proxy_set_header Host $$host;
-<<<<<<< HEAD
-            proxy_set_header X-Forwarded-Proto http;
-=======
             proxy_set_header X-Forwarded-Proto $$scheme;
->>>>>>> 2adc2fe (v1.0.5)
             proxy_set_header X-Forwarded-For $$proxy_add_x_forwarded_for;
             proxy_set_header X-Real-IP $$remote_addr;
           }
@@ -194,11 +170,7 @@ services:
             proxy_pass http://onlyoffice/downloadas/;
             proxy_http_version 1.1;
             proxy_set_header Host $$host;
-<<<<<<< HEAD
-            proxy_set_header X-Forwarded-Proto http;
-=======
             proxy_set_header X-Forwarded-Proto $$scheme;
->>>>>>> 2adc2fe (v1.0.5)
             proxy_set_header X-Forwarded-For $$proxy_add_x_forwarded_for;
             proxy_set_header X-Real-IP $$remote_addr;
           }

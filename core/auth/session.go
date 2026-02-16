@@ -33,31 +33,6 @@ func (m *SessionManager) Create(ctx context.Context, user *store.User, roles []s
 		return nil, err
 	}
 	now := utils.NowUTC()
-<<<<<<< HEAD
-	sess := &Session{
-		ID:        id,
-		UserID:    user.ID,
-		Username:  user.Username,
-		Roles:     roles,
-		IP:        ip,
-		UserAgent: userAgent,
-		CreatedAt: now,
-		LastSeenAt: now,
-		ExpiresAt: now.Add(m.cfg.SessionTTL),
-		CSRFToken: csrf,
-	}
-	if err := m.store.SaveSession(ctx, &store.SessionRecord{
-		ID:        sess.ID,
-		UserID:    sess.UserID,
-		Username:  sess.Username,
-		Roles:     sess.Roles,
-		IP:        sess.IP,
-		UserAgent: sess.UserAgent,
-		CSRFToken: sess.CSRFToken,
-		CreatedAt: sess.CreatedAt,
-		LastSeenAt: sess.LastSeenAt,
-		ExpiresAt: sess.ExpiresAt,
-=======
 	sessionTTL := m.cfg.EffectiveSessionTTL()
 	sess := &Session{
 		ID:         id,
@@ -82,7 +57,6 @@ func (m *SessionManager) Create(ctx context.Context, user *store.User, roles []s
 		CreatedAt:  sess.CreatedAt,
 		LastSeenAt: sess.LastSeenAt,
 		ExpiresAt:  sess.ExpiresAt,
->>>>>>> 2adc2fe (v1.0.5)
 	}); err != nil {
 		return nil, err
 	}
@@ -90,11 +64,7 @@ func (m *SessionManager) Create(ctx context.Context, user *store.User, roles []s
 }
 
 func (m *SessionManager) Refresh(ctx context.Context, sessID string) error {
-<<<<<<< HEAD
-	return m.store.UpdateActivity(ctx, sessID, utils.NowUTC(), m.cfg.SessionTTL)
-=======
 	return m.store.UpdateActivity(ctx, sessID, utils.NowUTC(), m.cfg.EffectiveSessionTTL())
->>>>>>> 2adc2fe (v1.0.5)
 }
 
 func (m *SessionManager) Rotate(ctx context.Context, sessID string) (*Session, error) {

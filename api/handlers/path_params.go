@@ -2,10 +2,7 @@ package handlers
 
 import (
 	"net/http"
-<<<<<<< HEAD
-=======
 	"strings"
->>>>>>> 2adc2fe (v1.0.5)
 
 	"github.com/go-chi/chi/v5"
 )
@@ -17,18 +14,6 @@ func urlParam(r *http.Request, key string) string {
 func pathParams(r *http.Request) map[string]string {
 	out := map[string]string{}
 	rc := chi.RouteContext(r.Context())
-<<<<<<< HEAD
-	if rc == nil {
-		return out
-	}
-	for i, key := range rc.URLParams.Keys {
-		if i < len(rc.URLParams.Values) {
-			out[key] = rc.URLParams.Values[i]
-		}
-	}
-	return out
-}
-=======
 	if rc != nil {
 		for i, key := range rc.URLParams.Keys {
 			if i < len(rc.URLParams.Values) {
@@ -64,4 +49,3 @@ func addParamAfter(segments []string, marker, key string, out map[string]string)
 		}
 	}
 }
->>>>>>> 2adc2fe (v1.0.5)

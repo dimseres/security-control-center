@@ -187,14 +187,9 @@ func setupGroupHandlers(t *testing.T) (*handlers.AccountsHandler, *handlers.Auth
 	policy := rbac.NewPolicy(rbac.DefaultRoles())
 	sessions := &mockSessions{}
 	audits := store.NewAuditStore(db)
-<<<<<<< HEAD
-	acc := handlers.NewAccountsHandler(users, groups, roles, sessions, policy, auth.NewSessionManager(sessions, cfg, logger), cfg, audits, logger, nil)
-	authHandler := handlers.NewAuthHandler(cfg, users, sessions, auth.NewSessionManager(sessions, cfg, logger), policy, audits, logger)
-=======
 	incidents := store.NewIncidentsStore(db)
 	acc := handlers.NewAccountsHandler(users, groups, roles, sessions, policy, auth.NewSessionManager(sessions, cfg, logger), cfg, audits, logger, nil)
 	authHandler := handlers.NewAuthHandler(cfg, users, sessions, incidents, auth.NewSessionManager(sessions, cfg, logger), policy, audits, logger)
->>>>>>> 2adc2fe (v1.0.5)
 	return acc, authHandler, users, groups, policy, sessions, func() { db.Close() }
 }
 

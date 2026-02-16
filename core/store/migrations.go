@@ -233,8 +233,6 @@ var migrations = []string{
 		updated_at TIMESTAMP NOT NULL,
 		FOREIGN KEY(doc_id) REFERENCES docs(id) ON DELETE CASCADE
 	);`,
-<<<<<<< HEAD
-=======
 	`CREATE TABLE IF NOT EXISTS doc_export_approvals (
 		id INTEGER PRIMARY KEY AUTOINCREMENT,
 		doc_id INTEGER NOT NULL,
@@ -246,7 +244,6 @@ var migrations = []string{
 		consumed_at TIMESTAMP,
 		FOREIGN KEY(doc_id) REFERENCES docs(id) ON DELETE CASCADE
 	);`,
->>>>>>> 2adc2fe (v1.0.5)
 	`CREATE TABLE IF NOT EXISTS approval_participants (
 		id INTEGER PRIMARY KEY AUTOINCREMENT,
 		approval_id INTEGER NOT NULL,
@@ -418,10 +415,7 @@ var migrations = []string{
 	`CREATE INDEX IF NOT EXISTS idx_docs_folder ON docs(folder_id);`,
 	`CREATE INDEX IF NOT EXISTS idx_doc_versions_doc ON doc_versions(doc_id);`,
 	`CREATE INDEX IF NOT EXISTS idx_approvals_doc ON approvals(doc_id);`,
-<<<<<<< HEAD
-=======
 	`CREATE INDEX IF NOT EXISTS idx_doc_export_approvals_doc ON doc_export_approvals(doc_id, requested_by, expires_at);`,
->>>>>>> 2adc2fe (v1.0.5)
 	`CREATE INDEX IF NOT EXISTS idx_entity_links_doc ON entity_links(doc_id);`,
 	`CREATE INDEX IF NOT EXISTS idx_incidents_status ON incidents(status);`,
 	`CREATE INDEX IF NOT EXISTS idx_incidents_severity ON incidents(severity);`,
@@ -599,10 +593,7 @@ var migrations = []string{
 		group_id INTEGER,
 		sla_target_pct REAL,
 		auto_incident INTEGER NOT NULL DEFAULT 0,
-<<<<<<< HEAD
-=======
 		auto_task_on_down INTEGER NOT NULL DEFAULT 0,
->>>>>>> 2adc2fe (v1.0.5)
 		incident_severity TEXT NOT NULL DEFAULT 'low',
 		incident_type_id TEXT NOT NULL DEFAULT '',
 		created_by INTEGER,
@@ -686,22 +677,15 @@ var migrations = []string{
 		default_timeout_sec INTEGER NOT NULL DEFAULT 5,
 		default_interval_sec INTEGER NOT NULL DEFAULT 60,
 		engine_enabled INTEGER NOT NULL DEFAULT 1,
-<<<<<<< HEAD
-		allow_private_networks INTEGER NOT NULL DEFAULT 1,
-=======
 		allow_private_networks INTEGER NOT NULL DEFAULT 0,
->>>>>>> 2adc2fe (v1.0.5)
 		tls_refresh_hours INTEGER NOT NULL DEFAULT 24,
 		tls_expiring_days INTEGER NOT NULL DEFAULT 30,
 		notify_suppress_minutes INTEGER NOT NULL DEFAULT 5,
 		notify_repeat_down_minutes INTEGER NOT NULL DEFAULT 30,
 		notify_maintenance INTEGER NOT NULL DEFAULT 0,
-<<<<<<< HEAD
-=======
 		auto_task_on_down INTEGER NOT NULL DEFAULT 1,
 		auto_tls_incident INTEGER NOT NULL DEFAULT 1,
 		auto_tls_incident_days INTEGER NOT NULL DEFAULT 14,
->>>>>>> 2adc2fe (v1.0.5)
 		default_retries INTEGER NOT NULL DEFAULT 2,
 		default_retry_interval_sec INTEGER NOT NULL DEFAULT 30,
 		default_sla_target_pct REAL NOT NULL DEFAULT 90,
@@ -714,14 +698,11 @@ var migrations = []string{
 		telegram_bot_token BLOB NOT NULL,
 		telegram_chat_id TEXT NOT NULL,
 		telegram_thread_id INTEGER,
-<<<<<<< HEAD
-=======
 		template_text TEXT NOT NULL DEFAULT '',
 		quiet_hours_enabled INTEGER NOT NULL DEFAULT 0,
 		quiet_hours_start TEXT NOT NULL DEFAULT '',
 		quiet_hours_end TEXT NOT NULL DEFAULT '',
 		quiet_hours_tz TEXT NOT NULL DEFAULT '',
->>>>>>> 2adc2fe (v1.0.5)
 		silent INTEGER NOT NULL DEFAULT 0,
 		protect_content INTEGER NOT NULL DEFAULT 0,
 		is_default INTEGER NOT NULL DEFAULT 0,
@@ -729,8 +710,6 @@ var migrations = []string{
 		created_at TIMESTAMP NOT NULL,
 		is_active INTEGER NOT NULL DEFAULT 1
 	);`,
-<<<<<<< HEAD
-=======
 	`CREATE TABLE IF NOT EXISTS monitor_notification_deliveries (
 		id INTEGER PRIMARY KEY AUTOINCREMENT,
 		monitor_id INTEGER,
@@ -745,7 +724,6 @@ var migrations = []string{
 		FOREIGN KEY(monitor_id) REFERENCES monitors(id) ON DELETE SET NULL,
 		FOREIGN KEY(notification_channel_id) REFERENCES notification_channels(id) ON DELETE CASCADE
 	);`,
->>>>>>> 2adc2fe (v1.0.5)
 	`CREATE TABLE IF NOT EXISTS monitor_notifications (
 		id INTEGER PRIMARY KEY AUTOINCREMENT,
 		monitor_id INTEGER NOT NULL,
@@ -787,11 +765,8 @@ var migrations = []string{
 	`CREATE INDEX IF NOT EXISTS idx_monitor_tls_checked ON monitor_tls(checked_at);`,
 	`CREATE INDEX IF NOT EXISTS idx_monitor_maintenance_window ON monitor_maintenance(starts_at, ends_at);`,
 	`CREATE INDEX IF NOT EXISTS idx_notification_channels_default ON notification_channels(is_default, is_active);`,
-<<<<<<< HEAD
-=======
 	`CREATE INDEX IF NOT EXISTS idx_monitor_notification_deliveries_created ON monitor_notification_deliveries(created_at);`,
 	`CREATE INDEX IF NOT EXISTS idx_monitor_notification_deliveries_status ON monitor_notification_deliveries(status, acknowledged_at);`,
->>>>>>> 2adc2fe (v1.0.5)
 	`CREATE INDEX IF NOT EXISTS idx_monitor_notifications_monitor ON monitor_notifications(monitor_id);`,
 }
 
@@ -1131,10 +1106,7 @@ func ensureMonitoringColumns(ctx context.Context, db *sql.DB) error {
 	cols := []col{
 		{Table: "monitors", Name: "sla_target_pct", SQL: "ALTER TABLE monitors ADD COLUMN sla_target_pct REAL"},
 		{Table: "monitors", Name: "auto_incident", SQL: "ALTER TABLE monitors ADD COLUMN auto_incident INTEGER NOT NULL DEFAULT 0"},
-<<<<<<< HEAD
-=======
 		{Table: "monitors", Name: "auto_task_on_down", SQL: "ALTER TABLE monitors ADD COLUMN auto_task_on_down INTEGER NOT NULL DEFAULT 0"},
->>>>>>> 2adc2fe (v1.0.5)
 		{Table: "monitors", Name: "incident_severity", SQL: "ALTER TABLE monitors ADD COLUMN incident_severity TEXT NOT NULL DEFAULT 'low'"},
 		{Table: "monitors", Name: "incident_type_id", SQL: "ALTER TABLE monitors ADD COLUMN incident_type_id TEXT NOT NULL DEFAULT ''"},
 		{Table: "monitor_state", Name: "last_result_status", SQL: "ALTER TABLE monitor_state ADD COLUMN last_result_status TEXT NOT NULL DEFAULT ''"},
@@ -1146,12 +1118,9 @@ func ensureMonitoringColumns(ctx context.Context, db *sql.DB) error {
 		{Table: "monitoring_settings", Name: "notify_suppress_minutes", SQL: "ALTER TABLE monitoring_settings ADD COLUMN notify_suppress_minutes INTEGER NOT NULL DEFAULT 5"},
 		{Table: "monitoring_settings", Name: "notify_repeat_down_minutes", SQL: "ALTER TABLE monitoring_settings ADD COLUMN notify_repeat_down_minutes INTEGER NOT NULL DEFAULT 30"},
 		{Table: "monitoring_settings", Name: "notify_maintenance", SQL: "ALTER TABLE monitoring_settings ADD COLUMN notify_maintenance INTEGER NOT NULL DEFAULT 0"},
-<<<<<<< HEAD
-=======
 		{Table: "monitoring_settings", Name: "auto_task_on_down", SQL: "ALTER TABLE monitoring_settings ADD COLUMN auto_task_on_down INTEGER NOT NULL DEFAULT 1"},
 		{Table: "monitoring_settings", Name: "auto_tls_incident", SQL: "ALTER TABLE monitoring_settings ADD COLUMN auto_tls_incident INTEGER NOT NULL DEFAULT 1"},
 		{Table: "monitoring_settings", Name: "auto_tls_incident_days", SQL: "ALTER TABLE monitoring_settings ADD COLUMN auto_tls_incident_days INTEGER NOT NULL DEFAULT 14"},
->>>>>>> 2adc2fe (v1.0.5)
 		{Table: "monitors", Name: "ignore_tls_errors", SQL: "ALTER TABLE monitors ADD COLUMN ignore_tls_errors INTEGER NOT NULL DEFAULT 0"},
 		{Table: "monitors", Name: "notify_tls_expiring", SQL: "ALTER TABLE monitors ADD COLUMN notify_tls_expiring INTEGER NOT NULL DEFAULT 1"},
 		{Table: "monitoring_settings", Name: "default_retries", SQL: "ALTER TABLE monitoring_settings ADD COLUMN default_retries INTEGER NOT NULL DEFAULT 2"},
@@ -1257,14 +1226,11 @@ func ensureMonitoringColumns(ctx context.Context, db *sql.DB) error {
 		telegram_bot_token BLOB NOT NULL,
 		telegram_chat_id TEXT NOT NULL,
 		telegram_thread_id INTEGER,
-<<<<<<< HEAD
-=======
 		template_text TEXT NOT NULL DEFAULT '',
 		quiet_hours_enabled INTEGER NOT NULL DEFAULT 0,
 		quiet_hours_start TEXT NOT NULL DEFAULT '',
 		quiet_hours_end TEXT NOT NULL DEFAULT '',
 		quiet_hours_tz TEXT NOT NULL DEFAULT '',
->>>>>>> 2adc2fe (v1.0.5)
 		silent INTEGER NOT NULL DEFAULT 0,
 		protect_content INTEGER NOT NULL DEFAULT 0,
 		is_default INTEGER NOT NULL DEFAULT 0,
@@ -1274,8 +1240,6 @@ func ensureMonitoringColumns(ctx context.Context, db *sql.DB) error {
 	);`); err != nil {
 		return err
 	}
-<<<<<<< HEAD
-=======
 	notificationCols := []col{
 		{Table: "notification_channels", Name: "template_text", SQL: "ALTER TABLE notification_channels ADD COLUMN template_text TEXT NOT NULL DEFAULT ''"},
 		{Table: "notification_channels", Name: "quiet_hours_enabled", SQL: "ALTER TABLE notification_channels ADD COLUMN quiet_hours_enabled INTEGER NOT NULL DEFAULT 0"},
@@ -1295,7 +1259,6 @@ func ensureMonitoringColumns(ctx context.Context, db *sql.DB) error {
 			return fmt.Errorf("add column %s.%s: %w", c.Table, c.Name, err)
 		}
 	}
->>>>>>> 2adc2fe (v1.0.5)
 	if _, err := db.ExecContext(ctx, `CREATE TABLE IF NOT EXISTS monitor_notifications (
 		id INTEGER PRIMARY KEY AUTOINCREMENT,
 		monitor_id INTEGER NOT NULL,
@@ -1319,8 +1282,6 @@ func ensureMonitoringColumns(ctx context.Context, db *sql.DB) error {
 	);`); err != nil {
 		return err
 	}
-<<<<<<< HEAD
-=======
 	if _, err := db.ExecContext(ctx, `CREATE TABLE IF NOT EXISTS monitor_notification_deliveries (
 		id INTEGER PRIMARY KEY AUTOINCREMENT,
 		monitor_id INTEGER,
@@ -1337,7 +1298,6 @@ func ensureMonitoringColumns(ctx context.Context, db *sql.DB) error {
 	);`); err != nil {
 		return err
 	}
->>>>>>> 2adc2fe (v1.0.5)
 	if _, err := db.ExecContext(ctx, `CREATE INDEX IF NOT EXISTS idx_monitor_tls_checked ON monitor_tls(checked_at);`); err != nil {
 		return err
 	}
@@ -1350,15 +1310,12 @@ func ensureMonitoringColumns(ctx context.Context, db *sql.DB) error {
 	if _, err := db.ExecContext(ctx, `CREATE INDEX IF NOT EXISTS idx_monitor_notifications_monitor ON monitor_notifications(monitor_id);`); err != nil {
 		return err
 	}
-<<<<<<< HEAD
-=======
 	if _, err := db.ExecContext(ctx, `CREATE INDEX IF NOT EXISTS idx_monitor_notification_deliveries_created ON monitor_notification_deliveries(created_at);`); err != nil {
 		return err
 	}
 	if _, err := db.ExecContext(ctx, `CREATE INDEX IF NOT EXISTS idx_monitor_notification_deliveries_status ON monitor_notification_deliveries(status, acknowledged_at);`); err != nil {
 		return err
 	}
->>>>>>> 2adc2fe (v1.0.5)
 	return nil
 }
 

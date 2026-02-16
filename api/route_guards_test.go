@@ -54,8 +54,6 @@ func TestTasksRoutesRequireSessionAndPermission(t *testing.T) {
 	}
 }
 
-<<<<<<< HEAD
-=======
 func TestBackupsRoutesRequireSessionAndPermission(t *testing.T) {
 	root := projectRoot(t)
 	path := filepath.Join(root, "api", "backups", "router.go")
@@ -76,7 +74,6 @@ func TestBackupsRoutesRequireSessionAndPermission(t *testing.T) {
 	}
 }
 
->>>>>>> 2adc2fe (v1.0.5)
 func TestCoreAPIRoutesHaveSessionGuards(t *testing.T) {
 	root := projectRoot(t)
 	path := filepath.Join(root, "api", "routes_shell_core.go")

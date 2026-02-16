@@ -21,11 +21,8 @@
   "reports.tabs.templates": "Templates",
   "reports.tabs.settings": "Settings",
   "reports.new": "New report",
-<<<<<<< HEAD
-=======
   "reports.auditPackage.action": "Download audit package",
   "reports.auditPackage.formatPrompt": "Audit package format (md/pdf/docx/json)",
->>>>>>> 2adc2fe (v1.0.5)
   "reports.searchPlaceholder": "Search reports",
   "reports.filter.status": "Status",
   "reports.filter.classification": "Classification",
@@ -441,10 +438,7 @@
   "settings.tabs.general": "General",
   "settings.tabs.advanced": "Advanced",
   "settings.tabs.https": "HTTPS",
-<<<<<<< HEAD
-=======
   "settings.tabs.hardening": "Hardening",
->>>>>>> 2adc2fe (v1.0.5)
   "settings.tabs.tags": "Tags",
   "settings.tabs.classifications": "Classifications",
   "settings.tabs.incidents": "Incidents",
@@ -460,8 +454,6 @@
   "settings.about.description": "Security Control Center is an offline-first workspace for classified document management and incident response. It provides RBAC with per-object ACLs, clearance enforcement, encrypted storage, versioning, approvals, audit trails, and controlled export for regulated environments.",
   "settings.about.projectLink": "Project GitHub",
   "settings.about.profileLink": "BerkutSolutions GitHub",
-<<<<<<< HEAD
-=======
   "settings.hardening.title": "Security baseline",
   "settings.hardening.hint": "Zero-trust hardening checks",
   "settings.hardening.score": "Posture score",
@@ -501,7 +493,6 @@
   "settings.hardening.check.password.ok": "Password policy baseline is enabled.",
   "settings.hardening.check.password.warn": "Password policy is partially hardened.",
   "settings.hardening.check.password.fail": "Password policy baseline is not met.",
->>>>>>> 2adc2fe (v1.0.5)
   "settings.tags.title": "Tags",
   "settings.tags.subtitle": "Manage shared tags for documents and incidents",
   "settings.tags.placeholder": "New tag",
@@ -587,10 +578,7 @@
   "common.cancel": "Cancel",
   "common.confirm": "Confirm",
   "common.error": "Error",
-<<<<<<< HEAD
-=======
   "common.empty": "Empty",
->>>>>>> 2adc2fe (v1.0.5)
   "common.errors": "Errors",
   "common.badRequest": "Bad request",
   "common.serverError": "Server error",
@@ -706,10 +694,7 @@
   "docs.menu.versions": "Versions",
   "docs.menu.approval": "Send for approval",
   "docs.menu.export": "Export",
-<<<<<<< HEAD
-=======
   "docs.menu.exportApprove": "Approve Export",
->>>>>>> 2adc2fe (v1.0.5)
   "docs.menu.open": "Open",
   "docs.menu.newFolder": "Create folder",
   "docs.menu.newDoc": "Create document",
@@ -782,8 +767,6 @@
   "docs.nonEditable": "Preview only. Download to view.",
   "docs.deleteConfirm": "Delete this document?",
   "docs.exportPrompt": "Export format (md/pdf/docx/txt)?",
-<<<<<<< HEAD
-=======
   "docs.exportApprovalRequired": "Export requires approval from another employee.",
   "docs.exportApproveRequesterPrompt": "Enter requester username",
   "docs.exportApproveReasonPrompt": "Approval reason",
@@ -791,7 +774,6 @@
   "docs.export.requesterRequired": "Requester is required",
   "docs.export.selfApprovalForbidden": "Self approval is forbidden",
   "docs.security.invalidEvent": "Invalid security event",
->>>>>>> 2adc2fe (v1.0.5)
   "editor.subtitle": "Built-in Markdown editor",
   "editor.edit": "Edit",
   "editor.view": "View",
@@ -1047,11 +1029,8 @@
   "incidents.form.sla": "Required response time",
   "incidents.form.slaDefault": "2 hours",
   "incidents.form.slaDeadline": "First response deadline",
-<<<<<<< HEAD
-=======
   "incidents.form.resolveDeadline": "Resolution deadline",
   "incidents.form.slaState": "SLA state",
->>>>>>> 2adc2fe (v1.0.5)
   "incidents.form.assets": "Impacted assets",
   "incidents.form.assetsPlaceholder": "Example: CRM, AD, file servers",
   "incidents.form.tags": "Tags",
@@ -1062,11 +1041,8 @@
   "incidents.form.risks": "Risk of leak/outage",
   "incidents.form.riskPlaceholder": "Describe potential impact or downtime",
   "incidents.form.actions": "Actions taken",
-<<<<<<< HEAD
-=======
   "incidents.form.postmortem": "Postmortem",
   "incidents.form.postmortemSave": "Save postmortem",
->>>>>>> 2adc2fe (v1.0.5)
   "incidents.form.save": "Save",
   "incidents.form.cancel": "Cancel",
   "incidents.form.nameRequired": "Please specify incident title",
@@ -1091,15 +1067,12 @@
   "incidents.close.missingClosure": "Closure stage is required",
   "incidents.close.stageNotDone": "Closure stage must be completed",
   "incidents.close.noDecisions": "Add at least one decision to closure stage",
-<<<<<<< HEAD
-=======
   "incidents.postmortemRequired": "Postmortem is required for high/critical incidents",
   "incidents.postmortemSaveFailed": "Failed to save postmortem",
   "incidents.sla.firstResponseLate": "First response overdue",
   "incidents.sla.firstResponseOk": "First response in time",
   "incidents.sla.resolveLate": "Resolution overdue",
   "incidents.sla.resolveOk": "Resolution in time",
->>>>>>> 2adc2fe (v1.0.5)
   "incidents.closeFailed": "Could not close incident",
   "incidents.stage.addTitle": "Add section",
   "incidents.stage.addAction": "Add section",
@@ -1166,11 +1139,7 @@
   "incidents.stage.blocks.decisions.outcome.monitor": "Monitor",
   "incidents.stage.blocks.decisions.outcome.other": "Other",
   "incidents.stage.blocks.decisions.options": "Options",
-<<<<<<< HEAD
-  "incidents.stage.blocks.decisions.optionsHint": "",
-=======
   "incidents.stage.blocks.decisions.optionsHint": "Enter options separated by commas",
->>>>>>> 2adc2fe (v1.0.5)
   "incidents.stage.blocks.decisions.optionPlaceholder": "Option description",
   "incidents.stage.blocks.decisions.addOption": "Add option",
   "incidents.stage.blocks.decisions.selected": "Selected option",
@@ -1296,11 +1265,7 @@
   "incidents.aclInvalid": "Invalid access rules",
   "logs.title": "Logs",
   "logs.subtitle": "System audit trail",
-<<<<<<< HEAD
-  "logs.placeholder": "",
-=======
   "logs.placeholder": "Search by action, user or details",
->>>>>>> 2adc2fe (v1.0.5)
   "logs.table.time": "Time",
   "logs.table.user": "User",
   "logs.table.action": "Action",
@@ -1315,13 +1280,10 @@
   "logs.filter.from": "From",
   "logs.filter.to": "To",
   "logs.filter.reset": "Reset",
-<<<<<<< HEAD
-=======
   "logs.views.save": "Save view",
   "logs.views.placeholder": "Saved views",
   "logs.views.prompt": "Saved view name",
   "logs.export": "Export CSV",
->>>>>>> 2adc2fe (v1.0.5)
   "logs.section.docs": "Documents",
   "logs.section.folders": "Folders",
   "logs.section.approvals": "Approvals",
@@ -1868,10 +1830,6 @@
   "monitoring.notifications.testFailed": "Test notification failed",
   "monitoring.notifications.testSuccess": "Test notification sent",
   "monitoring.notifications.channelRequired": "Notification channel is not configured",
-<<<<<<< HEAD
-  "monitoring.certs.notifyNoMonitors": "Select at least one HTTPS monitor for test",
-  "monitoring.incidents.autoCreate": "Create incidents automatically",
-=======
   "monitoring.notifications.template": "Template",
   "monitoring.notifications.templatePlaceholder": "Use {message} placeholder for generated text",
   "monitoring.notifications.quietEnabled": "Enable quiet hours",
@@ -1892,7 +1850,6 @@
   "monitoring.certs.notifyNoMonitors": "Select at least one HTTPS monitor for test",
   "monitoring.incidents.autoCreate": "Create incidents on downtime",
   "monitoring.tasks.autoCreate": "Create tasks on downtime",
->>>>>>> 2adc2fe (v1.0.5)
   "monitoring.incidents.severity": "Severity",
   "monitoring.incidents.type": "Incident type",
   "monitoring.incidents.typeEmpty": "Not set",
@@ -2075,12 +2032,9 @@
   "monitoring.settings.notifySuppress": "Notify suppression (minutes)",
   "monitoring.settings.notifyRepeatDown": "Repeat DOWN after (minutes)",
   "monitoring.settings.notifyMaintenance": "Notify maintenance start/end",
-<<<<<<< HEAD
-=======
   "monitoring.settings.autoTaskOnDown": "Automation: create task on monitor DOWN",
   "monitoring.settings.autoTLSIncident": "Automation: create incident on TLS expiry risk",
   "monitoring.settings.autoTLSIncidentDays": "TLS incident threshold (days)",
->>>>>>> 2adc2fe (v1.0.5)
   "monitoring.settings.saved": "Monitoring settings saved",
   "monitoring.certs.title": "Certificates",
   "monitoring.certs.subtitle": "TLS expiry overview for HTTPS monitors",
@@ -2270,8 +2224,6 @@
   "backups.overview.lastSuccessful": "Last successful backup",
   "backups.overview.lastRun": "Last run",
   "backups.overview.newBackupOptions": "New backup options",
-<<<<<<< HEAD
-=======
   "backups.integrity.title": "Backup integrity",
   "backups.integrity.status": "Status",
   "backups.integrity.lastTest": "Last restore test",
@@ -2285,7 +2237,6 @@
   "backups.integrity.restoreTestMissing": "Restore test has not been executed yet",
   "backups.integrity.restoreTestFailed": "Last restore test failed",
   "backups.integrity.restoreTestStale": "Restore test is outdated",
->>>>>>> 2adc2fe (v1.0.5)
   "backups.create.fields.label": "Backup name",
   "backups.create.fields.labelPlaceholder": "Monthly baseline",
   "backups.create.fields.includeFiles": "Include files in backup",

@@ -24,12 +24,9 @@ type monitoringSettingsPayload struct {
 	NotifySuppressMinutes   int     `json:"notify_suppress_minutes"`
 	NotifyRepeatDownMinutes int     `json:"notify_repeat_down_minutes"`
 	NotifyMaintenance       *bool   `json:"notify_maintenance"`
-<<<<<<< HEAD
-=======
 	AutoTaskOnDown          *bool   `json:"auto_task_on_down"`
 	AutoTLSIncident         *bool   `json:"auto_tls_incident"`
 	AutoTLSIncidentDays     int     `json:"auto_tls_incident_days"`
->>>>>>> 2adc2fe (v1.0.5)
 }
 
 func (h *MonitoringHandler) GetSettings(w http.ResponseWriter, r *http.Request) {
@@ -96,8 +93,6 @@ func (h *MonitoringHandler) UpdateSettings(w http.ResponseWriter, r *http.Reques
 	if payload.NotifyMaintenance != nil {
 		current.NotifyMaintenance = *payload.NotifyMaintenance
 	}
-<<<<<<< HEAD
-=======
 	if payload.AutoTaskOnDown != nil {
 		current.AutoTaskOnDown = *payload.AutoTaskOnDown
 	}
@@ -107,7 +102,6 @@ func (h *MonitoringHandler) UpdateSettings(w http.ResponseWriter, r *http.Reques
 	if payload.AutoTLSIncidentDays > 0 {
 		current.AutoTLSIncidentDays = payload.AutoTLSIncidentDays
 	}
->>>>>>> 2adc2fe (v1.0.5)
 	if current.RetentionDays <= 0 || current.DefaultTimeoutSec <= 0 || current.DefaultIntervalSec <= 0 || current.MaxConcurrentChecks <= 0 {
 		http.Error(w, "monitoring.error.invalidSettings", http.StatusBadRequest)
 		return
@@ -128,13 +122,10 @@ func (h *MonitoringHandler) UpdateSettings(w http.ResponseWriter, r *http.Reques
 		http.Error(w, "monitoring.error.invalidSettings", http.StatusBadRequest)
 		return
 	}
-<<<<<<< HEAD
-=======
 	if current.AutoTLSIncidentDays <= 0 {
 		http.Error(w, "monitoring.error.invalidSettings", http.StatusBadRequest)
 		return
 	}
->>>>>>> 2adc2fe (v1.0.5)
 	if err := h.store.UpdateSettings(r.Context(), current); err != nil {
 		http.Error(w, errServerError, http.StatusInternalServerError)
 		return
@@ -168,12 +159,9 @@ func settingsDetails(s *store.MonitorSettings) string {
 		"notify_suppress=" + strconv.Itoa(s.NotifySuppressMinutes),
 		"notify_repeat=" + strconv.Itoa(s.NotifyRepeatDownMinutes),
 		"notify_maintenance=" + strconv.FormatBool(s.NotifyMaintenance),
-<<<<<<< HEAD
-=======
 		"auto_task_on_down=" + strconv.FormatBool(s.AutoTaskOnDown),
 		"auto_tls_incident=" + strconv.FormatBool(s.AutoTLSIncident),
 		"auto_tls_incident_days=" + strconv.Itoa(s.AutoTLSIncidentDays),
->>>>>>> 2adc2fe (v1.0.5)
 	}
 	return strings.Join(parts, "|")
 }

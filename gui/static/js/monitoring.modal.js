@@ -28,11 +28,8 @@
     els.tags = document.getElementById('monitor-tags');
     els.tagsHint = document.querySelector('[data-tag-hint="monitor-tags"]');
     els.autoIncident = document.getElementById('monitor-auto-incident');
-<<<<<<< HEAD
-=======
     els.autoIncidentRow = document.getElementById('monitor-auto-incident-row');
     els.autoTaskOnDown = document.getElementById('monitor-auto-task-on-down');
->>>>>>> 2adc2fe (v1.0.5)
     els.incidentSeverity = document.getElementById('monitor-incident-severity');
     els.notifyTLS = document.getElementById('monitor-notify-tls');
     els.ignoreTLS = document.getElementById('monitor-ignore-tls');
@@ -101,12 +98,9 @@
       if (els.autoIncident) {
         els.autoIncident.checked = !!monitor.auto_incident;
       }
-<<<<<<< HEAD
-=======
       if (els.autoTaskOnDown) {
         els.autoTaskOnDown.checked = monitor.auto_task_on_down !== false;
       }
->>>>>>> 2adc2fe (v1.0.5)
       if (els.notifyTLS) {
         els.notifyTLS.checked = monitor.notify_tls_expiring !== false;
       }
@@ -130,12 +124,9 @@
       if (els.autoIncident) {
         els.autoIncident.checked = false;
       }
-<<<<<<< HEAD
-=======
       if (els.autoTaskOnDown) {
         els.autoTaskOnDown.checked = false;
       }
->>>>>>> 2adc2fe (v1.0.5)
       if (els.notifyTLS) {
         els.notifyTLS.checked = true;
       }
@@ -213,12 +204,9 @@
       payload.auto_incident = !!els.autoIncident.checked;
       payload.incident_severity = els.incidentSeverity?.value || 'low';
     }
-<<<<<<< HEAD
-=======
     if (els.autoTaskOnDown) {
       payload.auto_task_on_down = !!els.autoTaskOnDown.checked;
     }
->>>>>>> 2adc2fe (v1.0.5)
     if (els.notifyTLS) {
       payload.notify_tls_expiring = !!els.notifyTLS.checked;
     }
@@ -367,13 +355,6 @@
 
   function toggleIncidentFields() {
     const canLink = MonitoringPage.hasPermission('monitoring.incidents.link');
-<<<<<<< HEAD
-    [els.autoIncident, els.incidentSeverity].forEach(el => {
-      if (!el) return;
-      el.closest('.form-field').hidden = !canLink;
-      if (!canLink) el.disabled = true;
-    });
-=======
     if (els.autoIncidentRow) {
       els.autoIncidentRow.hidden = !canLink;
     }
@@ -385,7 +366,6 @@
       if (field) field.hidden = !canLink;
       els.incidentSeverity.disabled = !canLink;
     }
->>>>>>> 2adc2fe (v1.0.5)
   }
 
   function applyIncidentControlState() {

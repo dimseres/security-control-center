@@ -69,11 +69,6 @@
     return tpl.innerHTML;
   }
 
-<<<<<<< HEAD
-  function exportDoc(docId) {
-    const fmt = prompt(BerkutI18n.t('docs.exportPrompt'), 'pdf') || 'pdf';
-    window.open(`/api/docs/${docId}/export?format=${encodeURIComponent(fmt)}`, '_blank');
-=======
   async function exportDoc(docId, format) {
     const fmt = String(format || 'pdf').trim().toLowerCase() || 'pdf';
     try {
@@ -119,7 +114,6 @@
     } catch (err) {
       alert(BerkutI18n.t((err && err.message) || 'common.error'));
     }
->>>>>>> 2adc2fe (v1.0.5)
   }
 
   async function openViewer(docId) {
@@ -391,8 +385,5 @@
   DocsPage.applyZoom = applyZoom;
   DocsPage.runSearch = runSearch;
   DocsPage.resetSearch = resetSearch;
-<<<<<<< HEAD
-=======
   DocsPage.approveExport = approveExport;
->>>>>>> 2adc2fe (v1.0.5)
 })();

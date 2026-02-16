@@ -20,11 +20,7 @@ import (
 )
 
 const (
-<<<<<<< HEAD
-	onlyOfficeTokenTTL       = 24 * time.Hour
-=======
 	onlyOfficeTokenTTL       = 10 * time.Minute
->>>>>>> 2adc2fe (v1.0.5)
 	onlyOfficeUserDataPrefix = "berkut:"
 )
 

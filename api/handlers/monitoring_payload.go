@@ -33,10 +33,7 @@ type monitorPayload struct {
 	IgnoreTLSErrors   *bool             `json:"ignore_tls_errors"`
 	NotifyTLSExpiring *bool             `json:"notify_tls_expiring"`
 	AutoIncident      *bool             `json:"auto_incident"`
-<<<<<<< HEAD
-=======
 	AutoTaskOnDown    *bool             `json:"auto_task_on_down"`
->>>>>>> 2adc2fe (v1.0.5)
 	IncidentSeverity  string            `json:"incident_severity"`
 	IncidentTypeID    string            `json:"incident_type_id"`
 }
@@ -75,12 +72,9 @@ func payloadToMonitor(payload monitorPayload, settings *store.MonitorSettings, c
 	if payload.AutoIncident != nil {
 		m.AutoIncident = *payload.AutoIncident
 	}
-<<<<<<< HEAD
-=======
 	if payload.AutoTaskOnDown != nil {
 		m.AutoTaskOnDown = *payload.AutoTaskOnDown
 	}
->>>>>>> 2adc2fe (v1.0.5)
 	if payload.IgnoreTLSErrors != nil {
 		m.IgnoreTLSErrors = *payload.IgnoreTLSErrors
 	}
@@ -161,12 +155,9 @@ func mergeMonitor(existing *store.Monitor, payload monitorPayload, settings *sto
 	if payload.AutoIncident != nil {
 		m.AutoIncident = *payload.AutoIncident
 	}
-<<<<<<< HEAD
-=======
 	if payload.AutoTaskOnDown != nil {
 		m.AutoTaskOnDown = *payload.AutoTaskOnDown
 	}
->>>>>>> 2adc2fe (v1.0.5)
 	if payload.IncidentSeverity != "" || payload.AutoIncident != nil {
 		m.IncidentSeverity = strings.ToLower(strings.TrimSpace(payload.IncidentSeverity))
 		if m.AutoIncident && m.IncidentSeverity == "" {

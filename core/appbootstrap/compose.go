@@ -63,10 +63,7 @@ func composeRuntime(cfg *config.AppConfig, db *sql.DB, logger *utils.Logger) (*r
 		monitoring.NewHTTPTelegramSender(),
 		logger,
 	)
-<<<<<<< HEAD
-=======
 	monitoringEngine.SetTaskStore(tasksStore)
->>>>>>> 2adc2fe (v1.0.5)
 
 	return &runtimeComposition{
 		serverDeps: api.ServerDeps{

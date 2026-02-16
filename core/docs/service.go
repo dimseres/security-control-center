@@ -3,11 +3,8 @@ package docs
 import (
 	"bytes"
 	"context"
-<<<<<<< HEAD
-=======
 	"encoding/base64"
 	"encoding/json"
->>>>>>> 2adc2fe (v1.0.5)
 	"errors"
 	"fmt"
 	"io"
@@ -63,8 +60,6 @@ type ExportResult struct {
 	WatermarkApplied bool
 }
 
-<<<<<<< HEAD
-=======
 type jsonExportPayload struct {
 	DocID            int64  `json:"doc_id"`
 	RegNumber        string `json:"reg_number"`
@@ -76,7 +71,6 @@ type jsonExportPayload struct {
 	ContentBase64    string `json:"content_base64,omitempty"`
 }
 
->>>>>>> 2adc2fe (v1.0.5)
 func NewService(cfg *config.AppConfig, ds store.DocsStore, us store.UsersStore, audits store.AuditStore, logger *utils.Logger) (*Service, error) {
 	if cfg.Docs.StorageDir == "" {
 		cfg.Docs.StorageDir = cfg.Docs.StoragePath
@@ -243,8 +237,6 @@ func (s *Service) Export(ctx context.Context, req ExportRequest) (*ExportResult,
 			return nil, err
 		}
 		out = data
-<<<<<<< HEAD
-=======
 	case FormatJSON:
 		jsonData := jsonExportPayload{
 			DocID:            req.Doc.ID,
@@ -273,7 +265,6 @@ func (s *Service) Export(ctx context.Context, req ExportRequest) (*ExportResult,
 		if err != nil {
 			return nil, err
 		}
->>>>>>> 2adc2fe (v1.0.5)
 	default:
 		return nil, fmt.Errorf("unsupported export format %s", target)
 	}
@@ -506,12 +497,9 @@ func (s *Service) CheckACL(user *store.User, roles []string, doc *store.Document
 	if len(docACL) == 0 && doc.InheritACL {
 		docACL = append(docACL, folderACL...)
 	}
-<<<<<<< HEAD
-=======
 	if doc.CreatedBy == user.ID {
 		return true
 	}
->>>>>>> 2adc2fe (v1.0.5)
 	for _, a := range docACL {
 		if a.Permission != required {
 			continue
@@ -626,8 +614,6 @@ func (s *Service) ConvertMarkdown(ctx context.Context, target string, md []byte,
 		out, err := s.convertFromMarkdown(ctx, FormatPDF, md)
 		return out, contentTypeFor(FormatPDF), err
 	}
-<<<<<<< HEAD
-=======
 	if t == FormatJSON {
 		payload := jsonExportPayload{
 			SourceFormat:     FormatMarkdown,
@@ -640,7 +626,6 @@ func (s *Service) ConvertMarkdown(ctx context.Context, target string, md []byte,
 		out, err := json.MarshalIndent(payload, "", "  ")
 		return out, contentTypeFor(FormatJSON), err
 	}
->>>>>>> 2adc2fe (v1.0.5)
 	return nil, "", fmt.Errorf("unsupported export format %s", t)
 }
 
@@ -672,11 +657,8 @@ func contentTypeFor(format string) string {
 		return "application/pdf"
 	case FormatTXT:
 		return "text/plain; charset=utf-8"
-<<<<<<< HEAD
-=======
 	case FormatJSON:
 		return "application/json; charset=utf-8"
->>>>>>> 2adc2fe (v1.0.5)
 	default:
 		return "text/markdown; charset=utf-8"
 	}

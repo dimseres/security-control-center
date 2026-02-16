@@ -207,9 +207,6 @@
   }
 
   async function deleteDoc(docId) {
-<<<<<<< HEAD
-    if (!confirm(BerkutI18n.t('docs.deleteConfirm'))) return;
-=======
     const ok = DocsPage.confirmAction
       ? await DocsPage.confirmAction({
         title: BerkutI18n.t('docs.menu.delete'),
@@ -219,7 +216,6 @@
       })
       : confirm(BerkutI18n.t('docs.deleteConfirm'));
     if (!ok) return;
->>>>>>> 2adc2fe (v1.0.5)
     await Api.del(`/api/docs/${docId}`);
     await DocsPage.loadDocs();
   }

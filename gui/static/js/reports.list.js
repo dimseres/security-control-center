@@ -56,13 +56,10 @@
         ReportsPage.openCreateModal();
       }
     };
-<<<<<<< HEAD
-=======
     const auditBtn = document.getElementById('reports-audit-package-btn');
     if (auditBtn) {
       auditBtn.onclick = () => exportAuditPackage();
     }
->>>>>>> 2adc2fe (v1.0.5)
     if (ReportsPage.bindContextMenu) ReportsPage.bindContextMenu();
     const table = document.getElementById('reports-table');
     if (table) {
@@ -176,8 +173,6 @@
     }
   }
 
-<<<<<<< HEAD
-=======
   function exportAuditPackage() {
     const from = ReportsPage.toISODateInput(state.filters.periodFrom);
     const to = ReportsPage.toISODateInput(state.filters.periodTo);
@@ -190,17 +185,13 @@
     window.open(`/api/reports/audit-package?${params.toString()}`, '_blank');
   }
 
->>>>>>> 2adc2fe (v1.0.5)
   ReportsPage.bindList = bindList;
   ReportsPage.loadReports = loadReports;
   ReportsPage.renderReports = renderReports;
   ReportsPage.updateStatus = updateStatus;
   ReportsPage.exportReport = exportReport;
   ReportsPage.deleteReport = deleteReport;
-<<<<<<< HEAD
-=======
   ReportsPage.exportAuditPackage = exportAuditPackage;
->>>>>>> 2adc2fe (v1.0.5)
   ReportsPage.bindContextMenu = bindContextMenu;
 
   function bindContextMenu() {

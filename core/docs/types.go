@@ -49,10 +49,7 @@ const (
 	FormatDocx     = "docx"
 	FormatPDF      = "pdf"
 	FormatTXT      = "txt"
-<<<<<<< HEAD
-=======
 	FormatJSON     = "json"
->>>>>>> 2adc2fe (v1.0.5)
 )
 
 var TagList = []string{"COMMERCIAL_SECRET", "PERSONAL_DATA"}

@@ -1,10 +1,6 @@
 module berkut-scc
 
-<<<<<<< HEAD
-go 1.23
-=======
 go 1.24.0
->>>>>>> 2adc2fe (v1.0.5)
 
 require (
 	github.com/casbin/casbin/v2 v2.96.0
@@ -14,11 +10,7 @@ require (
 	github.com/jackc/pgx/v5 v5.7.2
 	github.com/pressly/goose/v3 v3.22.1
 	github.com/robfig/cron/v3 v3.0.1
-<<<<<<< HEAD
-	golang.org/x/crypto v0.31.0
-=======
 	golang.org/x/crypto v0.45.0
->>>>>>> 2adc2fe (v1.0.5)
 	modernc.org/sqlite v1.33.0
 )
 
@@ -40,17 +32,10 @@ require (
 	github.com/rogpeppe/go-internal v1.14.1 // indirect
 	github.com/sethvargo/go-retry v0.3.0 // indirect
 	go.uber.org/multierr v1.11.0 // indirect
-<<<<<<< HEAD
-	golang.org/x/sync v0.10.0 // indirect
-	golang.org/x/sys v0.28.0 // indirect
-	golang.org/x/text v0.21.0 // indirect
-	golang.org/x/tools v0.26.0 // indirect
-=======
 	golang.org/x/sync v0.18.0 // indirect
 	golang.org/x/sys v0.38.0 // indirect
 	golang.org/x/text v0.31.0 // indirect
 	golang.org/x/tools v0.38.0 // indirect
->>>>>>> 2adc2fe (v1.0.5)
 	gopkg.in/yaml.v3 v3.0.1 // indirect
 	modernc.org/gc/v3 v3.0.0-20240107210532-573471604cb6 // indirect
 	modernc.org/mathutil v1.6.0 // indirect

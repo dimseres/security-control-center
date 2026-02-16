@@ -33,10 +33,7 @@ func RegisterIncidents(apiRouter chi.Router, g Guards, incidents *handlers.Incid
 		incidentsRouter.MethodFunc("GET", "/{id}/export", g.SessionPerm("incidents.export", incidents.Export))
 		incidentsRouter.MethodFunc("POST", "/{id}/create-report-doc", g.SessionPerm("incidents.edit", incidents.CreateReportDoc))
 		incidentsRouter.MethodFunc("POST", "/{id}/close", g.SessionPerm("incidents.edit", incidents.CloseIncident))
-<<<<<<< HEAD
-=======
 		incidentsRouter.MethodFunc("PUT", "/{id}/postmortem", g.SessionPerm("incidents.edit", incidents.SavePostmortem))
->>>>>>> 2adc2fe (v1.0.5)
 		incidentsRouter.MethodFunc("GET", "/{id}/stages", g.SessionPerm("incidents.view", incidents.ListStages))
 		incidentsRouter.MethodFunc("POST", "/{id}/stages", g.SessionPerm("incidents.edit", incidents.AddStage))
 		incidentsRouter.MethodFunc("GET", "/{id}/stages/{stage_id}", g.SessionPerm("incidents.view", incidents.GetStage))

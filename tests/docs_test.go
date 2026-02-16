@@ -24,11 +24,7 @@ func setupDocs(t *testing.T) (context.Context, *config.AppConfig, *store.User, s
 			VersionLimit:      2,
 			PerFolderSequence: false,
 			Watermark: config.WatermarkConfig{
-<<<<<<< HEAD
-				Enabled:  false,
-=======
 				Enabled:  true,
->>>>>>> 2adc2fe (v1.0.5)
 				MinLevel: "CONFIDENTIAL",
 			},
 			Converters: config.ConvertersConfig{Enabled: false},

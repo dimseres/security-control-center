@@ -270,13 +270,10 @@ func (h *AccountsHandler) BulkUsers(w http.ResponseWriter, r *http.Request) {
 			failures = append(failures, bulkFailure{UserID: id, Reason: "forbidden"})
 			continue
 		}
-<<<<<<< HEAD
-=======
 		if containsRole(roles, "superadmin") && h.isLastSuperadmin(ctx, target.ID) && (action == "lock" || action == "disable") {
 			failures = append(failures, bulkFailure{UserID: id, Reason: "last_superadmin"})
 			continue
 		}
->>>>>>> 2adc2fe (v1.0.5)
 		if sess != nil && sess.UserID == target.ID && (action == "lock" || action == "disable") {
 			failures = append(failures, bulkFailure{UserID: id, Reason: "self_lockout"})
 			h.audits.Log(ctx, currentUser(r), "accounts.self_lockout_blocked", fmt.Sprintf("%d|bulk_%s", id, action))
@@ -404,13 +401,6 @@ func (h *AccountsHandler) BulkUsers(w http.ResponseWriter, r *http.Request) {
 				Minutes int    `json:"minutes"`
 			}
 			_ = decodePayload(req.Payload, &p)
-<<<<<<< HEAD
-			if containsRole(roles, "superadmin") && h.isLastSuperadmin(ctx, target.ID) {
-				failures = append(failures, bulkFailure{UserID: id, Reason: "last_superadmin"})
-				continue
-			}
-=======
->>>>>>> 2adc2fe (v1.0.5)
 			now := time.Now().UTC()
 			target.LockReason = strings.TrimSpace(p.Reason)
 			if p.Stage > 0 {
@@ -460,13 +450,6 @@ func (h *AccountsHandler) BulkUsers(w http.ResponseWriter, r *http.Request) {
 				Reason string `json:"reason"`
 			}
 			_ = decodePayload(req.Payload, &p)
-<<<<<<< HEAD
-			if !enable && containsRole(roles, "superadmin") && h.isLastSuperadmin(ctx, target.ID) {
-				failures = append(failures, bulkFailure{UserID: id, Reason: "last_superadmin"})
-				continue
-			}
-=======
->>>>>>> 2adc2fe (v1.0.5)
 			if err := h.users.SetActive(ctx, target.ID, enable); err != nil {
 				failures = append(failures, bulkFailure{UserID: id, Reason: "server_error"})
 				continue
@@ -716,11 +699,8 @@ func (h *AccountsHandler) UpdateUser(w http.ResponseWriter, r *http.Request) {
 	}
 	originalRoles := make([]string, len(roles))
 	copy(originalRoles, roles)
-<<<<<<< HEAD
-=======
 	updatedRoles := roles
 	rolesChanged := false
->>>>>>> 2adc2fe (v1.0.5)
 	var p accountPayload
 	if err := json.NewDecoder(r.Body).Decode(&p); err != nil {
 		http.Error(w, "bad request", http.StatusBadRequest)
@@ -757,14 +737,11 @@ func (h *AccountsHandler) UpdateUser(w http.ResponseWriter, r *http.Request) {
 		existing.ClearanceTags = tags
 	}
 	if p.Status != "" {
-<<<<<<< HEAD
-=======
 		if p.Status == "disabled" && containsRole(originalRoles, "superadmin") && h.isLastSuperadmin(r.Context(), id) {
 			http.Error(w, localized(preferredLang(r), "accounts.lastSuperadminProtected"), http.StatusConflict)
 			h.audits.Log(r.Context(), currentUser(r), "accounts.last_superadmin_blocked", idStr)
 			return
 		}
->>>>>>> 2adc2fe (v1.0.5)
 		if p.Status == "disabled" {
 			existing.Active = false
 			now := time.Now().UTC()
@@ -774,14 +751,11 @@ func (h *AccountsHandler) UpdateUser(w http.ResponseWriter, r *http.Request) {
 			existing.DisabledAt = nil
 		}
 	} else if p.Active != nil {
-<<<<<<< HEAD
-=======
 		if !*p.Active && containsRole(originalRoles, "superadmin") && h.isLastSuperadmin(r.Context(), id) {
 			http.Error(w, localized(preferredLang(r), "accounts.lastSuperadminProtected"), http.StatusConflict)
 			h.audits.Log(r.Context(), currentUser(r), "accounts.last_superadmin_blocked", idStr)
 			return
 		}
->>>>>>> 2adc2fe (v1.0.5)
 		existing.Active = *p.Active
 		if *p.Active {
 			existing.DisabledAt = nil
@@ -791,14 +765,6 @@ func (h *AccountsHandler) UpdateUser(w http.ResponseWriter, r *http.Request) {
 		}
 	}
 	if p.Roles != nil || p.Role != "" {
-<<<<<<< HEAD
-		roles = sanitizeRoles(p.Roles, p.Role)
-		if containsRole(roles, "superadmin") && (sess == nil || !containsRole(sess.Roles, "superadmin")) {
-			http.Error(w, "forbidden", http.StatusForbidden)
-			return
-		}
-		if id == sess.UserID && !h.policy.Allowed(roles, "accounts.manage") {
-=======
 		updatedRoles = sanitizeRoles(p.Roles, p.Role)
 		rolesChanged = true
 		if containsRole(updatedRoles, "superadmin") && (sess == nil || !containsRole(sess.Roles, "superadmin")) {
@@ -806,16 +772,11 @@ func (h *AccountsHandler) UpdateUser(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 		if id == sess.UserID && !h.policy.Allowed(updatedRoles, "accounts.manage") {
->>>>>>> 2adc2fe (v1.0.5)
 			http.Error(w, localized(preferredLang(r), "accounts.selfLockoutPrevented"), http.StatusConflict)
 			h.audits.Log(r.Context(), currentUser(r), "accounts.self_lockout_blocked", idStr)
 			return
 		}
-<<<<<<< HEAD
-		if containsRole(originalRoles, "superadmin") && h.isLastSuperadmin(r.Context(), id) && !containsRole(roles, "superadmin") {
-=======
 		if containsRole(originalRoles, "superadmin") && h.isLastSuperadmin(r.Context(), id) && !containsRole(updatedRoles, "superadmin") {
->>>>>>> 2adc2fe (v1.0.5)
 			http.Error(w, localized(preferredLang(r), "accounts.lastSuperadminProtected"), http.StatusConflict)
 			h.audits.Log(r.Context(), currentUser(r), "accounts.last_superadmin_blocked", idStr)
 			return
@@ -828,15 +789,11 @@ func (h *AccountsHandler) UpdateUser(w http.ResponseWriter, r *http.Request) {
 	if p.RequirePasswordChange {
 		existing.RequirePasswordChange = true
 	}
-<<<<<<< HEAD
-	if err := h.users.Update(r.Context(), existing, roles); err != nil {
-=======
 	var directRoles []string
 	if rolesChanged {
 		directRoles = updatedRoles
 	}
 	if err := h.users.Update(r.Context(), existing, directRoles); err != nil {
->>>>>>> 2adc2fe (v1.0.5)
 		http.Error(w, "server error", http.StatusInternalServerError)
 		return
 	}

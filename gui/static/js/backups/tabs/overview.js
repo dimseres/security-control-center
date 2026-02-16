@@ -8,17 +8,11 @@ const BackupsOverview = (() => {
     const createBtn = document.getElementById('backups-create-now');
     const refreshBtn = document.getElementById('backups-overview-refresh');
     const emptyCreate = document.getElementById('backups-overview-empty-create');
-<<<<<<< HEAD
-    if (createBtn) createBtn.addEventListener('click', createNow);
-    if (refreshBtn) refreshBtn.addEventListener('click', () => load(true));
-    if (emptyCreate) emptyCreate.addEventListener('click', createNow);
-=======
     const runIntegrityBtn = document.getElementById('backups-overview-run-integrity');
     if (createBtn) createBtn.addEventListener('click', createNow);
     if (refreshBtn) refreshBtn.addEventListener('click', () => load(true));
     if (emptyCreate) emptyCreate.addEventListener('click', createNow);
     if (runIntegrityBtn) runIntegrityBtn.addEventListener('click', runIntegrityTest);
->>>>>>> 2adc2fe (v1.0.5)
   }
 
   async function createNow() {
@@ -26,15 +20,7 @@ const BackupsOverview = (() => {
     disableCreate(true);
     BackupsPage.setAlert('', '', '');
     try {
-<<<<<<< HEAD
-      const res = await BackupsPage.createBackup({
-        label: '',
-        scope: ['ALL'],
-        include_files: false,
-      });
-=======
       const res = await BackupsPage.createBackup(buildCreatePayload());
->>>>>>> 2adc2fe (v1.0.5)
       const key = res?.run?.status === 'success' ? 'backups.create.success' : 'backups.create.started';
       BackupsPage.setAlert('success', key, '');
       await load(false);
@@ -97,14 +83,6 @@ const BackupsOverview = (() => {
     if (showSpinner) toggleLoading(true);
     BackupsPage.setAlert('', '', '');
     try {
-<<<<<<< HEAD
-      const items = await BackupsPage.listBackups();
-      render(items);
-    } catch (err) {
-      const e = BackupsPage.parseError(err);
-      BackupsPage.setAlert('error', e.i18nKey, BackupsPage.t('common.serverError'));
-      render([]);
-=======
       const [items, integrityRes] = await Promise.all([
         BackupsPage.listBackups(),
         Api.get('/api/backups/integrity').catch(() => ({ item: null })),
@@ -114,17 +92,12 @@ const BackupsOverview = (() => {
       const e = BackupsPage.parseError(err);
       BackupsPage.setAlert('error', e.i18nKey, BackupsPage.t('common.serverError'));
       render([], null);
->>>>>>> 2adc2fe (v1.0.5)
     } finally {
       toggleLoading(false);
     }
   }
 
-<<<<<<< HEAD
-  function render(items) {
-=======
   function render(items, integrity) {
->>>>>>> 2adc2fe (v1.0.5)
     const lastRun = (items || [])[0] || null;
     const lastSuccessful = (items || []).find((item) => item.status === 'success') || null;
 
@@ -134,10 +107,7 @@ const BackupsOverview = (() => {
 
     setText('backups-overview-last-run-status', lastRun ? BackupsPage.statusLabel(lastRun.status) : '-');
     setText('backups-overview-last-run-updated', BackupsPage.formatDateTime(lastRun?.updated_at));
-<<<<<<< HEAD
-=======
     renderIntegrity(integrity);
->>>>>>> 2adc2fe (v1.0.5)
 
     const empty = document.getElementById('backups-overview-empty');
     if (empty) empty.hidden = (items || []).length > 0;
@@ -155,8 +125,6 @@ const BackupsOverview = (() => {
     if (loading) loading.hidden = !show;
   }
 
-<<<<<<< HEAD
-=======
   function renderIntegrity(item) {
     const statusMap = {
       ok: 'backups.integrity.state.ok',
@@ -183,7 +151,6 @@ const BackupsOverview = (() => {
     }
   }
 
->>>>>>> 2adc2fe (v1.0.5)
   function setText(id, value) {
     const el = document.getElementById(id);
     if (el) el.textContent = value ?? '-';

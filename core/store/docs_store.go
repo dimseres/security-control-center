@@ -74,17 +74,6 @@ type Approval struct {
 }
 
 type ApprovalParticipant struct {
-<<<<<<< HEAD
-	ApprovalID int64      `json:"approval_id"`
-	UserID     int64      `json:"user_id"`
-	Role       string     `json:"role"`
-	Stage      int        `json:"stage"`
-	StageName  string     `json:"stage_name"`
-	StageMessage string   `json:"stage_message"`
-	Decision   *string    `json:"decision,omitempty"`
-	Comment    *string    `json:"comment,omitempty"`
-	DecidedAt  *time.Time `json:"decided_at,omitempty"`
-=======
 	ApprovalID   int64      `json:"approval_id"`
 	UserID       int64      `json:"user_id"`
 	Role         string     `json:"role"`
@@ -94,7 +83,6 @@ type ApprovalParticipant struct {
 	Decision     *string    `json:"decision,omitempty"`
 	Comment      *string    `json:"comment,omitempty"`
 	DecidedAt    *time.Time `json:"decided_at,omitempty"`
->>>>>>> 2adc2fe (v1.0.5)
 }
 
 type ApprovalComment struct {
@@ -124,8 +112,6 @@ type DocTemplate struct {
 	CreatedAt           time.Time          `json:"created_at"`
 }
 
-<<<<<<< HEAD
-=======
 type DocExportApproval struct {
 	ID          int64      `json:"id"`
 	DocID       int64      `json:"doc_id"`
@@ -137,7 +123,6 @@ type DocExportApproval struct {
 	ConsumedAt  *time.Time `json:"consumed_at,omitempty"`
 }
 
->>>>>>> 2adc2fe (v1.0.5)
 type DocumentFilter struct {
 	FolderID       *int64
 	Status         string
@@ -159,15 +144,9 @@ type ApprovalFilter struct {
 }
 
 type SearchHit struct {
-<<<<<<< HEAD
-	DocID    int64
-	Version  int
-	Snippet  string
-=======
 	DocID   int64
 	Version int
 	Snippet string
->>>>>>> 2adc2fe (v1.0.5)
 }
 
 type DocsStore interface {
@@ -216,11 +195,8 @@ type DocsStore interface {
 	SaveTemplate(ctx context.Context, tpl *DocTemplate) error
 	DeleteTemplate(ctx context.Context, id int64) error
 	GetActiveApproval(ctx context.Context, docID int64) (*Approval, []ApprovalParticipant, error)
-<<<<<<< HEAD
-=======
 	CreateDocExportApproval(ctx context.Context, item *DocExportApproval) (int64, error)
 	ConsumeDocExportApproval(ctx context.Context, docID, requestedBy int64) (*DocExportApproval, error)
->>>>>>> 2adc2fe (v1.0.5)
 }
 
 type docsStore struct {
@@ -370,12 +346,9 @@ func (s *docsStore) CreateDocument(ctx context.Context, doc *Document, acl []ACL
 	if err := tx.Commit(); err != nil {
 		return 0, err
 	}
-<<<<<<< HEAD
-=======
 	doc.ID = docID
 	doc.CreatedAt = now
 	doc.UpdatedAt = now
->>>>>>> 2adc2fe (v1.0.5)
 	return docID, nil
 }
 
@@ -398,12 +371,9 @@ func (s *docsStore) nextSeqTx(ctx context.Context, tx *sql.Tx, level int, folder
 }
 
 func buildRegNumber(tmpl string, level int, seq int64) string {
-<<<<<<< HEAD
-=======
 	if strings.TrimSpace(tmpl) == "" {
 		tmpl = "{level_code}.{year}.{seq}"
 	}
->>>>>>> 2adc2fe (v1.0.5)
 	code := levelCode(level)
 	year := time.Now().UTC().Year()
 	out := strings.ReplaceAll(tmpl, "{level_code}", code)

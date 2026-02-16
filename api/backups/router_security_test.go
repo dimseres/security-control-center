@@ -106,11 +106,8 @@ func TestBackupsRoutesAuthAndPermissionGuards(t *testing.T) {
 		bodyFn func() (io.Reader, string)
 	}{
 		{method: http.MethodGet, path: "/backups", perm: string(corebackups.PermRead)},
-<<<<<<< HEAD
-=======
 		{method: http.MethodGet, path: "/backups/integrity", perm: string(corebackups.PermRead)},
 		{method: http.MethodPost, path: "/backups/integrity/run", perm: string(corebackups.PermRestore)},
->>>>>>> 2adc2fe (v1.0.5)
 		{method: http.MethodGet, path: "/backups/1", perm: string(corebackups.PermRead)},
 		{method: http.MethodPost, path: "/backups", perm: string(corebackups.PermCreate)},
 		{method: http.MethodPost, path: "/backups/import", perm: string(corebackups.PermImport), bodyFn: importBody},

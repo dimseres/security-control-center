@@ -15,11 +15,8 @@ var (
 	reDataI18nPlaceholder = regexp.MustCompile(`data-i18n-placeholder="([^"]+)"`)
 	reBerkutT             = regexp.MustCompile(`BerkutI18n\.t\(\s*['"]([^'"]+)['"]\s*\)`)
 	reLocalT              = regexp.MustCompile(`\bt\(\s*['"]([^'"]+)['"]\s*\)`)
-<<<<<<< HEAD
-=======
 	reNamedPlaceholder    = regexp.MustCompile(`\{[a-zA-Z0-9_.-]+\}`)
 	rePrintfPlaceholder   = regexp.MustCompile(`%(\[[0-9]+\])?[-+# 0]*[0-9]*(\.[0-9]+)?[bcdefFgGosqTtUvVxX%]`)
->>>>>>> 2adc2fe (v1.0.5)
 )
 
 func TestI18NKeyCoverage(t *testing.T) {
@@ -48,8 +45,6 @@ func TestI18NKeyCoverage(t *testing.T) {
 	}
 }
 
-<<<<<<< HEAD
-=======
 func TestI18NValuesNonEmptyAndPlaceholdersMatch(t *testing.T) {
 	ru := mustLoadLang(t, filepath.Join("..", "gui", "static", "i18n", "ru.json"))
 	en := mustLoadLang(t, filepath.Join("..", "gui", "static", "i18n", "en.json"))
@@ -86,7 +81,6 @@ func TestI18NValuesNonEmptyAndPlaceholdersMatch(t *testing.T) {
 	}
 }
 
->>>>>>> 2adc2fe (v1.0.5)
 func mustLoadLang(t *testing.T, path string) map[string]string {
 	t.Helper()
 	raw, err := os.ReadFile(path)
@@ -173,8 +167,6 @@ func sample(items []string) []string {
 	}
 	return append(items[:30], "...")
 }
-<<<<<<< HEAD
-=======
 
 func placeholdersSet(value string) map[string]struct{} {
 	out := map[string]struct{}{}
@@ -201,4 +193,3 @@ func sameStringSet(a, b map[string]struct{}) bool {
 	}
 	return true
 }
->>>>>>> 2adc2fe (v1.0.5)

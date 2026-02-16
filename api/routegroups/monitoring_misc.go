@@ -41,11 +41,8 @@ func RegisterMonitoring(apiRouter chi.Router, g Guards, monitoring *handlers.Mon
 		monitoringRouter.MethodFunc("PUT", "/notifications/{id:[0-9]+}", g.SessionPerm("monitoring.notifications.manage", monitoring.UpdateNotificationChannel))
 		monitoringRouter.MethodFunc("DELETE", "/notifications/{id:[0-9]+}", g.SessionPerm("monitoring.notifications.manage", monitoring.DeleteNotificationChannel))
 		monitoringRouter.MethodFunc("POST", "/notifications/{id:[0-9]+}/test", g.SessionPerm("monitoring.notifications.manage", monitoring.TestNotificationChannel))
-<<<<<<< HEAD
-=======
 		monitoringRouter.MethodFunc("GET", "/notifications/deliveries", g.SessionPerm("monitoring.notifications.view", monitoring.ListNotificationDeliveries))
 		monitoringRouter.MethodFunc("POST", "/notifications/deliveries/{id:[0-9]+}/ack", g.SessionPerm("monitoring.notifications.manage", monitoring.AcknowledgeNotificationDelivery))
->>>>>>> 2adc2fe (v1.0.5)
 		monitoringRouter.MethodFunc("GET", "/monitors/{id:[0-9]+}/notifications", g.SessionPerm("monitoring.notifications.view", monitoring.ListMonitorNotifications))
 		monitoringRouter.MethodFunc("PUT", "/monitors/{id:[0-9]+}/notifications", g.SessionPerm("monitoring.notifications.manage", monitoring.UpdateMonitorNotifications))
 	})
@@ -68,25 +65,16 @@ func RegisterTemplatesAndApprovals(apiRouter chi.Router, g Guards, docs *handler
 	})
 }
 
-<<<<<<< HEAD
-func RegisterLogsAndSettings(apiRouter chi.Router, g Guards, logs *handlers.LogsHandler, https *handlers.HTTPSSettingsHandler, runtime *handlers.RuntimeSettingsHandler) {
-	apiRouter.Route("/logs", func(logsRouter chi.Router) {
-		logsRouter.MethodFunc("GET", "/", g.SessionPerm("logs.view", logs.List))
-=======
 func RegisterLogsAndSettings(apiRouter chi.Router, g Guards, logs *handlers.LogsHandler, https *handlers.HTTPSSettingsHandler, runtime *handlers.RuntimeSettingsHandler, hardening *handlers.HardeningHandler) {
 	apiRouter.Route("/logs", func(logsRouter chi.Router) {
 		logsRouter.MethodFunc("GET", "/", g.SessionPerm("logs.view", logs.List))
 		logsRouter.MethodFunc("GET", "/export", g.SessionPerm("logs.view", logs.Export))
->>>>>>> 2adc2fe (v1.0.5)
 	})
 
 	apiRouter.MethodFunc("GET", "/settings/https", g.SessionPerm("settings.advanced", https.Get))
 	apiRouter.MethodFunc("PUT", "/settings/https", g.SessionPerm("settings.advanced", https.Update))
 	apiRouter.MethodFunc("GET", "/settings/runtime", g.SessionPerm("settings.advanced", runtime.Get))
 	apiRouter.MethodFunc("PUT", "/settings/runtime", g.SessionPerm("settings.advanced", runtime.Update))
-<<<<<<< HEAD
-=======
 	apiRouter.MethodFunc("GET", "/settings/hardening", g.SessionPerm("settings.advanced", hardening.GetBaseline))
->>>>>>> 2adc2fe (v1.0.5)
 	apiRouter.MethodFunc("POST", "/settings/updates/check", g.SessionPerm("settings.advanced", runtime.CheckUpdates))
 }

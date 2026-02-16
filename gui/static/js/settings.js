@@ -237,10 +237,7 @@ const SettingsPage = (() => {
     'settings-general': 'settings.general',
     'settings-advanced': 'settings.advanced',
     'settings-https': 'settings.advanced',
-<<<<<<< HEAD
-=======
     'settings-hardening': 'settings.advanced',
->>>>>>> 2adc2fe (v1.0.5)
     'settings-tags': 'settings.tags',
     'settings-classifications': 'settings.tags',
     'settings-incidents': 'settings.incident_options',
@@ -282,10 +279,7 @@ const SettingsPage = (() => {
     bindTimeZoneSettings(alertBox, onChange);
     bindRuntimeSettings(alertBox);
     bindHTTPSSettings(alertBox);
-<<<<<<< HEAD
-=======
     bindHardeningSettings(alertBox);
->>>>>>> 2adc2fe (v1.0.5)
     bindApprovalsCleanup(alertBox);
     bindTabsCleanup(alertBox);
     bindTagSettings();
@@ -632,8 +626,6 @@ const SettingsPage = (() => {
     };
   }
 
-<<<<<<< HEAD
-=======
   function bindHardeningSettings(alertBox) {
     const refreshBtn = document.getElementById('settings-hardening-refresh');
     const scoreEl = document.getElementById('settings-hardening-score');
@@ -687,7 +679,6 @@ const SettingsPage = (() => {
     load();
   }
 
->>>>>>> 2adc2fe (v1.0.5)
   function bindTabsCleanup(alertBox) {
     const cleanupSection = document.getElementById('tabs-cleanup-section');
     const cleanupBtn = document.getElementById('tabs-cleanup-btn');

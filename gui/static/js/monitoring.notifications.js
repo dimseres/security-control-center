@@ -11,11 +11,8 @@
       return;
     }
     els.list = document.getElementById('monitoring-notify-list');
-<<<<<<< HEAD
-=======
     els.deliveryList = document.getElementById('monitoring-notify-delivery-list');
     els.deliveryRefresh = document.getElementById('monitoring-notify-delivery-refresh');
->>>>>>> 2adc2fe (v1.0.5)
     els.alert = document.getElementById('monitoring-notify-alert');
     els.newBtn = document.getElementById('monitoring-notify-new');
     bindModal();
@@ -25,15 +22,11 @@
         els.newBtn.disabled = true;
       }
     }
-<<<<<<< HEAD
-    loadChannels();
-=======
     if (els.deliveryRefresh) {
       els.deliveryRefresh.addEventListener('click', () => loadDeliveries());
     }
     loadChannels();
     loadDeliveries();
->>>>>>> 2adc2fe (v1.0.5)
   }
 
   function bindModal() {
@@ -48,14 +41,11 @@
     els.tokenToggle = document.getElementById('notification-token-toggle');
     els.chatId = document.getElementById('notification-chat-id');
     els.threadId = document.getElementById('notification-thread-id');
-<<<<<<< HEAD
-=======
     els.template = document.getElementById('notification-template');
     els.quietEnabled = document.getElementById('notification-quiet-enabled');
     els.quietStart = document.getElementById('notification-quiet-start');
     els.quietEnd = document.getElementById('notification-quiet-end');
     els.quietTz = document.getElementById('notification-quiet-tz');
->>>>>>> 2adc2fe (v1.0.5)
     els.silent = document.getElementById('notification-silent');
     els.protect = document.getElementById('notification-protect');
     els.default = document.getElementById('notification-default');
@@ -175,14 +165,11 @@
       els.token.value = channel.telegram_bot_token || '';
       els.chatId.value = channel.telegram_chat_id || '';
       els.threadId.value = channel.telegram_thread_id || '';
-<<<<<<< HEAD
-=======
       els.template.value = channel.template_text || '';
       els.quietEnabled.checked = !!channel.quiet_hours_enabled;
       els.quietStart.value = channel.quiet_hours_start || '';
       els.quietEnd.value = channel.quiet_hours_end || '';
       els.quietTz.value = channel.quiet_hours_tz || '';
->>>>>>> 2adc2fe (v1.0.5)
       els.silent.checked = !!channel.silent;
       els.protect.checked = !!channel.protect_content;
       els.default.checked = !!channel.is_default;
@@ -190,14 +177,11 @@
     } else {
       els.modalTitle.textContent = MonitoringPage.t('monitoring.notifications.createTitle');
       els.type.value = 'telegram';
-<<<<<<< HEAD
-=======
       els.template.value = '{message}';
       els.quietEnabled.checked = false;
       els.quietStart.value = '';
       els.quietEnd.value = '';
       els.quietTz.value = 'UTC';
->>>>>>> 2adc2fe (v1.0.5)
       els.default.checked = false;
       els.active.checked = true;
     }
@@ -247,14 +231,11 @@
       telegram_bot_token: token,
       telegram_chat_id: chatId,
       telegram_thread_id: els.threadId.value ? parseInt(els.threadId.value, 10) || null : null,
-<<<<<<< HEAD
-=======
       template_text: (els.template.value || '').trim(),
       quiet_hours_enabled: !!els.quietEnabled.checked,
       quiet_hours_start: (els.quietStart.value || '').trim(),
       quiet_hours_end: (els.quietEnd.value || '').trim(),
       quiet_hours_tz: (els.quietTz.value || '').trim(),
->>>>>>> 2adc2fe (v1.0.5)
       silent: !!els.silent.checked,
       protect_content: !!els.protect.checked,
       is_default: !!els.default.checked,
@@ -291,11 +272,6 @@
     return MonitoringPage.state.notificationChannels || [];
   }
 
-<<<<<<< HEAD
-  if (typeof MonitoringPage !== 'undefined') {
-    MonitoringPage.bindNotifications = bindNotifications;
-    MonitoringPage.ensureNotificationChannels = ensureNotificationChannels;
-=======
   async function loadDeliveries() {
     if (!els.deliveryList) return;
     try {
@@ -364,6 +340,5 @@
     MonitoringPage.bindNotifications = bindNotifications;
     MonitoringPage.ensureNotificationChannels = ensureNotificationChannels;
     MonitoringPage.loadNotificationDeliveries = loadDeliveries;
->>>>>>> 2adc2fe (v1.0.5)
   }
 })();

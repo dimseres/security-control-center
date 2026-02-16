@@ -153,10 +153,7 @@
     }
     const incident = detail.incident || state.incidents.find(i => i.id === incidentId);
     const meta = incident?.meta || {};
-<<<<<<< HEAD
-=======
     const caseSLA = incident?.case_sla || {};
->>>>>>> 2adc2fe (v1.0.5)
     if (!incident) return;
     const statusDisplay = IncidentsPage.getIncidentStatusDisplay
       ? IncidentsPage.getIncidentStatusDisplay(incident)
@@ -223,8 +220,6 @@
                 <div class="meta-value">${formatMetaValue(meta.first_response_deadline, { type: 'datetime' })}</div>
               </div>
               <div class="meta-field">
-<<<<<<< HEAD
-=======
                 <label>${t('incidents.form.resolveDeadline')}</label>
                 <div class="meta-value">${formatMetaValue(meta.resolve_deadline, { type: 'datetime' })}</div>
               </div>
@@ -233,7 +228,6 @@
                 <div class="meta-value">${renderSlaState(caseSLA)}</div>
               </div>
               <div class="meta-field">
->>>>>>> 2adc2fe (v1.0.5)
                 <label>${t('incidents.form.assets')}</label>
                 <div class="meta-value">${formatMetaValue(meta.assets)}</div>
               </div>
@@ -288,8 +282,6 @@
                 <label>${t('incidents.form.actions')}</label>
                 <div class="meta-value">${formatMetaValue(meta.actions_taken)}</div>
               </div>
-<<<<<<< HEAD
-=======
               <div class="meta-field wide">
                 <label>${t('incidents.form.postmortem')}</label>
                 <textarea class="input incident-postmortem-text" rows="4" ${detail.readOnly ? 'disabled' : ''}>${escapeHtml(meta.postmortem || '')}</textarea>
@@ -297,7 +289,6 @@
                   <button class="btn ghost incident-postmortem-save" ${detail.readOnly ? 'disabled' : ''}>${t('incidents.form.postmortemSave')}</button>
                 </div>
               </div>
->>>>>>> 2adc2fe (v1.0.5)
             </div>
           </div>
           <div class="tabs inner-tabs incident-inner-tabs"></div>
@@ -321,13 +312,10 @@
       closeBtn.title = closeState.reason || '';
       closeBtn.addEventListener('click', () => confirmCloseIncident(incidentId));
     }
-<<<<<<< HEAD
-=======
     const postmortemBtn = panel.querySelector('.incident-postmortem-save');
     if (postmortemBtn) {
       postmortemBtn.addEventListener('click', () => savePostmortem(incidentId));
     }
->>>>>>> 2adc2fe (v1.0.5)
     renderIncidentClassification(incidentId);
     renderIncidentPeople(incidentId);
     renderIncidentInnerTabs(incidentId);
@@ -842,8 +830,6 @@
     return escapeHtml(incident.source);
   }
 
-<<<<<<< HEAD
-=======
   async function savePostmortem(incidentId) {
     const tabId = `incident-${incidentId}`;
     const panel = document.querySelector(`#incidents-panels [data-tab="${tabId}"]`);
@@ -876,7 +862,6 @@
     return values.join(' ');
   }
 
->>>>>>> 2adc2fe (v1.0.5)
   function incidentTags() {
     if (typeof TagDirectory !== 'undefined' && TagDirectory.all) {
       return TagDirectory.all();

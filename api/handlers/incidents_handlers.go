@@ -144,10 +144,7 @@ func (h *IncidentsHandler) List(w http.ResponseWriter, r *http.Request) {
 			Incident:     inc,
 			OwnerName:    displayName(owner),
 			AssigneeName: displayName(assignee),
-<<<<<<< HEAD
-=======
 			CaseSLA:      buildIncidentCaseSLA(inc),
->>>>>>> 2adc2fe (v1.0.5)
 		})
 	}
 	writeJSON(w, http.StatusOK, map[string]any{"items": result})
@@ -358,10 +355,7 @@ func (h *IncidentsHandler) Create(w http.ResponseWriter, r *http.Request) {
 		Incident:     *created,
 		OwnerName:    displayName(ownerUser),
 		AssigneeName: displayName(assigneeUser),
-<<<<<<< HEAD
-=======
 		CaseSLA:      buildIncidentCaseSLA(*created),
->>>>>>> 2adc2fe (v1.0.5)
 	})
 }
 
@@ -405,10 +399,7 @@ func (h *IncidentsHandler) Get(w http.ResponseWriter, r *http.Request) {
 			Incident:     *incident,
 			OwnerName:    displayName(owner),
 			AssigneeName: displayName(assignee),
-<<<<<<< HEAD
-=======
 			CaseSLA:      buildIncidentCaseSLA(*incident),
->>>>>>> 2adc2fe (v1.0.5)
 		},
 		"participants": parts,
 	})
@@ -630,10 +621,7 @@ func (h *IncidentsHandler) Update(w http.ResponseWriter, r *http.Request) {
 		Incident:     updated,
 		OwnerName:    displayName(owner),
 		AssigneeName: displayName(assigneeUser),
-<<<<<<< HEAD
-=======
 		CaseSLA:      buildIncidentCaseSLA(updated),
->>>>>>> 2adc2fe (v1.0.5)
 	})
 }
 
@@ -764,13 +752,10 @@ func (h *IncidentsHandler) CloseIncident(w http.ResponseWriter, r *http.Request)
 		http.Error(w, "incidents.completionStageEmpty", http.StatusBadRequest)
 		return
 	}
-<<<<<<< HEAD
-=======
 	if strings.TrimSpace(incident.Meta.Postmortem) == "" && (incident.Severity == "high" || incident.Severity == "critical") {
 		http.Error(w, "incidents.postmortemRequired", http.StatusBadRequest)
 		return
 	}
->>>>>>> 2adc2fe (v1.0.5)
 	if outcome := extractDecisionOutcome(completionPayload); outcome != "" {
 		updated := *incident
 		updated.Meta = store.NormalizeIncidentMeta(updated.Meta)
@@ -800,8 +785,6 @@ func (h *IncidentsHandler) CloseIncident(w http.ResponseWriter, r *http.Request)
 	writeJSON(w, http.StatusOK, map[string]any{"incident": updated})
 }
 
-<<<<<<< HEAD
-=======
 func (h *IncidentsHandler) SavePostmortem(w http.ResponseWriter, r *http.Request) {
 	user, roles, eff, err := h.currentUser(r)
 	if err != nil || user == nil {
@@ -841,7 +824,6 @@ func (h *IncidentsHandler) SavePostmortem(w http.ResponseWriter, r *http.Request
 	writeJSON(w, http.StatusOK, map[string]any{"incident": updated})
 }
 
->>>>>>> 2adc2fe (v1.0.5)
 func (h *IncidentsHandler) ListStages(w http.ResponseWriter, r *http.Request) {
 	user, roles, eff, err := h.currentUser(r)
 	if err != nil || user == nil {
@@ -1254,10 +1236,7 @@ func (h *IncidentsHandler) Dashboard(w http.ResponseWriter, r *http.Request) {
 				Incident:     inc,
 				OwnerName:    displayName(owner),
 				AssigneeName: displayName(assignee),
-<<<<<<< HEAD
-=======
 				CaseSLA:      buildIncidentCaseSLA(inc),
->>>>>>> 2adc2fe (v1.0.5)
 			})
 		}
 		return res
@@ -1661,11 +1640,7 @@ func (h *IncidentsHandler) DownloadAttachment(w http.ResponseWriter, r *http.Req
 		return
 	}
 	if !h.canViewByClassification(eff, att.ClassificationLevel, att.ClassificationTags) {
-<<<<<<< HEAD
-		http.Error(w, "incidents.notFound", http.StatusNotFound)
-=======
 		http.Error(w, "forbidden", http.StatusForbidden)
->>>>>>> 2adc2fe (v1.0.5)
 		return
 	}
 	blob, err := os.ReadFile(h.svc.AttachmentPath(incident.ID, att.ID))
@@ -2227,17 +2202,6 @@ func (h *IncidentsHandler) getIncidentWithACL(w http.ResponseWriter, r *http.Req
 	acl, _ := h.store.GetIncidentACL(r.Context(), incident.ID)
 	if incident.DeletedAt != nil {
 		if !canManage || !h.svc.CheckACL(user, roles, acl, "manage") {
-<<<<<<< HEAD
-			http.Error(w, "incidents.notFound", http.StatusNotFound)
-			return nil, false
-		}
-	} else if !canManage && !h.svc.CheckACL(user, roles, acl, required) {
-		http.Error(w, "incidents.notFound", http.StatusNotFound)
-		return nil, false
-	}
-	if !h.canViewByClassification(eff, incident.ClassificationLevel, incident.ClassificationTags) {
-		http.Error(w, "incidents.notFound", http.StatusNotFound)
-=======
 			http.Error(w, "forbidden", http.StatusForbidden)
 			return nil, false
 		}
@@ -2247,7 +2211,6 @@ func (h *IncidentsHandler) getIncidentWithACL(w http.ResponseWriter, r *http.Req
 	}
 	if !h.canViewByClassification(eff, incident.ClassificationLevel, incident.ClassificationTags) {
 		http.Error(w, "forbidden", http.StatusForbidden)
->>>>>>> 2adc2fe (v1.0.5)
 		return nil, false
 	}
 	if strings.ToLower(required) != "view" && strings.ToLower(incident.Status) == "closed" {
@@ -2626,10 +2589,6 @@ func displayName(u *store.User) string {
 
 type incidentDTO struct {
 	store.Incident
-<<<<<<< HEAD
-	OwnerName    string `json:"owner_name"`
-	AssigneeName string `json:"assignee_name,omitempty"`
-=======
 	OwnerName    string          `json:"owner_name"`
 	AssigneeName string          `json:"assignee_name,omitempty"`
 	CaseSLA      incidentCaseSLA `json:"case_sla"`
@@ -2640,7 +2599,6 @@ type incidentCaseSLA struct {
 	FirstResponseLate  bool   `json:"first_response_late"`
 	ResolveDueAt       string `json:"resolve_due_at,omitempty"`
 	ResolveLate        bool   `json:"resolve_late"`
->>>>>>> 2adc2fe (v1.0.5)
 }
 
 type stageContentBlock struct {
@@ -2669,8 +2627,6 @@ func isValidStatus(val string) bool {
 	return ok
 }
 
-<<<<<<< HEAD
-=======
 func buildIncidentCaseSLA(inc store.Incident) incidentCaseSLA {
 	now := time.Now().UTC()
 	result := incidentCaseSLA{}
@@ -2702,7 +2658,6 @@ func buildIncidentCaseSLA(inc store.Incident) incidentCaseSLA {
 	return result
 }
 
->>>>>>> 2adc2fe (v1.0.5)
 func parseStageContentPayload(entry *store.IncidentStageEntry) stageContentPayload {
 	var payload stageContentPayload
 	if entry == nil || strings.TrimSpace(entry.Content) == "" {

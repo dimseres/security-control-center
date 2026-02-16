@@ -1,11 +1,8 @@
 .env
 .env.*
 !.env.example
-<<<<<<< HEAD
-=======
 *.pem
 *.crt
->>>>>>> 2adc2fe (v1.0.5)
 
 # Build outputs
 *.exe

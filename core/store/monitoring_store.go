@@ -54,12 +54,9 @@ type MonitoringStore interface {
 	ListMonitorNotifications(ctx context.Context, monitorID int64) ([]MonitorNotification, error)
 	ReplaceMonitorNotifications(ctx context.Context, monitorID int64, items []MonitorNotification) error
 	ListDefaultNotificationChannels(ctx context.Context) ([]NotificationChannel, error)
-<<<<<<< HEAD
-=======
 	ListNotificationDeliveries(ctx context.Context, limit int) ([]MonitorNotificationDelivery, error)
 	AddNotificationDelivery(ctx context.Context, item *MonitorNotificationDelivery) (int64, error)
 	AcknowledgeNotificationDelivery(ctx context.Context, id int64, userID int64) error
->>>>>>> 2adc2fe (v1.0.5)
 
 	GetNotificationState(ctx context.Context, monitorID int64) (*MonitorNotificationState, error)
 	UpsertNotificationState(ctx context.Context, st *MonitorNotificationState) error
