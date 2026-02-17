@@ -2445,4 +2445,5 @@
 
   TasksPage.initSidebar = initSidebar;
   TasksPage.openTask = openTask;
+  TasksPage.closeTaskModal = closeTaskModal;
 })();

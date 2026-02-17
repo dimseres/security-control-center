@@ -5855,6 +5855,30 @@ body.auth-locked #main-screen {
   color: #c1f3dc;
 }
 
+.status-closed_deferred {
+  background: rgba(216, 166, 70, 0.18);
+  border-color: rgba(216, 166, 70, 0.45);
+  color: #ffe2a6;
+}
+
+.status-closed_monitor {
+  background: rgba(64, 199, 215, 0.18);
+  border-color: rgba(64, 199, 215, 0.45);
+  color: #bdeff6;
+}
+
+.status-closed_rejected {
+  background: rgba(210, 107, 83, 0.18);
+  border-color: rgba(210, 107, 83, 0.45);
+  color: #ffd4cb;
+}
+
+.status-closed_blocked {
+  background: rgba(198, 79, 143, 0.18);
+  border-color: rgba(198, 79, 143, 0.45);
+  color: #ffd4ea;
+}
+
 #incidents-page .incident-card {
   padding: 16px;
 }
@@ -6391,6 +6415,26 @@ body.auth-locked #main-screen {
   display: flex;
   flex-direction: column;
   gap: 10px;
+}
+
+.decision-card[data-outcome="approved"] {
+  border-left: 3px solid #5f86ff;
+}
+
+.decision-card[data-outcome="deferred"] {
+  border-left: 3px solid #d8a646;
+}
+
+.decision-card[data-outcome="monitor"] {
+  border-left: 3px solid #40c7d7;
+}
+
+.decision-card[data-outcome="rejected"] {
+  border-left: 3px solid #d26b53;
+}
+
+.decision-card[data-outcome="blocked"] {
+  border-left: 3px solid #c64f8f;
 }
 
 .decision-card-header {
@@ -7233,7 +7277,7 @@ body.auth-locked #main-screen {
 
 #incidents-page .incident-timeline {
   display: grid;
-  grid-template-columns: minmax(280px, 0.9fr) minmax(320px, 1.1fr);
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
   gap: 12px;
   align-items: start;
 }
@@ -7243,6 +7287,7 @@ body.auth-locked #main-screen {
   border-radius: 12px;
   padding: 12px;
   background: rgba(12, 16, 26, 0.75);
+  min-width: 0;
 }
 
 #incidents-page .incident-timeline .form-actions-inline {
@@ -7284,12 +7329,20 @@ body.auth-locked #main-screen {
 
   #incidents-page .timeline-item {
     display: grid;
-    grid-template-columns: 140px 1fr;
+    grid-template-columns: minmax(120px, 140px) minmax(0, 1fr);
     gap: 10px;
     padding: 10px 12px;
     border-radius: 12px;
     border: 1px solid rgba(125, 155, 255, 0.18);
     background: rgba(12, 16, 26, 0.85);
+  }
+
+  #incidents-page .timeline-body,
+  #incidents-page .timeline-msg,
+  #incidents-page .timeline-type {
+    min-width: 0;
+    overflow-wrap: anywhere;
+    word-break: break-word;
   }
 
   #incidents-page .timeline-time {

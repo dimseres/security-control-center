@@ -118,6 +118,7 @@
       { id: 'home', type: 'home', titleKey: 'incidents.tabs.home', closable: false },
       { id: 'list', type: 'list', titleKey: 'incidents.tabs.incidents', closable: false },
     ];
+    const startupIncidentId = extractIncidentIdFromLocation();
     if (IncidentsPage.renderTabBar) IncidentsPage.renderTabBar();
     if (IncidentsPage.renderHome) IncidentsPage.renderHome();
     if (IncidentsPage.renderList) IncidentsPage.renderList();
@@ -137,7 +138,11 @@
         e.returnValue = '';
       }
     });
-    await handleIncidentDeepLink();
+    if (startupIncidentId && IncidentsPage.openIncidentTab) {
+      await IncidentsPage.openIncidentTab(startupIncidentId, { fromLink: true });
+    } else {
+      await handleIncidentDeepLink();
+    }
     await handlePendingIncidentOpen();
   }
 
@@ -173,7 +178,7 @@
   }
 
   function getIncidentStatusDisplay(incident) {
-    const status = (incident?.status || '').toLowerCase();
+    let status = (incident?.status || '').toLowerCase();
     let label = status ? t(`incidents.status.${status}`) : '';
     if (!label || label === `incidents.status.${status}`) label = status;
     if (status === 'closed') {
@@ -185,6 +190,7 @@
         } else {
           label = outcome;
         }
+        status = `closed_${outcome}`;
       }
     }
     return { status, label };
@@ -531,7 +537,7 @@
     }
   }
 
-  async function handleIncidentDeepLink() {
+  function extractIncidentIdFromLocation() {
     const url = new URL(window.location.href);
     const parts = window.location.pathname.split('/').filter(Boolean);
     let rawId = '';
@@ -548,6 +554,12 @@
     if (!rawId) return;
     const incidentId = parseInt(rawId, 10);
     if (!Number.isFinite(incidentId)) return;
+    return incidentId;
+  }
+
+  async function handleIncidentDeepLink() {
+    const incidentId = extractIncidentIdFromLocation();
+    if (!incidentId) return;
     if (IncidentsPage.openIncidentTab) {
       await IncidentsPage.openIncidentTab(incidentId, { fromLink: true });
     }

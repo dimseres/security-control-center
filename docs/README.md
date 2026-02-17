@@ -1,6 +1,6 @@
-﻿# Documentation
+# Documentation
 
-Version baseline: `1.0.7`
+Version baseline: `1.0.8`
 
 This directory contains detailed technical documentation for the current runtime model.
 
@@ -14,6 +14,7 @@ Primary entry points:
 - Reverse-proxy + OnlyOffice compose example: `docs/ru/docker-compose.https.yml`
 - Tabs/UX wiki RU: `docs/ru/wiki/tabs.md`
 - Tabs/UX wiki EN: `docs/eng/wiki/tabs.md`
+- Local compose example (runtime TZ, Postgres, OnlyOffice): `docker-compose.local.yml`
 
 Root product overview:
 - `README.md`

@@ -42,6 +42,7 @@
   }
 
   async function loadData() {
+    const pendingTaskId = parsePendingTaskFromPath();
     try {
       await TasksPage.loadCurrentUser();
       await TasksPage.ensureUserDirectory();
@@ -57,9 +58,8 @@
       if (TasksPage.renderTemplatesHome) {
         TasksPage.renderTemplatesHome();
       }
-      const pending = parsePendingTaskFromPath();
-      if (pending) {
-        await openTaskById(pending);
+      if (pendingTaskId) {
+        await openTaskById(pendingTaskId);
       }
     } catch (err) {
       if (isNetworkError(err)) {

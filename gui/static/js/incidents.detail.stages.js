@@ -497,8 +497,8 @@
   }
 
   async function saveStageContent(incidentId, stage, opts = {}) {
-    if (!stage || stage.saving || stage.is_default || stage.readOnly) return;
-    if (!isStageDirty(stage)) return;
+    if (!stage || stage.saving || stage.is_default || stage.readOnly) return false;
+    if (!isStageDirty(stage)) return true;
     stage.saving = true;
     try {
       const payload = StageBlocks ? StageBlocks.serializeContent(stage) : (stage.currentSerialized || '');
@@ -513,10 +513,12 @@
       if (IncidentsPage.updateIncidentSaveState) {
         IncidentsPage.updateIncidentSaveState(incidentId);
       }
+      return true;
     } catch (err) {
       if (!opts.silent) {
         showError(err, 'incidents.conflictVersion');
       }
+      return false;
     } finally {
       stage.saving = false;
     }
@@ -535,10 +537,12 @@
     if (!detail || detail.readOnly) return false;
     const dirtyStages = detail.stages.filter(isStageDirty);
     if (!dirtyStages.length) return false;
+    let allSaved = true;
     for (const stage of dirtyStages) {
-      await saveStageContent(incidentId, stage, opts);
+      const ok = await saveStageContent(incidentId, stage, opts);
+      if (!ok) allSaved = false;
     }
-    return true;
+    return allSaved;
   }
 
   function disableStageEditing(container) {
@@ -700,7 +704,6 @@
       select.appendChild(o);
     });
     const currentStatus = (detail.incident?.status || 'draft').toLowerCase();
-    const draftStatus = (detail.statusDraft || '').toLowerCase();
     if (currentStatus === 'closed') {
       const closedOpt = document.createElement('option');
       closedOpt.value = 'closed';
@@ -716,7 +719,7 @@
       currentOpt.selected = true;
       select.appendChild(currentOpt);
     } else {
-      select.value = draftStatus || currentStatus;
+      select.value = currentStatus;
     }
     const saveBtn = document.createElement('button');
     saveBtn.type = 'button';
@@ -728,17 +731,26 @@
       detail.statusDraft = select.value;
     });
     saveBtn.addEventListener('click', async () => {
-      const nextStatus = ((detail.statusDraft || select.value) || '').toLowerCase();
+      if (detail.statusSaving) return;
+      const nextStatus = (select.value || '').toLowerCase();
       saveBtn.disabled = true;
       select.disabled = true;
-      let baseIncident = detail.incident;
+      detail.statusSaving = true;
+      const baseIncident = detail.incident ? { ...detail.incident } : null;
       try {
-        const latestRes = await Api.get(`/api/incidents/${incidentId}`);
-        baseIncident = latestRes.incident || latestRes;
-        detail.incident = baseIncident;
-        const prevStatus = (baseIncident?.status || '').toLowerCase();
-        const prevVersion = baseIncident?.version;
-        if (baseIncident) {
+        let prevVersion = baseIncident?.version;
+        if (incidentId) {
+          try {
+            const latest = await Api.get(`/api/incidents/${incidentId}`);
+            const latestIncident = latest.incident || latest;
+            if (latestIncident && latestIncident.version) {
+              prevVersion = latestIncident.version;
+            }
+          } catch (_) {
+            // Use local version fallback.
+          }
+        }
+        if (baseIncident && prevVersion) {
           detail.incident = { ...baseIncident, status: nextStatus };
           syncIncident(detail.incident);
           if (IncidentsPage.updateIncidentTabTitle) {
@@ -760,26 +772,40 @@
           IncidentsPage.updateIncidentTabTitle(incidentId, updated);
         }
         updateIncidentStatusUI(incidentId, (updated.status || nextStatus).toLowerCase());
-        try {
-          const refreshed = await Api.get(`/api/incidents/${incidentId}`);
-          const latest = refreshed.incident || refreshed;
-          detail.incident = latest;
-          detail.readOnly = (latest.status || '').toLowerCase() === 'closed';
-          syncStageReadOnly(detail);
-          syncIncident(latest);
-          if (IncidentsPage.updateIncidentTabTitle) {
-            IncidentsPage.updateIncidentTabTitle(incidentId, latest);
-          }
-          updateIncidentStatusUI(incidentId, (latest.status || nextStatus).toLowerCase());
-        } catch (_) {
-          // Keep optimistic update if refresh fails
-        }
+        renderIncidentStages(incidentId);
       } catch (err) {
         const msg = (err && err.message ? err.message : '').trim();
         if (msg === 'incidents.conflictVersion') {
           try {
             const latest = await Api.get(`/api/incidents/${incidentId}`);
             const latestIncident = latest.incident || latest;
+            const latestStatus = (latestIncident?.status || '').toLowerCase();
+            if (latestIncident) {
+              detail.incident = latestIncident;
+              detail.readOnly = latestStatus === 'closed';
+              syncStageReadOnly(detail);
+              syncIncident(latestIncident);
+              if (IncidentsPage.updateIncidentTabTitle) {
+                IncidentsPage.updateIncidentTabTitle(incidentId, latestIncident);
+              }
+            }
+            const uiStatus = latestStatus || nextStatus;
+            detail.statusDraft = '';
+            updateIncidentStatusUI(incidentId, uiStatus);
+            renderIncidentStages(incidentId);
+            // Conflict usually means parallel update; keep synchronized state without forced rollback.
+            return;
+          } catch (_) {
+            // Suppress false-positive UI errors; status may already be applied server-side.
+            return;
+          }
+        }
+        // For non-conflict errors keep optimistic visual status and refresh from server asynchronously.
+        setTimeout(async () => {
+          try {
+            const latest = await Api.get(`/api/incidents/${incidentId}`);
+            const latestIncident = latest.incident || latest;
+            if (!latestIncident) return;
             detail.incident = latestIncident;
             detail.readOnly = (latestIncident.status || '').toLowerCase() === 'closed';
             detail.statusDraft = '';
@@ -788,37 +814,14 @@
             if (IncidentsPage.updateIncidentTabTitle) {
               IncidentsPage.updateIncidentTabTitle(incidentId, latestIncident);
             }
-            if ((latestIncident.status || '').toLowerCase() === nextStatus) {
-              updateIncidentStatusUI(incidentId, nextStatus);
-              return;
-            }
-            const retry = await Api.put(`/api/incidents/${incidentId}`, {
-              status: nextStatus,
-              version: latestIncident.version
-            });
-            const retryIncident = retry.incident || retry;
-            detail.incident = retryIncident;
-            detail.readOnly = (retryIncident.status || '').toLowerCase() === 'closed';
-            detail.statusDraft = '';
-            syncStageReadOnly(detail);
-            syncIncident(retryIncident);
-            if (IncidentsPage.updateIncidentTabTitle) {
-              IncidentsPage.updateIncidentTabTitle(incidentId, retryIncident);
-            }
-            updateIncidentStatusUI(incidentId, (retryIncident.status || nextStatus).toLowerCase());
-            return;
-          } catch (_) {
-          }
-        }
-        if (baseIncident) {
-          detail.incident = { ...baseIncident, status: (baseIncident.status || '').toLowerCase(), version: baseIncident.version };
-          syncIncident(detail.incident);
-        }
-        if (IncidentsPage.updateIncidentTabTitle) {
-          IncidentsPage.updateIncidentTabTitle(incidentId, detail.incident);
-        }
-        updateIncidentStatusUI(incidentId, (baseIncident?.status || nextStatus || '').toLowerCase());
+            updateIncidentStatusUI(incidentId, (latestIncident.status || nextStatus).toLowerCase());
+            renderIncidentStages(incidentId);
+          } catch (_) {}
+        }, 250);
+        // Do not show blocking popup for status save flow:
+        // the server state may already be updated and UI will be re-synced asynchronously.
       } finally {
+        detail.statusSaving = false;
         saveBtn.disabled = false;
         select.disabled = detail.readOnly;
       }
@@ -844,7 +847,8 @@
     }
     const statusSelect = panel.querySelector('.status-select');
     if (statusSelect) {
-      statusSelect.value = status;
+      const selectStatus = (detail?.incident?.status || status || '').toLowerCase();
+      statusSelect.value = selectStatus;
     }
     if (state && Array.isArray(state.incidents)) {
       const idx = state.incidents.findIndex(i => i.id === incidentId);
@@ -904,6 +908,10 @@
     if (!detail) return;
     const stage = detail.stages.find(s => s.id === stageId);
     if (!stage || stage.readOnly || stage.is_default) return;
+    if (isStageDirty(stage)) {
+      const saved = await saveStageContent(incidentId, stage, { silent: false });
+      if (!saved) return;
+    }
     try {
       const res = await Api.post(`/api/incidents/${incidentId}/stages/${stageId}/complete`);
       stage.status = (res.status || 'done').toLowerCase();

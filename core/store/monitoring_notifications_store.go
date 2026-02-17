@@ -248,11 +248,19 @@ func (s *monitoringStore) ListNotificationDeliveries(ctx context.Context, limit 
 	if limit <= 0 {
 		limit = 100
 	}
-	rows, err := s.db.QueryContext(ctx, `
+	query := `
 		SELECT id, monitor_id, notification_channel_id, event_type, status, error_text, body_preview, created_at, acknowledged_at, acknowledged_by
 		FROM monitor_notification_deliveries
 		ORDER BY created_at DESC
-		LIMIT ?`, limit)
+		LIMIT ?`
+	if isPG, _ := isPostgresDB(ctx, s.db); isPG {
+		query = `
+		SELECT id, monitor_id, notification_channel_id, event_type, status, error_text, body_preview, created_at, acknowledged_at, acknowledged_by
+		FROM monitor_notification_deliveries
+		ORDER BY created_at DESC
+		LIMIT $1`
+	}
+	rows, err := s.db.QueryContext(ctx, query, limit)
 	if err != nil {
 		return nil, err
 	}

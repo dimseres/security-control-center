@@ -2702,6 +2702,30 @@ type decisionOutcomeItem struct {
 	Selected string `json:"selected"`
 }
 
+func normalizeDecisionOutcome(raw string) string {
+	val := strings.ToLower(strings.TrimSpace(raw))
+	if val == "" {
+		return ""
+	}
+	if _, ok := validDecisionOutcomes[val]; ok {
+		return val
+	}
+	switch val {
+	case "разрешено":
+		return "approved"
+	case "отклонено":
+		return "rejected"
+	case "блокировка", "заблокировано":
+		return "blocked"
+	case "отложено":
+		return "deferred"
+	case "под наблюдением", "monitoring":
+		return "monitor"
+	default:
+		return ""
+	}
+}
+
 func extractDecisionOutcome(payload stageContentPayload) string {
 	outcome := ""
 	for _, b := range payload.Blocks {
@@ -2713,22 +2737,20 @@ func extractDecisionOutcome(payload stageContentPayload) string {
 			if err := json.Unmarshal(raw, &item); err != nil {
 				continue
 			}
-			candidate := strings.ToLower(strings.TrimSpace(item.Outcome))
+			candidate := normalizeDecisionOutcome(item.Outcome)
 			if candidate == "" {
-				candidate = strings.ToLower(strings.TrimSpace(item.Title))
+				candidate = normalizeDecisionOutcome(item.Title)
 			}
 			if candidate == "" {
-				candidate = strings.ToLower(strings.TrimSpace(item.Decision))
+				candidate = normalizeDecisionOutcome(item.Decision)
 			}
 			if candidate == "" {
-				candidate = strings.ToLower(strings.TrimSpace(item.Selected))
+				candidate = normalizeDecisionOutcome(item.Selected)
 			}
 			if candidate == "" {
 				continue
 			}
-			if _, ok := validDecisionOutcomes[candidate]; ok {
-				outcome = candidate
-			}
+			outcome = candidate
 		}
 	}
 	return outcome

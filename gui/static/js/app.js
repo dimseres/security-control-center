@@ -375,17 +375,25 @@
   }
 
   function setupModalDismiss() {
+    const closeModalWithHook = (modal) => {
+      if (!modal) return;
+      if (modal.id === 'task-modal' && typeof TasksPage !== 'undefined' && typeof TasksPage.closeTaskModal === 'function') {
+        TasksPage.closeTaskModal();
+        return;
+      }
+      modal.hidden = true;
+    };
     document.addEventListener('keydown', (e) => {
       if (e.key !== 'Escape') return;
       const openModals = Array.from(document.querySelectorAll('.modal')).filter(m => !m.hidden);
       if (!openModals.length) return;
-      openModals[openModals.length - 1].hidden = true;
+      closeModalWithHook(openModals[openModals.length - 1]);
     });
     document.addEventListener('click', (e) => {
       const backdrop = e.target.closest('.modal-backdrop');
       if (!backdrop) return;
       const modal = backdrop.closest('.modal');
-      if (modal) modal.hidden = true;
+      closeModalWithHook(modal);
     });
   }
 

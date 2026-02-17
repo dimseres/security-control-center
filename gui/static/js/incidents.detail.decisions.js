@@ -14,8 +14,23 @@
   }
 
   function normalizeOutcome(raw) {
-    const val = (raw || '').toString().toLowerCase();
+    const val = (raw || '').toString().trim().toLowerCase();
     if (OUTCOMES.includes(val)) return val;
+    const aliases = {
+      'разрешено': 'approved',
+      'approved': 'approved',
+      'отклонено': 'rejected',
+      'rejected': 'rejected',
+      'блокировка': 'blocked',
+      'заблокировано': 'blocked',
+      'blocked': 'blocked',
+      'отложено': 'deferred',
+      'deferred': 'deferred',
+      'под наблюдением': 'monitor',
+      'monitor': 'monitor',
+      'monitoring': 'monitor',
+    };
+    if (aliases[val]) return aliases[val];
     return 'approved';
   }
 
@@ -82,6 +97,7 @@
   function renderDecisionCard(block, item, ctx) {
     const card = document.createElement('div');
     card.className = 'decision-card';
+    card.dataset.outcome = normalizeOutcome(item.outcome);
     const header = document.createElement('div');
     header.className = 'decision-card-header';
     const titleLabel = document.createElement('label');
@@ -129,6 +145,8 @@
     select.value = normalizeOutcome(item.outcome);
     select.addEventListener('change', () => {
       item.outcome = normalizeOutcome(select.value);
+      const card = select.closest('.decision-card');
+      if (card) card.dataset.outcome = item.outcome;
       notifyChange(ctx);
     });
     return select;
@@ -248,14 +266,6 @@
     label.className = 'stage-field-label';
     label.textContent = t('incidents.stage.blocks.decisions.options');
     header.appendChild(label);
-    const hintKey = 'incidents.stage.blocks.decisions.optionsHint';
-    const hintText = t(hintKey);
-    if (hintText && hintText !== hintKey) {
-      const hint = document.createElement('span');
-      hint.className = 'form-hint';
-      hint.textContent = hintText;
-      header.appendChild(hint);
-    }
     wrap.appendChild(header);
     const options = Array.isArray(item.options) ? item.options : [];
     const list = document.createElement('div');

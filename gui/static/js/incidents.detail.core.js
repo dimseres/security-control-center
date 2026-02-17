@@ -384,7 +384,7 @@
   async function confirmCloseIncident(incidentId) {
     const detail = state.incidentDetails.get(incidentId);
     if (!detail) return;
-    const availability = canCloseIncident(detail);
+    let availability = canCloseIncident(detail);
     if (!availability.ok) return;
     const ok = await IncidentsPage.confirmAction({
       title: t('incidents.closeIncident'),
@@ -393,6 +393,18 @@
       cancelText: t('common.cancel'),
     });
     if (!ok) return;
+    if (IncidentsPage.saveDirtyStages) {
+      const saved = await IncidentsPage.saveDirtyStages(incidentId, { silent: false });
+      if (saved === false && availability.stage && IncidentsPage.isStageDirty && IncidentsPage.isStageDirty(availability.stage)) {
+        showError({ message: 'incidents.conflictVersion' }, 'incidents.conflictVersion');
+        return;
+      }
+    }
+    availability = canCloseIncident(detail);
+    if (!availability.ok) {
+      showError({ message: availability.reason || 'incidents.close.reasonUnavailable' }, 'incidents.close.reasonUnavailable');
+      return;
+    }
     try {
       const res = await Api.post(`/api/incidents/${incidentId}/close`);
       const updated = res.incident || res;
@@ -700,7 +712,7 @@
 
   async function saveIncidentPeople(incidentId, opts = {}) {
     const detail = state.incidentDetails.get(incidentId);
-    if (!detail || detail.readOnly || !detail.peopleDirty || detail.peopleSaving) return false;
+    if (!detail || detail.readOnly || detail.statusSaving || !detail.peopleDirty || detail.peopleSaving) return false;
     if (!detail.incident) return false;
     detail.peopleSaving = true;
     const combinedParticipants = normalizeList(detail.people.participants || []);
@@ -731,7 +743,7 @@
 
   async function saveIncidentChanges(incidentId, opts = {}) {
     const detail = state.incidentDetails.get(incidentId);
-    if (!detail || detail.readOnly) return;
+    if (!detail || detail.readOnly || detail.statusSaving) return;
     const tasks = [];
     if (IncidentsPage.saveDirtyStages) {
       tasks.push(IncidentsPage.saveDirtyStages(incidentId, { silent: !!opts.silent }));
@@ -837,12 +849,16 @@
     if (!panel || !detail || !detail.incident || detail.readOnly) return;
     const input = panel.querySelector('.incident-postmortem-text');
     if (!input) return;
+    const nextPostmortem = (input.value || '').trim();
     try {
       const res = await Api.put(`/api/incidents/${incidentId}/postmortem`, {
-        postmortem: (input.value || '').trim(),
+        postmortem: nextPostmortem,
         version: detail.incident.version
       });
-      detail.incident = res.incident || res;
+      const updated = res.incident || res || {};
+      if (!updated.meta || typeof updated.meta !== 'object') updated.meta = {};
+      updated.meta.postmortem = nextPostmortem;
+      detail.incident = updated;
       syncIncident(detail.incident);
       renderIncidentPanel(incidentId);
     } catch (err) {
