@@ -153,10 +153,13 @@ func TestMonitoringTelegramDownUp(t *testing.T) {
 	if len(sender.sent) < 2 {
 		t.Fatalf("expected 2 notifications, got %d", len(sender.sent))
 	}
-	if !containsText(sender.sent[0].Text, "Монитор недоступен") {
+	if !containsText(sender.sent[0].Text, "\u041c\u043e\u043d\u0438\u0442\u043e\u0440 \u043d\u0435\u0434\u043e\u0441\u0442\u0443\u043f\u0435\u043d") {
 		t.Fatalf("expected down notification text")
 	}
-	if !containsText(sender.sent[1].Text, "Монитор восстановлен") {
+	if !containsText(sender.sent[0].Text, "500") {
+		t.Fatalf("expected down notification to include error details")
+	}
+	if !containsText(sender.sent[1].Text, "\u041c\u043e\u043d\u0438\u0442\u043e\u0440 \u0432\u043e\u0441\u0441\u0442\u0430\u043d\u043e\u0432\u043b\u0435\u043d") {
 		t.Fatalf("expected up notification text")
 	}
 }
@@ -202,8 +205,8 @@ func TestMonitoringSuppression(t *testing.T) {
 	if err := engine.CheckNow(context.Background(), id); err != nil {
 		t.Fatalf("check up: %v", err)
 	}
-	if len(sender.sent) != 1 {
-		t.Fatalf("expected suppression to block second notification, got %d", len(sender.sent))
+	if len(sender.sent) != 2 {
+		t.Fatalf("expected up notification to bypass suppression, got %d", len(sender.sent))
 	}
 }
 

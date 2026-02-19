@@ -11,7 +11,7 @@
   const DecisionBlock = IncidentsPage.DecisionBlock;
   const STAGE_SCHEMA = 'incident-stage/v2';
   const BLOCK_ORDER = ['note', 'checklist', 'actions', 'decisions', 'timeline', 'artifacts', 'links', 'table'];
-  const DECISION_OUTCOMES = ['approved', 'rejected', 'blocked', 'deferred', 'monitor'];
+  const DECISION_OUTCOMES = ['closed', 'approved', 'rejected', 'blocked', 'deferred', 'monitor'];
   const CHECKLIST_UNITS = ['minutes', 'hours', 'days', 'weeks', 'months', 'years'];
   const artifactFiles = new Map();
 

@@ -59,6 +59,7 @@
                   <th>${t('incidents.table.owner')}</th>
                   <th>${t('incidents.table.createdAt')}</th>
                   <th>${t('incidents.table.updatedAt')}</th>
+                  <th>${t('incidents.table.actions')}</th>
                 </tr>
               </thead>
               <tbody></tbody>
@@ -120,10 +121,11 @@
     const rows = applyFilters(state.incidents.slice()).sort(sortByUpdated);
     if (!rows.length) {
       const tr = document.createElement('tr');
-      tr.innerHTML = `<td colspan="7">${escapeHtml(t('incidents.listEmpty'))}</td>`;
+      tr.innerHTML = `<td colspan="8">${escapeHtml(t('incidents.listEmpty'))}</td>`;
       tbody.appendChild(tr);
       return;
     }
+    const canDelete = !!(IncidentsPage.hasPermission && IncidentsPage.hasPermission('incidents.delete'));
     rows.forEach(incident => {
       const tr = document.createElement('tr');
       tr.className = 'incident-row';
@@ -138,12 +140,34 @@
         <td><span class="badge status-badge status-${statusDisplay.status}">${escapeHtml(statusDisplay.label)}</span></td>
         <td>${escapeHtml(incident.owner_name || incident.owner || '')}</td>
         <td>${escapeHtml(IncidentsPage.formatDate(incident.created_at))}</td>
-        <td>${escapeHtml(IncidentsPage.formatDate(incident.updated_at))}</td>`;
+        <td>${escapeHtml(IncidentsPage.formatDate(incident.updated_at))}</td>
+        <td>${canDelete ? `<button class="btn ghost btn-sm incident-delete-btn" title="${escapeHtml(t('incidents.action.delete'))}" aria-label="${escapeHtml(t('incidents.action.delete'))}">x</button>` : ''}</td>`;
       tr.addEventListener('click', () => IncidentsPage.openIncidentTab(incident.id));
       tr.addEventListener('contextmenu', (e) => {
         e.preventDefault();
         showContextMenu(e.clientX, e.clientY, incident.id);
       });
+      const deleteBtn = tr.querySelector('.incident-delete-btn');
+      if (deleteBtn) {
+        deleteBtn.addEventListener('click', async (e) => {
+          e.preventDefault();
+          e.stopPropagation();
+          const confirmed = await IncidentsPage.confirmAction({
+            title: t('common.confirm'),
+            message: t('incidents.listDeleteConfirm'),
+            confirmText: t('common.delete'),
+            cancelText: t('common.cancel'),
+          });
+          if (!confirmed) return;
+          try {
+            await Api.del(`/api/incidents/${incident.id}`);
+            await IncidentsPage.loadIncidents();
+            renderTableRows();
+          } catch (err) {
+            IncidentsPage.showError(err, 'common.error');
+          }
+        });
+      }
       tbody.appendChild(tr);
     });
   }

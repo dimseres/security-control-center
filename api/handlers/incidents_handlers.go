@@ -61,6 +61,7 @@ var validIncidentStatus = map[string]struct{}{
 }
 
 var validDecisionOutcomes = map[string]struct{}{
+	"closed":   {},
 	"approved": {},
 	"rejected": {},
 	"blocked":  {},
@@ -646,10 +647,6 @@ func (h *IncidentsHandler) Delete(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "incidents.notFound", http.StatusNotFound)
 		return
 	}
-	if strings.ToLower(incident.Status) == "closed" {
-		http.Error(w, "incidents.closedReadOnly", http.StatusConflict)
-		return
-	}
 	if incident.DeletedAt != nil {
 		http.Error(w, "incidents.deleted", http.StatusBadRequest)
 		return
@@ -665,6 +662,112 @@ func (h *IncidentsHandler) Delete(w http.ResponseWriter, r *http.Request) {
 	h.svc.Log(r.Context(), user.Username, "incident.delete", incident.RegNo)
 	h.addTimeline(r.Context(), incident.ID, "incident.delete", "incident deleted", user.ID)
 	writeJSON(w, http.StatusOK, map[string]string{"status": "ok"})
+}
+
+func (h *IncidentsHandler) Cleanup(w http.ResponseWriter, r *http.Request) {
+	user, roles, _, err := h.currentUser(r)
+	if err != nil || user == nil {
+		http.Error(w, "unauthorized", http.StatusUnauthorized)
+		return
+	}
+	if !hasRole(roles, "superadmin") {
+		http.Error(w, "forbidden", http.StatusForbidden)
+		return
+	}
+	var payload struct {
+		Scope  string `json:"scope"`
+		Source string `json:"source"`
+		From   string `json:"from"`
+		To     string `json:"to"`
+	}
+	_ = json.NewDecoder(r.Body).Decode(&payload)
+	scope := strings.ToLower(strings.TrimSpace(payload.Scope))
+	if scope == "" {
+		scope = "all"
+	}
+	if scope != "all" && scope != "open" && scope != "completed" && scope != "period" {
+		http.Error(w, "incidents.cleanupInvalidScope", http.StatusBadRequest)
+		return
+	}
+	source := strings.ToLower(strings.TrimSpace(payload.Source))
+	var fromTS time.Time
+	var toTS time.Time
+	if scope == "period" {
+		parse := func(raw string, endOfDay bool) (time.Time, error) {
+			val := strings.TrimSpace(raw)
+			if val == "" {
+				return time.Time{}, nil
+			}
+			for _, layout := range []string{time.RFC3339Nano, time.RFC3339, "2006-01-02"} {
+				if ts, pErr := time.Parse(layout, val); pErr == nil {
+					out := ts.UTC()
+					if layout == "2006-01-02" && endOfDay {
+						out = out.Add(24*time.Hour - time.Nanosecond)
+					}
+					return out, nil
+				}
+			}
+			return time.Time{}, errors.New("bad date")
+		}
+		fromTS, err = parse(payload.From, false)
+		if err != nil {
+			http.Error(w, "incidents.cleanupInvalidPeriod", http.StatusBadRequest)
+			return
+		}
+		toTS, err = parse(payload.To, true)
+		if err != nil {
+			http.Error(w, "incidents.cleanupInvalidPeriod", http.StatusBadRequest)
+			return
+		}
+		if !fromTS.IsZero() && !toTS.IsZero() && fromTS.After(toTS) {
+			http.Error(w, "incidents.cleanupInvalidPeriod", http.StatusBadRequest)
+			return
+		}
+	}
+
+	items, err := h.store.ListIncidents(r.Context(), store.IncidentFilter{IncludeDeleted: false})
+	if err != nil {
+		http.Error(w, "server error", http.StatusInternalServerError)
+		return
+	}
+	removed := 0
+	for _, item := range items {
+		if item.DeletedAt != nil {
+			continue
+		}
+		if source != "" && strings.ToLower(strings.TrimSpace(item.Source)) != source {
+			continue
+		}
+		isClosed := strings.ToLower(strings.TrimSpace(item.Status)) == "closed"
+		switch scope {
+		case "open":
+			if isClosed {
+				continue
+			}
+		case "completed":
+			if !isClosed {
+				continue
+			}
+		case "period":
+			ts := item.CreatedAt.UTC()
+			if !fromTS.IsZero() && ts.Before(fromTS) {
+				continue
+			}
+			if !toTS.IsZero() && ts.After(toTS) {
+				continue
+			}
+		}
+		if err := h.store.SoftDeleteIncident(r.Context(), item.ID, user.ID); err != nil {
+			if errors.Is(err, store.ErrConflict) {
+				continue
+			}
+			http.Error(w, "server error", http.StatusInternalServerError)
+			return
+		}
+		removed++
+	}
+	h.svc.Log(r.Context(), user.Username, "incident.cleanup", fmt.Sprintf("scope=%s source=%s from=%s to=%s removed=%d", scope, source, strings.TrimSpace(payload.From), strings.TrimSpace(payload.To), removed))
+	writeJSON(w, http.StatusOK, map[string]any{"removed": removed})
 }
 
 func (h *IncidentsHandler) Restore(w http.ResponseWriter, r *http.Request) {
@@ -2711,6 +2814,8 @@ func normalizeDecisionOutcome(raw string) string {
 		return val
 	}
 	switch val {
+	case "closed":
+		return "closed"
 	case "разрешено":
 		return "approved"
 	case "отклонено":
@@ -2764,3 +2869,4 @@ func isValidIncidentPerm(val string) bool {
 		return false
 	}
 }
+

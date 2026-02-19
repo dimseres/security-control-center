@@ -268,14 +268,34 @@ func (s *monitoringStore) ListNotificationDeliveries(ctx context.Context, limit 
 	res := make([]MonitorNotificationDelivery, 0, limit)
 	for rows.Next() {
 		var item MonitorNotificationDelivery
-		var monitorID, ackBy sql.NullInt64
+		var monitorID, channelID, ackBy sql.NullInt64
+		var eventType, status, errorText, bodyPreview sql.NullString
+		var createdAt sql.NullTime
 		var ackAt sql.NullTime
-		if err := rows.Scan(&item.ID, &monitorID, &item.NotificationChannelID, &item.EventType, &item.Status, &item.Error, &item.BodyPreview, &item.CreatedAt, &ackAt, &ackBy); err != nil {
+		if err := rows.Scan(&item.ID, &monitorID, &channelID, &eventType, &status, &errorText, &bodyPreview, &createdAt, &ackAt, &ackBy); err != nil {
 			return nil, err
 		}
 		if monitorID.Valid {
 			val := monitorID.Int64
 			item.MonitorID = &val
+		}
+		if channelID.Valid {
+			item.NotificationChannelID = channelID.Int64
+		}
+		if eventType.Valid {
+			item.EventType = eventType.String
+		}
+		if status.Valid {
+			item.Status = status.String
+		}
+		if errorText.Valid {
+			item.Error = errorText.String
+		}
+		if bodyPreview.Valid {
+			item.BodyPreview = bodyPreview.String
+		}
+		if createdAt.Valid {
+			item.CreatedAt = createdAt.Time
 		}
 		if ackAt.Valid {
 			item.AcknowledgedAt = &ackAt.Time

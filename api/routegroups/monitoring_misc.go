@@ -40,6 +40,7 @@ func RegisterMonitoring(apiRouter chi.Router, g Guards, monitoring *handlers.Mon
 		monitoringRouter.MethodFunc("POST", "/notifications", g.SessionPerm("monitoring.notifications.manage", monitoring.CreateNotificationChannel))
 		monitoringRouter.MethodFunc("PUT", "/notifications/{id:[0-9]+}", g.SessionPerm("monitoring.notifications.manage", monitoring.UpdateNotificationChannel))
 		monitoringRouter.MethodFunc("DELETE", "/notifications/{id:[0-9]+}", g.SessionPerm("monitoring.notifications.manage", monitoring.DeleteNotificationChannel))
+		monitoringRouter.MethodFunc("GET", "/notifications/{id:[0-9]+}/token", g.SessionPerm("monitoring.notifications.manage", monitoring.RevealNotificationChannelToken))
 		monitoringRouter.MethodFunc("POST", "/notifications/{id:[0-9]+}/test", g.SessionPerm("monitoring.notifications.manage", monitoring.TestNotificationChannel))
 		monitoringRouter.MethodFunc("GET", "/notifications/deliveries", g.SessionPerm("monitoring.notifications.view", monitoring.ListNotificationDeliveries))
 		monitoringRouter.MethodFunc("POST", "/notifications/deliveries/{id:[0-9]+}/ack", g.SessionPerm("monitoring.notifications.manage", monitoring.AcknowledgeNotificationDelivery))

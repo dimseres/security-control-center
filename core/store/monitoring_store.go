@@ -18,6 +18,7 @@ type MonitoringStore interface {
 	GetMonitorState(ctx context.Context, id int64) (*MonitorState, error)
 	ListMonitorStates(ctx context.Context, ids []int64) ([]MonitorState, error)
 	UpsertMonitorState(ctx context.Context, state *MonitorState) error
+	MarkMonitorDueNow(ctx context.Context, monitorID int64) error
 	AddMetric(ctx context.Context, metric *MonitorMetric) (int64, error)
 	ListMetrics(ctx context.Context, monitorID int64, since time.Time) ([]MonitorMetric, error)
 	ListEvents(ctx context.Context, monitorID int64, since time.Time) ([]MonitorEvent, error)

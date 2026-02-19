@@ -32,6 +32,7 @@ const (
 	monitorAuditNotifChannelUpdate   = "monitoring.notification.channel.update"
 	monitorAuditNotifChannelDelete   = "monitoring.notification.channel.delete"
 	monitorAuditNotifChannelTest     = "monitoring.notification.channel.test"
+	monitorAuditNotifChannelReveal   = "monitoring.notification.channel.reveal_token"
 	monitorAuditNotifChannelApplyAll = "monitoring.notification.channel.apply_all"
 	monitorAuditNotifBindingsUpdate  = "monitoring.notification.bindings.update"
 )

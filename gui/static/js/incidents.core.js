@@ -190,7 +190,7 @@
         } else {
           label = outcome;
         }
-        status = `closed_${outcome}`;
+        status = outcome === 'closed' ? 'closed' : `closed_${outcome}`;
       }
     }
     return { status, label };

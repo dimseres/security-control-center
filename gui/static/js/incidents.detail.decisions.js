@@ -7,7 +7,7 @@
     getSelectedValues
   } = IncidentsPage;
 
-  const OUTCOMES = ['approved', 'rejected', 'blocked', 'deferred', 'monitor'];
+  const OUTCOMES = ['closed', 'approved', 'rejected', 'blocked', 'deferred', 'monitor'];
 
   function uid(prefix = 'dec') {
     return `${prefix}-${Math.random().toString(36).slice(2, 8)}-${Date.now()}`;
@@ -19,6 +19,8 @@
     const aliases = {
       'разрешено': 'approved',
       'approved': 'approved',
+      'closed': 'closed',
+      'закрыт': 'closed',
       'отклонено': 'rejected',
       'rejected': 'rejected',
       'блокировка': 'blocked',

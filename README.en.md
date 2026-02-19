@@ -18,7 +18,7 @@ Berkut Solutions - Security Control Center (SCC) is a self-hosted platform for s
 
 
 
-Current version: `1.0.8`
+Current version: `1.0.9`
 
 
 
@@ -137,6 +137,7 @@ It replaces fragmented spreadsheets, chat approvals, and disconnected trackers w
 - Russian docs: [`docs/ru/README.md`](docs/ru/README.md)
 
 - English docs: [`docs/eng/README.md`](docs/eng/README.md)
+- Monitoring notification message template: [`docs/eng/monitoring_notifications_message_template.md`](docs/eng/monitoring_notifications_message_template.md)
 
 
 

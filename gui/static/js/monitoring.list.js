@@ -230,6 +230,7 @@
   }
   function selectMonitor(id) {
     MonitoringPage.state.selectedId = id;
+    MonitoringPage.setMonitorDeepLink?.(id);
     renderList(MonitoringPage.state.monitors || []);
     MonitoringPage.loadDetail?.(id);
   }

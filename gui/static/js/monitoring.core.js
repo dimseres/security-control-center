@@ -49,6 +49,41 @@ const MonitoringPage = (() => {
     return null;
   }
 
+  function setMonitorDeepLink(id) {
+    const url = new URL(window.location.href);
+    const val = parseInt(String(id || ''), 10);
+    if (Number.isFinite(val) && val > 0) {
+      url.searchParams.set('monitor', String(val));
+    } else {
+      url.searchParams.delete('monitor');
+    }
+    window.history.replaceState({}, '', url.toString());
+  }
+
+  async function waitMonitorCheckedAfter(id, sinceISO, timeoutMs = 7000) {
+    const monitorID = parseInt(String(id || ''), 10);
+    if (!Number.isFinite(monitorID) || monitorID <= 0) return false;
+    let sinceTs = 0;
+    if (sinceISO) {
+      const parsed = Date.parse(String(sinceISO));
+      if (Number.isFinite(parsed)) sinceTs = parsed;
+    }
+    const stepMs = 450;
+    const deadline = Date.now() + Math.max(1000, Number(timeoutMs) || 7000);
+    while (Date.now() < deadline) {
+      try {
+        const res = await Api.get(`/api/monitoring/monitors/${monitorID}/state`);
+        const item = res?.item || null;
+        const checked = item?.last_checked_at ? Date.parse(item.last_checked_at) : 0;
+        if (checked && checked > sinceTs) return true;
+      } catch (_) {
+        return false;
+      }
+      await new Promise((resolve) => setTimeout(resolve, stepMs));
+    }
+    return false;
+  }
+
   async function loadCurrentUser() {
     try {
       const res = await Api.get('/api/auth/me');
@@ -189,6 +224,8 @@ const MonitoringPage = (() => {
     hasPermission,
     init,
     loadCurrentUser,
+    setMonitorDeepLink,
+    waitMonitorCheckedAfter,
     formatDate,
     formatDateShort,
     formatUptime,

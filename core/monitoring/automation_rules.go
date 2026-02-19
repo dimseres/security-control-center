@@ -2,6 +2,7 @@ package monitoring
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	"strconv"
 	"strings"
@@ -139,6 +140,9 @@ func (e *Engine) handleAutoTLSIncident(ctx context.Context, m store.Monitor, pre
 		}
 		closed, err := e.incidents.CloseIncident(ctx, existing.ID, existing.OwnerUserID)
 		if err != nil || closed == nil {
+			if errors.Is(err, store.ErrConflict) {
+				return
+			}
 			if e.logger != nil && err != nil {
 				e.logger.Errorf("monitoring auto tls incident close: %v", err)
 			}

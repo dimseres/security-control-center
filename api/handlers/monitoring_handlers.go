@@ -2,7 +2,9 @@ package handlers
 
 import (
 	"context"
+	"crypto/rand"
 	"database/sql"
+	"encoding/hex"
 	"encoding/json"
 	"errors"
 	"net/http"
@@ -150,6 +152,7 @@ func (h *MonitoringHandler) UpdateMonitor(w http.ResponseWriter, r *http.Request
 	if existing.IsPaused != mon.IsPaused {
 		_ = h.store.SetMonitorPaused(r.Context(), id, mon.IsPaused)
 	}
+	_ = h.store.MarkMonitorDueNow(r.Context(), id)
 	h.requestImmediateCheck(id)
 	h.audit(r, monitorAuditMonitorUpdate, strconv.FormatInt(id, 10))
 	if slaChanged {
@@ -278,6 +281,9 @@ func (h *MonitoringHandler) CloneMonitor(w http.ResponseWriter, r *http.Request)
 	clone := *existing
 	clone.ID = 0
 	clone.Name = strings.TrimSpace(existing.Name) + " (copy)"
+	if monitoring.TypeIsPassive(clone.Type) {
+		clone.RequestBody = randomPushToken()
+	}
 	clone.CreatedBy = sessionUserID(r)
 	clone.CreatedAt = time.Time{}
 	clone.UpdatedAt = time.Time{}
@@ -287,6 +293,22 @@ func (h *MonitoringHandler) CloneMonitor(w http.ResponseWriter, r *http.Request)
 		return
 	}
 	clone.ID = newID
+	if items, err := h.store.ListMonitorNotifications(r.Context(), id); err == nil && len(items) > 0 {
+		cloneItems := make([]store.MonitorNotification, 0, len(items))
+		for _, item := range items {
+			if item.NotificationChannelID <= 0 {
+				continue
+			}
+			cloneItems = append(cloneItems, store.MonitorNotification{
+				MonitorID:             newID,
+				NotificationChannelID: item.NotificationChannelID,
+				Enabled:               item.Enabled,
+			})
+		}
+		if len(cloneItems) > 0 {
+			_ = h.store.ReplaceMonitorNotifications(r.Context(), newID, cloneItems)
+		}
+	}
 	_ = h.store.UpsertMonitorState(r.Context(), &store.MonitorState{
 		MonitorID:        clone.ID,
 		Status:           initialStatus(clone.IsPaused),
@@ -304,6 +326,29 @@ func (h *MonitoringHandler) requestImmediateCheck(monitorID int64) {
 	go func(id int64) {
 		ctx, cancel := context.WithTimeout(context.Background(), 20*time.Second)
 		defer cancel()
-		_ = h.engine.CheckNow(ctx, id)
+		// If the worker pool is busy, retry briefly; otherwise the monitor may stay stale until next interval.
+		deadline := time.Now().Add(18 * time.Second)
+		for {
+			err := h.engine.CheckNow(ctx, id)
+			if err == nil {
+				return
+			}
+			if strings.TrimSpace(err.Error()) != "monitoring.error.busy" {
+				return
+			}
+			if time.Now().After(deadline) {
+				return
+			}
+			time.Sleep(450 * time.Millisecond)
+		}
 	}(monitorID)
+}
+
+func randomPushToken() string {
+	b := make([]byte, 16)
+	if _, err := rand.Read(b); err != nil {
+		// Fallback: not ideal, but better than empty token.
+		return strconv.FormatInt(time.Now().UTC().UnixNano(), 10)
+	}
+	return hex.EncodeToString(b)
 }

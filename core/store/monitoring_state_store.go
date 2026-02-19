@@ -67,6 +67,19 @@ func (s *monitoringStore) UpsertMonitorState(ctx context.Context, st *MonitorSta
 	return err
 }
 
+func (s *monitoringStore) MarkMonitorDueNow(ctx context.Context, monitorID int64) error {
+	// Ensures the monitor becomes due for checks ASAP (engine loop will pick it up).
+	// We do not touch any other state fields, only reset last_checked_at.
+	_, err := s.db.ExecContext(ctx, `
+		INSERT INTO monitor_state(monitor_id, status, last_checked_at)
+		VALUES(?, ?, NULL)
+		ON CONFLICT (monitor_id)
+		DO UPDATE SET last_checked_at=NULL`,
+		monitorID, "down",
+	)
+	return err
+}
+
 func (s *monitoringStore) AddMetric(ctx context.Context, metric *MonitorMetric) (int64, error) {
 	res, err := s.db.ExecContext(ctx, `
 		INSERT INTO monitor_metrics(monitor_id, ts, latency_ms, ok, status_code, error)

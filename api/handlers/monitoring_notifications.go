@@ -50,6 +50,10 @@ type notificationChannelView struct {
 	IsActive          bool   `json:"is_active"`
 }
 
+type notificationTokenView struct {
+	TelegramBotToken string `json:"telegram_bot_token"`
+}
+
 func (h *MonitoringHandler) ListNotificationChannels(w http.ResponseWriter, r *http.Request) {
 	items, err := h.store.ListNotificationChannels(r.Context())
 	if err != nil {
@@ -315,6 +319,34 @@ func (h *MonitoringHandler) TestNotificationChannel(w http.ResponseWriter, r *ht
 	}
 	h.audit(r, monitorAuditNotifChannelTest, strconv.FormatInt(id, 10))
 	writeJSON(w, http.StatusOK, map[string]string{"status": "ok"})
+}
+
+func (h *MonitoringHandler) RevealNotificationChannelToken(w http.ResponseWriter, r *http.Request) {
+	if h.encryptor == nil {
+		http.Error(w, errServerError, http.StatusInternalServerError)
+		return
+	}
+	id, err := parseID(pathParams(r)["id"])
+	if err != nil {
+		http.Error(w, errBadRequest, http.StatusBadRequest)
+		return
+	}
+	ch, err := h.store.GetNotificationChannel(r.Context(), id)
+	if err != nil {
+		http.Error(w, errServerError, http.StatusInternalServerError)
+		return
+	}
+	if ch == nil {
+		http.Error(w, errNotFound, http.StatusNotFound)
+		return
+	}
+	tokenRaw, err := h.encryptor.DecryptBlob(ch.TelegramBotTokenEnc)
+	if err != nil {
+		http.Error(w, errServerError, http.StatusInternalServerError)
+		return
+	}
+	h.audit(r, monitorAuditNotifChannelReveal, strconv.FormatInt(id, 10))
+	writeJSON(w, http.StatusOK, notificationTokenView{TelegramBotToken: string(tokenRaw)})
 }
 
 func (h *MonitoringHandler) ListMonitorNotifications(w http.ResponseWriter, r *http.Request) {

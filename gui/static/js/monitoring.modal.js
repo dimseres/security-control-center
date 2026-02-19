@@ -147,6 +147,15 @@
     setSubmitState(true);
     try {
       let id = modalState.editingId;
+      let prevCheckedAt = null;
+      if (modalState.editingId && MonitoringPage.hasPermission('monitoring.view')) {
+        try {
+          const res = await Api.get(`/api/monitoring/monitors/${modalState.editingId}/state`);
+          prevCheckedAt = res?.item?.last_checked_at || null;
+        } catch (_) {
+          prevCheckedAt = null;
+        }
+      }
       if (modalState.editingId) {
         await Api.put(`/api/monitoring/monitors/${modalState.editingId}`, payload);
       } else {
@@ -154,13 +163,14 @@
         id = created?.id || created?.ID || null;
         if (id) {
           MonitoringPage.state.selectedId = id;
+          MonitoringPage.setMonitorDeepLink?.(id);
         }
       }
       if (id && MonitoringPage.hasPermission('monitoring.notifications.manage')) {
         await saveMonitorNotifications(id);
       }
       if (id && MonitoringPage.hasPermission('monitoring.view')) {
-        await waitMonitorFirstCheck(id);
+        await MonitoringPage.waitMonitorCheckedAfter?.(id, prevCheckedAt);
       }
       els.modal.hidden = true;
       modalState.editingId = null;
@@ -182,22 +192,6 @@
     if (!els.save) return;
     els.save.disabled = !!submitting;
     els.save.classList.toggle('disabled', !!submitting);
-  }
-
-  async function waitMonitorFirstCheck(id) {
-    const timeoutMs = 7000;
-    const stepMs = 450;
-    const deadline = Date.now() + timeoutMs;
-    while (Date.now() < deadline) {
-      try {
-        const res = await Api.get(`/api/monitoring/monitors/${id}/state`);
-        const item = res?.item || null;
-        if (item && item.last_checked_at) return;
-      } catch (_) {
-        return;
-      }
-      await new Promise((resolve) => setTimeout(resolve, stepMs));
-    }
   }
 
   function buildPayload() {

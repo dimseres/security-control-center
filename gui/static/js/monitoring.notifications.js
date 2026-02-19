@@ -223,8 +223,10 @@
   function buildPayload() {
     const name = (els.name.value || '').trim();
     let token = (els.token.value || '').trim();
-    if (modalState.editingId && token && token === modalState.originalToken && token.includes('*')) {
-      token = '';
+    if (modalState.editingId && token) {
+      if (token.includes('*') || token === (modalState.originalToken || '').trim()) {
+        token = '';
+      }
     }
     const chatId = (els.chatId.value || '').trim();
     if (!name) {
@@ -258,9 +260,21 @@
     return (str || '').toString().replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
   }
 
-  function toggleTokenVisibility() {
+  async function toggleTokenVisibility() {
     if (!els.token) return;
-    modalState.tokenVisible = !modalState.tokenVisible;
+    const nextVisible = !modalState.tokenVisible;
+    if (nextVisible && modalState.editingId && (els.token.value || '').includes('*')) {
+      try {
+        const res = await Api.get(`/api/monitoring/notifications/${modalState.editingId}/token`);
+        const raw = (res?.telegram_bot_token || '').toString();
+        els.token.value = raw;
+        modalState.originalToken = raw.trim();
+      } catch (err) {
+        MonitoringPage.showAlert(els.modalAlert, MonitoringPage.sanitizeErrorMessage(err.message || err), false);
+        return;
+      }
+    }
+    modalState.tokenVisible = nextVisible;
     els.token.type = modalState.tokenVisible ? 'text' : 'password';
     if (els.tokenToggle) {
       els.tokenToggle.classList.toggle('active', modalState.tokenVisible);

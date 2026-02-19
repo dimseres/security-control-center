@@ -2,6 +2,7 @@ package monitoring
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	"strings"
 	"time"
@@ -89,6 +90,9 @@ func (e *Engine) handleAutoIncident(ctx context.Context, m store.Monitor, prev, 
 		owner := existing.OwnerUserID
 		closed, err := e.incidents.CloseIncident(ctx, existing.ID, owner)
 		if err != nil || closed == nil {
+			if errors.Is(err, store.ErrConflict) {
+				return
+			}
 			if e.logger != nil && err != nil {
 				e.logger.Errorf("monitoring auto incident close: %v", err)
 			}

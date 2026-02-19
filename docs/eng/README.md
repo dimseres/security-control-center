@@ -2,7 +2,7 @@
 
 
 
-Documentation version baseline: `1.0.8`
+Documentation version baseline: `1.0.9`
 
 
 
@@ -30,6 +30,8 @@ Documentation version baseline: `1.0.8`
 
 11. Reverse-proxy + OnlyOffice compose example: `docs/ru/docker-compose.https.yml`
 
+12. Monitoring notification message template: `docs/eng/monitoring_notifications_message_template.md`
+
 
 
 ## Context
@@ -50,7 +52,7 @@ Documentation is aligned with current runtime reality:
 
 
 
-## Included for 1.0.8
+## Included for 1.0.9
 
 - Settings: dedicated Cleanup tab with selective per-module data cleanup.
 

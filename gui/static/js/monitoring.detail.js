@@ -775,6 +775,9 @@
       const nextId = res?.id || res?.monitor_id || null;
       if (nextId) {
         MonitoringPage.state.selectedId = nextId;
+        MonitoringPage.setMonitorDeepLink?.(nextId);
+        await loadDetail(nextId);
+        await MonitoringPage.waitMonitorCheckedAfter?.(nextId, null, 15000);
         await loadDetail(nextId);
       }
     } catch (err) {
@@ -790,6 +793,7 @@
     try {
       await Api.del(`/api/monitoring/monitors/${mon.id}`);
       MonitoringPage.state.selectedId = null;
+      MonitoringPage.setMonitorDeepLink?.(null);
       await MonitoringPage.loadMonitors?.();
       clearDetail();
     } catch (err) {

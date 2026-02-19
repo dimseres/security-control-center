@@ -10,6 +10,7 @@ func RegisterIncidents(apiRouter chi.Router, g Guards, incidents *handlers.Incid
 		incidentsRouter.MethodFunc("GET", "/dashboard", g.SessionPerm("incidents.view", incidents.Dashboard))
 		incidentsRouter.MethodFunc("GET", "/list", g.SessionPerm("incidents.view", incidents.ListIncidentsLite))
 		incidentsRouter.MethodFunc("GET", "/", g.SessionPerm("incidents.view", incidents.List))
+		incidentsRouter.MethodFunc("POST", "/cleanup", g.SessionPerm("settings.advanced", incidents.Cleanup))
 		incidentsRouter.MethodFunc("POST", "/", g.SessionPerm("incidents.create", incidents.Create))
 		incidentsRouter.MethodFunc("GET", "/{id}", g.SessionPerm("incidents.view", incidents.Get))
 		incidentsRouter.MethodFunc("PUT", "/{id}", g.SessionPerm("incidents.edit", incidents.Update))

@@ -216,7 +216,6 @@ func (e *Engine) handleNotifications(ctx context.Context, m store.Monitor, prev,
 		prev != nil &&
 		strings.ToLower(strings.TrimSpace(prev.LastResultStatus)) == "down" &&
 		canNotifyUpRecover() &&
-		canSend(st.LastNotifiedAt) &&
 		canSend(st.LastUpNotifiedAt) {
 		if e.dispatchNotification(ctx, channels, buildNotificationMessage("up", "ru", m, result, tlsRecord, now, false), "up", &m.ID) {
 			st.LastNotifiedAt = &now
@@ -372,6 +371,11 @@ func buildNotificationMessage(kind, lang string, m store.Monitor, result CheckRe
 	}
 	lines = append(lines, strings.TrimSpace(m.Name))
 	lines = append(lines, monitorTarget(m))
+	if kind == "down" {
+		if reason := notifyErrorText(lang, result.Error); reason != "" {
+			lines = append(lines, fmt.Sprintf("%s: %s", notifyText(lang, "monitoring.notify.error"), reason))
+		}
+	}
 	if kind == "tls_expiring" && tlsRecord != nil {
 		lines = append(lines, fmt.Sprintf("%s: %s", notifyText(lang, "monitoring.notify.expires"), formatNotifyTime(tlsRecord.NotAfter)))
 		days := int(time.Until(tlsRecord.NotAfter).Hours() / 24)
@@ -383,6 +387,36 @@ func buildNotificationMessage(kind, lang string, m store.Monitor, result CheckRe
 	lines = append(lines, "")
 	lines = append(lines, notifyText(lang, "monitoring.notify.footer"))
 	return TelegramMessage{Text: strings.Join(lines, "\n")}
+}
+
+func notifyErrorText(lang, raw string) string {
+	trimmed := strings.TrimSpace(raw)
+	if trimmed == "" {
+		return ""
+	}
+	if strings.HasPrefix(trimmed, "status_") {
+		code := strings.TrimPrefix(trimmed, "status_")
+		if parsed, err := strconv.Atoi(code); err == nil && parsed > 0 {
+			return fmt.Sprintf("%s %d", notifyText(lang, "monitoring.notify.httpStatus"), parsed)
+		}
+	}
+	switch trimmed {
+	case "monitoring.error.invalidUrl",
+		"monitoring.error.privateBlocked",
+		"monitoring.error.tlsHandshakeFailed",
+		"monitoring.error.timeout",
+		"monitoring.error.requestFailed",
+		"monitoring.error.invalidJsonResponse",
+		"monitoring.error.keywordRequired",
+		"monitoring.error.keywordNotFound",
+		"monitoring.error.dnsNoAnswer",
+		"monitoring.error.paused",
+		"monitoring.error.engineDisabled",
+		"monitoring.error.busy":
+		return notifyText(lang, trimmed)
+	default:
+		return trimmed
+	}
 }
 
 func formatNotifyTime(t time.Time) string {
@@ -403,31 +437,59 @@ func monitorTarget(m store.Monitor) string {
 func notifyText(lang, key string) string {
 	lang = strings.ToLower(strings.TrimSpace(lang))
 	ru := map[string]string{
-		"monitoring.notify.downTitle":             "\U0001F6A8 Монитор недоступен",
-		"monitoring.notify.upTitle":               "\u2705 Монитор восстановлен",
-		"monitoring.notify.tlsTitle":              "\u26A0\ufe0f Истекает сертификат",
-		"monitoring.notify.maintenanceStartTitle": "\U0001F6E0\ufe0f Начало обслуживания",
-		"monitoring.notify.maintenanceEndTitle":   "\u2705 Обслуживание завершено",
-		"monitoring.notify.repeatDown":            "\u26A0\ufe0f повторное падение",
-		"monitoring.notify.testTitle":             "\u2705 Тестовое уведомление",
-		"monitoring.notify.latency":               "Задержка",
-		"monitoring.notify.time":                  "Время",
-		"monitoring.notify.expires":               "Истекает",
-		"monitoring.notify.daysLeft":              "Дней осталось",
+		"monitoring.notify.downTitle":             "\U0001f6a8 \u041c\u043e\u043d\u0438\u0442\u043e\u0440 \u043d\u0435\u0434\u043e\u0441\u0442\u0443\u043f\u0435\u043d",
+		"monitoring.notify.upTitle":               "\u2705 \u041c\u043e\u043d\u0438\u0442\u043e\u0440 \u0432\u043e\u0441\u0441\u0442\u0430\u043d\u043e\u0432\u043b\u0435\u043d",
+		"monitoring.notify.tlsTitle":              "\u26a0\ufe0f \u0418\u0441\u0442\u0435\u043a\u0430\u0435\u0442 \u0441\u0435\u0440\u0442\u0438\u0444\u0438\u043a\u0430\u0442",
+		"monitoring.notify.maintenanceStartTitle": "\U0001f6e0\ufe0f \u041d\u0430\u0447\u0430\u043b\u043e \u043e\u0431\u0441\u043b\u0443\u0436\u0438\u0432\u0430\u043d\u0438\u044f",
+		"monitoring.notify.maintenanceEndTitle":   "\u2705 \u041e\u0431\u0441\u043b\u0443\u0436\u0438\u0432\u0430\u043d\u0438\u0435 \u0437\u0430\u0432\u0435\u0440\u0448\u0435\u043d\u043e",
+		"monitoring.notify.repeatDown":            "\u26a0\ufe0f \u043f\u043e\u0432\u0442\u043e\u0440\u043d\u043e\u0435 \u043f\u0430\u0434\u0435\u043d\u0438\u0435",
+		"monitoring.notify.testTitle":             "\u2705 \u0422\u0435\u0441\u0442\u043e\u0432\u043e\u0435 \u0443\u0432\u0435\u0434\u043e\u043c\u043b\u0435\u043d\u0438\u0435",
+		"monitoring.notify.latency":               "\u0417\u0430\u0434\u0435\u0440\u0436\u043a\u0430",
+		"monitoring.notify.time":                  "\u0412\u0440\u0435\u043c\u044f",
+		"monitoring.notify.error":                 "\u041e\u0448\u0438\u0431\u043a\u0430",
+		"monitoring.notify.httpStatus":            "HTTP \u0441\u0442\u0430\u0442\u0443\u0441",
+		"monitoring.notify.expires":               "\u0418\u0441\u0442\u0435\u043a\u0430\u0435\u0442",
+		"monitoring.notify.daysLeft":              "\u0414\u043d\u0435\u0439 \u043e\u0441\u0442\u0430\u043b\u043e\u0441\u044c",
+		"monitoring.error.invalidUrl":             "\u041d\u0435\u043a\u043e\u0440\u0440\u0435\u043a\u0442\u043d\u044b\u0439 URL",
+		"monitoring.error.privateBlocked":         "\u041f\u0440\u0438\u0432\u0430\u0442\u043d\u044b\u0435 \u0441\u0435\u0442\u0438 \u0437\u0430\u043f\u0440\u0435\u0449\u0435\u043d\u044b",
+		"monitoring.error.tlsHandshakeFailed":     "\u041e\u0448\u0438\u0431\u043a\u0430 TLS \u0440\u0443\u043a\u043e\u043f\u043e\u0436\u0430\u0442\u0438\u044f",
+		"monitoring.error.timeout":                "\u041f\u0440\u0435\u0432\u044b\u0448\u0435\u043d \u0442\u0430\u0439\u043c\u0430\u0443\u0442",
+		"monitoring.error.requestFailed":          "\u0417\u0430\u043f\u0440\u043e\u0441 \u0437\u0430\u0432\u0435\u0440\u0448\u0438\u043b\u0441\u044f \u043e\u0448\u0438\u0431\u043a\u043e\u0439",
+		"monitoring.error.invalidJsonResponse":    "\u041e\u0442\u0432\u0435\u0442 \u043d\u0435 \u044f\u0432\u043b\u044f\u0435\u0442\u0441\u044f \u0432\u0430\u043b\u0438\u0434\u043d\u044b\u043c JSON",
+		"monitoring.error.keywordRequired":        "\u0423\u043a\u0430\u0436\u0438\u0442\u0435 \u043e\u0436\u0438\u0434\u0430\u0435\u043c\u043e\u0435 \u0441\u043b\u043e\u0432\u043e",
+		"monitoring.error.keywordNotFound":        "\u041e\u0436\u0438\u0434\u0430\u0435\u043c\u043e\u0435 \u0441\u043b\u043e\u0432\u043e \u043d\u0435 \u043d\u0430\u0439\u0434\u0435\u043d\u043e \u0432 \u043e\u0442\u0432\u0435\u0442\u0435",
+		"monitoring.error.dnsNoAnswer":            "DNS-\u043e\u0442\u0432\u0435\u0442 \u043d\u0435 \u0441\u043e\u0432\u043f\u0430\u0434\u0430\u0435\u0442 \u0441 \u043e\u0436\u0438\u0434\u0430\u043d\u0438\u0435\u043c",
+		"monitoring.error.paused":                 "\u041c\u043e\u043d\u0438\u0442\u043e\u0440 \u043d\u0430 \u043f\u0430\u0443\u0437\u0435",
+		"monitoring.error.engineDisabled":         "\u0414\u0432\u0438\u0436\u043e\u043a \u043c\u043e\u043d\u0438\u0442\u043e\u0440\u0438\u043d\u0433\u0430 \u043e\u0442\u043a\u043b\u044e\u0447\u0435\u043d",
+		"monitoring.error.busy":                   "\u041d\u0435\u0442 \u0441\u0432\u043e\u0431\u043e\u0434\u043d\u044b\u0445 \u0432\u043e\u0440\u043a\u0435\u0440\u043e\u0432 \u043f\u0440\u043e\u0432\u0435\u0440\u043a\u0438",
 		"monitoring.notify.footer":                "Berkut SCC",
 	}
 	en := map[string]string{
-		"monitoring.notify.downTitle":             "\U0001F6A8 Monitor down",
+		"monitoring.notify.downTitle":             "\U0001f6a8 Monitor down",
 		"monitoring.notify.upTitle":               "\u2705 Monitor recovered",
-		"monitoring.notify.tlsTitle":              "\u26A0\ufe0f TLS certificate expiring",
-		"monitoring.notify.maintenanceStartTitle": "\U0001F6E0\ufe0f Maintenance started",
+		"monitoring.notify.tlsTitle":              "\u26a0\ufe0f TLS certificate expiring",
+		"monitoring.notify.maintenanceStartTitle": "\U0001f6e0\ufe0f Maintenance started",
 		"monitoring.notify.maintenanceEndTitle":   "\u2705 Maintenance ended",
-		"monitoring.notify.repeatDown":            "\u26A0\ufe0f repeated outage",
+		"monitoring.notify.repeatDown":            "\u26a0\ufe0f repeated outage",
 		"monitoring.notify.testTitle":             "\u2705 Test notification",
 		"monitoring.notify.latency":               "Latency",
 		"monitoring.notify.time":                  "Time",
+		"monitoring.notify.error":                 "Error",
+		"monitoring.notify.httpStatus":            "HTTP status",
 		"monitoring.notify.expires":               "Expires",
 		"monitoring.notify.daysLeft":              "Days left",
+		"monitoring.error.invalidUrl":             "Invalid URL",
+		"monitoring.error.privateBlocked":         "Private networks are blocked",
+		"monitoring.error.tlsHandshakeFailed":     "TLS handshake failed",
+		"monitoring.error.timeout":                "Timeout exceeded",
+		"monitoring.error.requestFailed":          "Request failed",
+		"monitoring.error.invalidJsonResponse":    "Response is not a valid JSON",
+		"monitoring.error.keywordRequired":        "Expected word is required",
+		"monitoring.error.keywordNotFound":        "Expected word was not found in response",
+		"monitoring.error.dnsNoAnswer":            "DNS answer does not match expectation",
+		"monitoring.error.paused":                 "Monitor is paused",
+		"monitoring.error.engineDisabled":         "Monitoring engine is disabled",
+		"monitoring.error.busy":                   "No available workers for check",
 		"monitoring.notify.footer":                "Berkut SCC",
 	}
 	if lang == "ru" {
@@ -440,7 +502,6 @@ func notifyText(lang, key string) string {
 	}
 	return key
 }
-
 func applyNotificationTemplate(templateText, text string) string {
 	tpl := strings.TrimSpace(templateText)
 	if tpl == "" {

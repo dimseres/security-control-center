@@ -312,6 +312,7 @@ const SettingsPage = (() => {
     bindHTTPSSettings(alertBox);
     bindHardeningSettings(alertBox);
     bindApprovalsCleanup(alertBox);
+    bindMonitoringCleanup(alertBox);
     bindTabsCleanup(alertBox);
     bindTagSettings();
     bindClassificationSettings();
@@ -710,6 +711,57 @@ const SettingsPage = (() => {
     load();
   }
 
+  function bindMonitoringCleanup(alertBox) {
+    const section = document.getElementById('monitoring-cleanup-section');
+    const cleanupBtn = document.getElementById('monitoring-cleanup-btn');
+    const scopeEl = document.getElementById('monitoring-cleanup-scope');
+    const periodRow = document.getElementById('monitoring-cleanup-period-row');
+    const fromEl = document.getElementById('monitoring-cleanup-from');
+    const toEl = document.getElementById('monitoring-cleanup-to');
+    if (!section || !cleanupBtn || !scopeEl) return;
+
+    const togglePeriod = () => {
+      if (periodRow) periodRow.hidden = scopeEl.value !== 'period';
+    };
+    scopeEl.addEventListener('change', togglePeriod);
+    togglePeriod();
+
+    cleanupBtn.onclick = async () => {
+      if (alertBox) {
+        alertBox.hidden = true;
+        alertBox.classList.remove('success');
+      }
+      const scope = (scopeEl.value || '').trim() || 'open';
+      const confirmed = await confirmSettingsCleanup(BerkutI18n.t('settings.monitoringCleanupConfirm'));
+      if (!confirmed) return;
+      const payload = {
+        source: 'monitoring',
+        scope,
+      };
+      if (scope === 'period') {
+        payload.from = (fromEl?.value || '').trim();
+        payload.to = (toEl?.value || '').trim();
+      }
+      try {
+        const res = await Api.post('/api/incidents/cleanup', payload);
+        const removed = Number(res?.removed || 0);
+        if (alertBox) {
+          alertBox.textContent = BerkutI18n.t('settings.monitoringCleanupDone').replace('{count}', `${removed}`);
+          alertBox.classList.add('success');
+          alertBox.hidden = false;
+        }
+      } catch (err) {
+        if (alertBox) {
+          const raw = (err?.message || '').trim();
+          const translated = raw ? BerkutI18n.t(raw) : '';
+          alertBox.textContent = translated && translated !== raw ? translated : (raw || BerkutI18n.t('common.error'));
+          alertBox.classList.remove('success');
+          alertBox.hidden = false;
+        }
+      }
+    };
+  }
+
   function bindTabsCleanup(alertBox) {
     const cleanupSection = document.getElementById('tabs-cleanup-section');
     const cleanupBtn = document.getElementById('tabs-cleanup-btn');
@@ -820,33 +872,8 @@ const SettingsPage = (() => {
   }
 
   async function cleanupIncidentsRemote() {
-    let removed = 0;
-    for (let i = 0; i < 100; i += 1) {
-      const list = extractListItems(await Api.get('/api/incidents?limit=200'));
-      if (!list.length) break;
-      let removedThisPass = 0;
-      for (const incident of list) {
-        if (!incident?.id) continue;
-        try {
-          await Api.del(`/api/incidents/${incident.id}`);
-          removed += 1;
-          removedThisPass += 1;
-        } catch (err) {
-          const msg = (err?.message || '').trim();
-          if (
-            msg === 'incidents.closedReadOnly' ||
-            msg === 'incidents.notFound' ||
-            msg === 'not found' ||
-            msg === 'forbidden'
-          ) {
-            continue;
-          }
-          throw err;
-        }
-      }
-      if (removedThisPass === 0) break;
-    }
-    return removed;
+    const res = await Api.post('/api/incidents/cleanup', { scope: 'all' });
+    return Number(res?.removed || 0);
   }
 
   async function cleanupMonitoringRemote() {
@@ -1337,6 +1364,10 @@ const SettingsPage = (() => {
     const tabsCleanupSection = document.getElementById('tabs-cleanup-section');
     if (tabsCleanupSection) {
       tabsCleanupSection.hidden = !isSuperadmin || !hasPerm('settings.advanced');
+    }
+    const monitoringCleanupSection = document.getElementById('monitoring-cleanup-section');
+    if (monitoringCleanupSection) {
+      monitoringCleanupSection.hidden = !isSuperadmin || !hasPerm('settings.advanced');
     }
     const tabs = Array.from(document.querySelectorAll('.settings-tabs .tab-btn'));
     const panels = Array.from(document.querySelectorAll('.settings-panel'));

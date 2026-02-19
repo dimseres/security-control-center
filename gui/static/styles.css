@@ -6421,6 +6421,10 @@ body.auth-locked #main-screen {
   border-left: 3px solid #5f86ff;
 }
 
+.decision-card[data-outcome="closed"] {
+  border-left: 3px solid #56dca0;
+}
+
 .decision-card[data-outcome="deferred"] {
   border-left: 3px solid #d8a646;
 }

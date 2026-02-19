@@ -206,6 +206,40 @@
               </div>
             </div>
           </div>
+
+          <div class="card nested-card" id="monitoring-cleanup-section" hidden>
+            <div class="card-header">
+              <div>
+                <h3 data-i18n="settings.monitoringCleanupTitle">Monitoring cleanup</h3>
+                <p class="muted" data-i18n="settings.monitoringCleanupHint">Cleanup monitoring incidents by scope.</p>
+              </div>
+            </div>
+            <div class="card-body">
+              <div class="form-grid single-column">
+                <div class="form-field">
+                  <label for="monitoring-cleanup-scope" data-i18n="settings.monitoringCleanupScope">What to remove</label>
+                  <div class="settings-inline-row">
+                    <select id="monitoring-cleanup-scope" class="select">
+                      <option value="open" data-i18n="settings.monitoringCleanupOpen">Open incidents</option>
+                      <option value="completed" data-i18n="settings.monitoringCleanupCompleted">Completed incidents</option>
+                      <option value="period" data-i18n="settings.monitoringCleanupPeriod">By period</option>
+                    </select>
+                    <button type="button" class="btn danger settings-compact-action" id="monitoring-cleanup-btn" data-i18n="settings.monitoringCleanupRun">Clean up</button>
+                  </div>
+                </div>
+                <div class="settings-inline-row" id="monitoring-cleanup-period-row" hidden>
+                  <div class="form-field-inline">
+                    <label for="monitoring-cleanup-from" data-i18n="settings.monitoringCleanupFrom">From</label>
+                    <input id="monitoring-cleanup-from" class="input" type="date">
+                  </div>
+                  <div class="form-field-inline">
+                    <label for="monitoring-cleanup-to" data-i18n="settings.monitoringCleanupTo">To</label>
+                    <input id="monitoring-cleanup-to" class="input" type="date">
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
 
         <div class="tab-panel settings-panel" id="settings-https" data-tab="settings-https" hidden>
