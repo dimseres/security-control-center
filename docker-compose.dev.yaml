@@ -1,0 +1,59 @@
+version: '3.8'
+
+services:
+  postgres:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB:-berkut}
+      POSTGRES_USER: ${POSTGRES_USER:-berkut}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-berkut}
+    volumes:
+      - berkut_pgdata:/var/lib/postgresql/data
+    restart: unless-stopped
+    ports:
+      - "5552:5432"
+    networks:
+      - default
+      - berkut-network
+
+  go-compiler:
+    depends_on:
+      - postgres
+    build:
+      context: .
+      dockerfile: ./docker/Dockerfile
+    volumes:
+      - .:/app
+      - go-modules:/go/pkg/mod
+    networks:
+      - default
+      - berkut-network
+    working_dir: /app
+
+  application:
+    depends_on:
+      - go-compiler
+    build:
+      context: .
+      dockerfile: ./docker/Dockerfile
+    volumes:
+      - .:/app
+      - go-modules:/go/pkg/mod
+    networks:
+      - default
+      - berkut-network
+    working_dir: /app
+    tty: true
+    entrypoint: ["air", "-c", ".air.toml"]
+    ports:
+      - "7877:8080"
+
+networks:
+  berkut-network:
+    external: true
+
+volumes:
+  berkut_data:
+  berkut_pgdata:
+  go-modules:
+

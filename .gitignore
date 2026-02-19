@@ -37,3 +37,4 @@ Thumbs.db
 
 # Local deployment overrides
 docker-compose.local.yml
+tmp/
