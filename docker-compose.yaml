@@ -17,7 +17,7 @@ services:
   berkut:
     build:
       context: .
-      dockerfile: docker/Dockerfile
+      dockerfile: deployments/Dockerfile
     image: ${IMAGE_NAME:-berkut-scc}:${IMAGE_TAG:-latest}
     env_file:
       - .env
@@ -74,8 +74,8 @@ services:
       - "${PROXY_HTTP_PORT:-80}:80"
       - "${PROXY_HTTPS_PORT:-443}:443"
     volumes:
-      - ./docker/nginx/default.conf:/etc/nginx/conf.d/default.conf:ro
-      - ${TLS_CERTS_PATH:-./docker/certs}:/etc/nginx/certs:ro
+      - ./deployments/nginx/default.conf:/etc/nginx/conf.d/default.conf:ro
+      - ${TLS_CERTS_PATH:-./deployments/certs}:/etc/nginx/certs:ro
     restart: unless-stopped
 
 volumes:
