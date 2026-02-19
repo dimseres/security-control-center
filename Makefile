@@ -36,3 +36,30 @@ migrate:
 	@go run ./cmd/migrate
 
 ci: lint test
+
+init-dev: build-dev download-dev migrate-dev up-dev air-dev
+
+download-dev:
+	@docker compose -f docker-compose.dev.yaml run --rm --remove-orphans go-compiler go mod download
+
+install-air:
+	@docker compose -f docker-compose.dev.yaml run --rm --remove-orphans go-compiler go install github.com/air-verse/air
+
+up-dev:
+	@docker compose -f docker-compose.dev.yaml up -d
+
+air-dev:
+	@docker compose -f docker-compose.dev.yaml run --rm --remove-orphans application
+
+test-dev:
+	@docker compose -f docker-compose.dev.yaml run --rm --remove-orphans go-compiler go test ./...
+
+migrate-dev:
+	@docker compose -f docker-compose.dev.yaml run --rm --remove-orphans go-compiler go run ./cmd/migrate
+
+build-dev:
+	docker compose -f docker-compose.dev.yaml build --build-arg UID=$$(id -u) --build-arg GID=$$(id -g)
+
+
+dev:
+	@air
